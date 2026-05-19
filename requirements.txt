@@ -1,0 +1,9 @@
+psycopg[binary]
+qdrant-client
+
+pymupdf
+pymupdf4llm
+pytesseract
+gdown
+pandas
+docling
