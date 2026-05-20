@@ -2,6 +2,7 @@ import asyncio
 from pathlib import Path
 from PIL import Image
 import os
+import sys
 
 from docling.datamodel.base_models import InputFormat
 from docling.datamodel.pipeline_options import PdfPipelineOptions
@@ -9,6 +10,8 @@ from docling.document_converter import DocumentConverter, PdfFormatOption
 from docling_core.types.doc import PictureItem, DoclingDocument
 from docling_core.transforms.serializer.markdown import MarkdownDocSerializer
 
+from scripts.postgres import insert_pdf, insert_page
+from scripts.llms_and_models import OpenAIModel
 
 
 def save_to_file(filename,content,filepath=os.getenv('testing_results_path'),method='w'):
@@ -52,11 +55,11 @@ def is_useable_image(img, page_w, page_h, min_dim=100, area_threshold=0.20):
     return True
 
 
-def get_document_markdown(filepath,converter):
+def get_document_markdown(filepath,converter,model):
 
     document = converter.convert(filepath).document
     markdown_text = []
-    serialiser = MarkdownDocSerializer(doc=document)
+    serializer = MarkdownDocSerializer(doc=document)
 
     for page_no in document.pages.keys():
 
@@ -71,44 +74,66 @@ def get_document_markdown(filepath,converter):
                 useable = is_useable_image(item,page_width,page_height)
                 if useable :
                     pil_image = item.get_image(doc=document)
-                    image_description = get_image_description(pil_image)
-                    caption = item.export_to_markdown()
-                    combined = f'Image description : ' + image_description + "\n" + f'Caption : {caption}'
-                    page_markdown.append(combined)
-                # else:
-
+                    image_description = model.get_image_description(pil_image)
+                    item_markdown = f'Image found, description : ' + image_description + "\n"
+                else:
+                    item_markdown = item.caption_text()
             else:
-                item_markdown = serialiser.serialize(item).text.strip()
-                if item_markdown:
-                    page_markdown.append(item_markdown)
+                item_markdown = serializer.serialize(item=item).text
+            if item_markdown:
+                page_markdown.append(item_markdown)
 
         combined_markdown = f'Page {page_no}\n\n' + "\n\n".join(page_markdown)
         markdown_text.append(combined_markdown)
 
-    final_text = "\n".join(markdown_text)
-    return final_text
+
+    """
+    Logic to calculate embeddings from each page and then upload the embeddings to qdrant
+    """
+
+
+    return markdown_text
 
 
 def parse_all_documents(folderpath):
 
     pipeline_options = PdfPipelineOptions()
-    pipeline_options.generate_picture_images = True  # CRUCIAL: Tells Docling to pull out images
-    pipeline_options.images_scale = 2.0             # Upscale to ~144 DPI for better LLM legibility
+    pipeline_options.generate_picture_images = True
+    pipeline_options.generate_page_images = False
+    pipeline_options.images_scale = 2.0
     pipeline_options.do_ocr = True
     pipeline_options.do_table_structure = True
     pipeline_options.do_code_enrichment = True
     pipeline_options.do_formula_enrichment = True
-
     converter = DocumentConverter(
         format_options={
             InputFormat.PDF: PdfFormatOption(pipeline_options=pipeline_options)
         }
     )
 
+    model = OpenAIModel()
+
     if folderpath.is_dir():
         for file in folderpath.iterdir():
             if file.suffix == '.pdf':
 
-                document_markdown = get_document_markdown(file,converter)
+                # insert_pdf(file.name,file)
+                document_markdown = get_document_markdown(file,converter,model)
                 filename = file.stem + '.md'
-                save_to_file(filename,document_markdown)
+                save_to_file(filename,document_markdown,method='a')
+
+
+def ingest_all_pdfs():
+    pdfs_path = Path(os.getenv('pdfs_path'))
+    parse_all_documents(pdfs_path)
+
+
+
+"""
+Also create a function to calculate and upload colqwen embeddings
+"""
+
+
+if __name__ == "__main__":
+
+    ingest_all_pdfs()

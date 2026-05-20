@@ -101,7 +101,7 @@ def create_db_tables():
                     """
                     DROP TABLE patches CASCADE
                     """
-                ) 
+                )
 
                 cur.execute(
                     """
@@ -137,14 +137,14 @@ def create_db_tables():
                     """
                 )
 
-                cur.execute(
-                    """
-                    CREATE TABLE IF NOT EXISTS patches(
-                    patch_id SERIAL PRIMARY KEY,
-                    page_id INT REFERENCES pages(page_id)
-                    )
-                    """
-                )
+                # cur.execute(
+                #     """
+                #     CREATE TABLE IF NOT EXISTS patches(
+                #     patch_id SERIAL PRIMARY KEY,
+                #     page_id INT REFERENCES pages(page_id),
+                #     )
+                #     """
+                # )
 
         print(f'Create tables successful \n\n')
 
@@ -159,11 +159,11 @@ def delete_rows():
         with get_connection() as conn:
             with conn.cursor() as cur:
 
-                cur.execute(
-                    """
-                    TRUNCATE TABLE patches CASCADE
-                    """
-                ) 
+                # cur.execute(
+                #     """
+                #     DROP TABLE patches CASCADE
+                #     """
+                # )
 
                 cur.execute(
                     """
@@ -225,25 +225,26 @@ def insert_page(pdf_name,page_markdown,page_no):
         raise
 
 
-def insert_patch(pdf_name,page_no):
+# def insert_patch(pdf_name,page_no):
 
-    try:
-        with get_connection() as conn:
-            with conn.cursor() as cur:
+#     try:
+#         with get_connection() as conn:
+#             with conn.cursor() as cur:
 
-                cur.execute(
-                    """
-                    INSERT INTO patches (page_id)
-                    SELECT pg.page_id
-                    FROM pages pg
-                    JOIN pdfs pd ON pg.pdf_id = pd.pdf_id
-                    WHERE pd.name = %s AND pg.num = %s
-                    """,
-                    (pdf_name, page_no)
-                )
+#                 cur.execute(
+#                     """
+#                     INSERT INTO patch (page_id)
+#                     SELECT pg.page_id
+#                     FROM pages pg 
+#                     JOIN pdfs pd on pg.pdf_id = pd.pdf_id
+#                     WHERE pd.name = %s AND pg.num = %s
+#                     """,
+#                     (pdf_name,page_no)
+#                 )
 
-    except psycopg.Error as e:
-        print(f'Failed to insert patch from pdf {pdf_name}, page {page_no}, error \n{e}\n\n')
+#     except psycopg.Error as e:
+#         print(f'Failed to insert patch from documeht {pdf_name} page {page_no} into database, error \n{e}\n\n')
+#         raise
 
 
 
