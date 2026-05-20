@@ -2,9 +2,6 @@ from qdrant_client import QdrantClient, models
 from qdrant_client.models import PointStruct, Distance, VectorParams, models
 
 import os
-from dataclasses import asdict
-
-from chunks import Chunk
 
 
 
@@ -31,67 +28,101 @@ def get_qdrant_client():
         print(f'Failed to connect to qdrant using parameters, error {e}\n\n')
 
 
-def create_collection():
+def create_text_collection():
 
     try:
+        client = get_qdrant_client()
+        name = os.getenv('text_collection_name')
 
-        qdrant_client = get_qdrant_client()
-        collection_name = os.getenv('qdrant_collection_name')
+        if client.collection_exists(name):
+            print(f'Text collection already exists, clearing points from it now\n\n')
+            clear_points(name)
 
-        if qdrant_client.collection_exists(collection_name=collection_name):
+        else:
+            client.create_collection(
+                collection_name=name,
+                vectors_config={
+                    'colqwen_coarse' : models.VectorParams(
+                        size = 123456789,
+                        distance = models.Distance.COSINE
+                    )
+                },
+                sparse_vectors_config={
+                    'splade_text' : models.SparseVectorParams(
+                        index_value_type=models.SparseIndexValueType.FLOAT32,
+                        modifier=models.Modifier.IDF
+                    )
+                },
+                hnsw_config=models.HnswConfigDiff(on_disk=True)
+            )
 
-            print(f'Collection exists currently, deleting to reset\n')
-            qdrant_client.delete_collection(collection_name=collection_name)
-
-        qdrant_client.create_collection(
-            collection_name,
-            vectors_config={
-                "dense": models.VectorParams(
-                    size=1536,
-                    distance=models.Distance.COSINE,
-                ),
-                "multi": models.VectorParams(
-                    size=96,
-                    distance=models.Distance.COSINE,
-                    multivector_config=models.MultiVectorConfig(
-                        comparator=models.MultiVectorComparator.MAX_SIM,
-                    ),
-                    hnsw_config=models.HnswConfigDiff(m=0)  #  Disable HNSW for reranking
-                ),
-            },
-            sparse_vectors_config={
-                "sparse": models.SparseVectorParams(modifier=models.Modifier.IDF)
-            }
-        )
-
-        print(f'Collection created\n\n')
+            print(f'Text collection created\n\n')
 
     except Exception as e:
-        print(f'Unable to create collection on qdrant cloud, error {e}\n\n')
+        print(f'Unable to create text collection in qdrant, error {e}\n\n')
 
 
-def delete_points(filters):
+def create_patch_collection():
 
     try:
+        client = get_qdrant_client()
+        name = os.getenv('patch_collection_name')
 
-        qdrant_client = get_qdrant_client()
-        collection_name = os.getenv('qdrant_collection_name')
+        if client.collection_exists(name):
+            print(f'Text collection already exists, clearing points from it now\n\n')
+            clear_points(name)
 
-        print(f'Attempting to delete all points from cloud\n\n')
+        else:
+            client.create_collection(
+                collection_name=name,
+                vectors_config={
+                    'patch' : models.VectorParams(
+                        size = 123456789,
+                        distance = models.distance.COSINE
+                    )
+                }
+            )
 
-        qdrant_client.delete(
-            collection_name=collection_name,
-            points_selector=filters
-        )
-
-        print(f'Finished deleteing points from cloud\n\n')
+            print(f'Patch collection created\n\n')
 
     except Exception as e:
-        print(f'Unable to delete points from qdrant cloud, error {e}\n\n')
+        print(f'Unable to create text collection in qdrant, error {e}\n\n')
+
+
+def clear_points(name):
+
+    try:
+        client = get_qdrant_client()
+        client.delete(
+                collection_name=name,
+                points_selector=models.Filter() 
+            )
+
+        print(f'All points deleted from collection {name}\n\n')
+
+    except Exception as e:
+        print(f'Unable to delete all points from collection {name} in qdrant, error {e}\n\n')
 
 
 
 # Execution functions
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 def upload_to_qdrant(chunks, dense, sparse, late):
 
@@ -194,44 +225,12 @@ def get_similar_chunks(dense,sparse,late,limit1=20,limit2=4,filters=None):
 
 if __name__ == '__main__':
 
+    recreate = 1
     sure = input('Are you sure? Enter Y to continue : ')
-
-    if sure == 'Y':
-
-        recreate = 1
-
-        if recreate:
-            create_collection()
-
-        else:
-            chunk_type = 2
-            chunks = {
-                0:None,
-                1:'text',
-                2:'image',
-                3:'tables'
-            }
-            # 1. Get the string value (e.g., 'image')
-            target = chunks.get(chunk_type)
-
-            if target:
-                # 2. Construct the Qdrant Filter
-                # Change "chunk_type" to the actual key name in your payload
-                delete_filter = models.Filter(
-                    must=[
-                        models.FieldCondition(
-                            key="type", 
-                            match=models.MatchValue(value=target)
-                        )
-                    ]
-                )
-
-                # 3. Call the delete function
-                delete_points(delete_filter)
-                print(f'Points of type {target} deleted\n')
-
-            else:
-                print(f'No type selected, not deleting anything\n')
+    
+    if recreate == 1 and sure == 'Y':
+        create_text_collection()
+        create_patch_collection()
 
     else:
         print('Aborted\n\n')
