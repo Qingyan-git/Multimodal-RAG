@@ -1,0 +1,264 @@
+import psycopg
+import os
+import json
+from pathlib import Path
+
+def get_connection():
+
+    '''
+    Gets and returns connection object for the llm database
+    '''
+
+    try :
+
+        user = os.getenv('postgres_user')
+        password = os.getenv('postgres_password')
+        db_name = os.getenv('postgres_llm_db_name')
+
+        if not user or not password or not db_name:
+            raise AttributeError("Environment variable not found, please check your environment files\n\n")
+
+        host = 'localhost'
+        port = 5432
+
+        conn = psycopg.connect(
+            host=host,
+            port=port,
+            dbname=db_name,
+            user=user,
+            password=password
+        )
+
+        return conn
+
+    except psycopg.Error as e: 
+        print(f'Database connection failed, error : {e}\n\n')
+        raise
+
+
+def create_llm_db():
+
+    '''
+    Checks for the existence of the db_name in postgresql. If not exist, create the db
+    '''
+
+    try :
+
+        user = os.getenv('postgres_user')
+        password = os.getenv('postgres_password')
+        admin_db_name = os.getenv('postgres_admin_db_name')
+        llm_db_name = os.getenv('postgres_llm_db_name')
+
+        if not user or not password or not admin_db_name:
+            raise AttributeError("Environment variable(s) not found, please check your environment files\n\n")
+        
+        host = 'localhost'
+        port = 5432
+
+        with psycopg.connect(
+            host=host,
+            port=port,
+            dbname=admin_db_name,
+            user=user,
+            password=password
+        ) as conn:
+            
+            print(f'Connected to db {admin_db_name}\n')
+
+            conn.autocommit = True
+            with conn.cursor() as cursor:
+                cursor.execute(
+                    'SELECT 1 FROM pg_database WHERE datname = %s',
+                    (llm_db_name,)
+                )
+
+                exists = cursor.fetchone()
+
+                if not exists:
+                    print(f'Database {llm_db_name} does not exist, creating database now \n')
+                    cursor.execute(f'CREATE DATABASE "{llm_db_name}"') #type:ignore
+                    print('Database created \n\n')
+
+                else:
+                    print(f'Database {llm_db_name} already exists\n\n')
+
+    except psycopg.Error as e:
+        print(f'Cannot create the llm_db, error : {e}\n\n')
+        raise
+
+
+def create_db_tables():
+
+    """
+    Creates tables for database
+    """
+
+    try : 
+        with get_connection() as conn:
+            with conn.cursor() as cur:
+
+                cur.execute(
+                    """
+                    DROP TABLE patches CASCADE
+                    """
+                ) 
+
+                cur.execute(
+                    """
+                    DROP TABLE pages CASCADE
+                    """
+                )
+
+                cur.execute(
+                    """
+                    DROP TABLE pdfs CASCADE
+                    """
+                )
+
+                cur.execute(
+                    """
+                    CREATE TABLE IF NOT EXISTS pdfs(
+                    pdf_id SERIAL PRIMARY KEY,
+                    name TEXT NOT NULL,
+                    path TEXT NOT NULL UNIQUE
+                    )
+                    """
+                )
+
+                cur.execute(
+                    """
+                    CREATE TABLE IF NOT EXISTS pages(
+                    page_id SERIAL PRIMARY KEY,
+                    pdf_id INT REFERENCES pdfs(pdf_id),
+                    markdown TEXT,
+                    num INT,
+                    UNIQUE(pdf_id,num)
+                    )
+                    """
+                )
+
+                cur.execute(
+                    """
+                    CREATE TABLE IF NOT EXISTS patches(
+                    patch_id SERIAL PRIMARY KEY,
+                    page_id INT REFERENCES pages(page_id)
+                    )
+                    """
+                )
+
+        print(f'Create tables successful \n\n')
+
+    except psycopg.Error as e:
+        print(f'Failed to create table, {e}\n\n')
+        raise
+
+
+def delete_rows():
+
+    try:
+        with get_connection() as conn:
+            with conn.cursor() as cur:
+
+                cur.execute(
+                    """
+                    TRUNCATE TABLE patches CASCADE
+                    """
+                ) 
+
+                cur.execute(
+                    """
+                    TRUNCATE TABLE pages CASCADE
+                    """
+                )
+
+                cur.execute(
+                    """
+                    TRUNCATE TABLE pdfs CASCADE
+                    """
+                )
+
+                print(f'\nAll rows from tables deleted\n\n')
+
+    except psycopg.Error as e:
+        print(f'Failed to delete rows from tables, {e}\n\n')
+
+
+
+#Execution functions
+
+def insert_pdf(name,path):
+
+    try:
+        with get_connection() as conn:
+            with conn.cursor() as cur:
+
+                cur.execute(
+                    """
+                    INSERT INTO pdfs (name,path) VALUES (%s,%s)
+                    """,
+                    (name,path)
+                )
+
+    except psycopg.Error as e:
+        print(f'Failed to insert pdf {name} into database, error \n{e}\n\n')
+        raise
+
+
+def insert_page(pdf_name,page_markdown,page_no):
+
+    try:
+        with get_connection() as conn:
+            with conn.cursor() as cur:
+
+                cur.execute(
+                    """
+                    INSERT INTO pages (pdf_id,markdown,num)
+                    SELECT pd.pdf_id, %s, %s
+                    FROM pdfs pd
+                    WHERE pd.name = %s
+                    """,
+                    (page_markdown,page_no,pdf_name)
+                )
+
+    except psycopg.Error as e:
+        print(f'Failed to insert page {page_no} from {pdf_name} into database, error \n{e}\n\n')
+        raise
+
+
+def insert_patch(pdf_name,page_no):
+
+    try:
+        with get_connection() as conn:
+            with conn.cursor() as cur:
+
+                cur.execute(
+                    """
+                    INSERT INTO patches (page_id)
+                    SELECT pg.page_id
+                    FROM pages pg
+                    JOIN pdfs pd ON pg.pdf_id = pd.pdf_id
+                    WHERE pd.name = %s AND pg.num = %s
+                    """,
+                    (pdf_name, page_no)
+                )
+
+    except psycopg.Error as e:
+        print(f'Failed to insert patch from pdf {pdf_name}, page {page_no}, error \n{e}\n\n')
+
+
+
+if __name__ == '__main__':
+
+    reformat = 1
+    sure = input('Are you sure? Enter Y to continue : ')
+
+    if reformat == 1 and sure == 'Y':
+        create_db_tables()
+
+    elif reformat == 0 and sure == 'Y':
+        delete_rows()
+
+    else:
+        print('Aborted\n\n')
+
+
