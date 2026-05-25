@@ -74,13 +74,11 @@ def create_llm_db():
 
                 exists = cursor.fetchone()
 
-                if not exists:
-                    print(f'Database {llm_db_name} does not exist, creating database now \n')
-                    cursor.execute(f'CREATE DATABASE "{llm_db_name}"') #type:ignore
-                    print('Database created \n\n')
+                if exists:
+                    cursor.execute(f'DROP DATABASE "{llm_db_name}"')
 
-                else:
-                    print(f'Database {llm_db_name} already exists\n\n')
+                cursor.execute(f'CREATE DATABASE "{llm_db_name}"')
+                print(f'Database {llm_db_name} created\n\n')
 
     except psycopg.Error as e:
         print(f'Cannot create the llm_db, error : {e}\n\n')
@@ -97,21 +95,21 @@ def create_db_tables():
         with get_connection() as conn:
             with conn.cursor() as cur:
 
+                # cur.execute(
+                #     """
+                #     DROP TABLE IF EXISTS patches CASCADE
+                #     """
+                # )
+
                 cur.execute(
                     """
-                    DROP TABLE patches CASCADE
+                    DROP TABLE IF EXISTS pages CASCADE
                     """
                 )
 
                 cur.execute(
                     """
-                    DROP TABLE pages CASCADE
-                    """
-                )
-
-                cur.execute(
-                    """
-                    DROP TABLE pdfs CASCADE
+                    DROP TABLE IF EXISTS pdfs CASCADE
                     """
                 )
 
@@ -195,6 +193,7 @@ def insert_pdf(name,path):
                 cur.execute(
                     """
                     INSERT INTO pdfs (name,path) VALUES (%s,%s)
+                    ON CONFLICT DO NOTHING;
                     """,
                     (name,path)
                 )
@@ -204,24 +203,29 @@ def insert_pdf(name,path):
         raise
 
 
-def insert_page(pdf_name,page_markdown,page_no):
+def insert_page(filename,markdown,page_no):
 
     try:
         with get_connection() as conn:
             with conn.cursor() as cur:
 
                 cur.execute(
+                    "SELECT pdf_id FROM pdfs WHERE name = %s",
+                    (filename,)
+                )
+
+                result = cur.fetchone()
+                pdf_id = result[0]
+
+                cur.execute(
                     """
-                    INSERT INTO pages (pdf_id,markdown,num)
-                    SELECT pd.pdf_id, %s, %s
-                    FROM pdfs pd
-                    WHERE pd.name = %s
+                    INSERT INTO pages(pdf_id,markdown,num) VALUES(%s,%s,%s)
                     """,
-                    (page_markdown,page_no,pdf_name)
+                    (pdf_id,markdown,page_no)
                 )
 
     except psycopg.Error as e:
-        print(f'Failed to insert page {page_no} from {pdf_name} into database, error \n{e}\n\n')
+        print(f'Failed to insert pages {filename} into database, error \n{e}\n\n')
         raise
 
 
@@ -250,16 +254,17 @@ def insert_page(pdf_name,page_markdown,page_no):
 
 if __name__ == '__main__':
 
-    reformat = 1
-    sure = input('Are you sure? Enter Y to continue : ')
+    reformat = 0
+    
 
-    if reformat == 1 and sure == 'Y':
-        create_db_tables()
+    if reformat == 1:
+        sure = input('Are you sure? Enter Y to continue : ')
+        if sure == 'Y':
+            create_llm_db()
+            create_db_tables()
+        else:
+            print('Aborted\n\n')
 
-    elif reformat == 0 and sure == 'Y':
+    elif reformat == 0:
         delete_rows()
-
-    else:
-        print('Aborted\n\n')
-
 

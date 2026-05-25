@@ -10,17 +10,23 @@ langchain_core
 langchain_community 
 langchain_openai 
 langchain_experimental
-
+fastembed
+dotenv
+supabase
+pandas
 
 torch
+torchvision
+torchaudio
 transformers
 pillow
-pypdfium2
-huggingface_hub
+# huggingface_hub
 colpali_engine
 frontend
+# flash-attn
 
 ipykernel
+ipywidgets
 
 # # 1. Force the GPU-accelerated Deep Learning Engine
 # --extra-index-url https://pytorch.org
