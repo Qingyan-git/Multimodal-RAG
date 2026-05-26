@@ -262,68 +262,66 @@ Page 33 from document government-personal-data-protection-policies-jul21
 
 Page 34 from document government-personal-data-protection-policies-jul21
 
-- (2) If X is a prospective party to the relevant transaction, the following conditions apply:2. (a) where X collects the personal data mentioned in subparagraph (1) from Y or Z -3. (i) X may collect, and Y or Z (as the case may be) may disclose, only personal data that is necessary for X to determine whether to proceed with the relevant transaction; and4. (ii) X and Y or Z (as the case may be) must have entered into an agreement that requires X to use or disclose the personal data solely for purposes related to the relevant transaction;5. (b) where Y collects the personal data mentioned in subparagraph (1) from Z -6. (i) Y may collect, and Z may disclose, only personal data that is necessary for X or Y (as the case may be) to determine whether to proceed with the relevant transaction; and7. (ii) Y and Z must have entered into an agreement that requires Y to use or disclose the personal data solely for purposes related to the relevant transaction.- (3) If X enters into the relevant transaction, the following conditions apply:9. (a) X may use or disclose the personal data collected from Y or Z (as the case may be) only for the same purposes for which Y or Z (as the case may be) would have been permitted to use or disclose the personal data;10. (b) Y may use or disclose the personal data collected from Z only for the same purposes for which Z would have been permitted to use or disclose the personal data;
+
 
 
 
 Page 35 from document government-personal-data-protection-policies-jul21
 
-- (c) X, Y or Z must notify the applicable individuals of Z whose personal data is disclosed that -- (i) the relevant transaction has taken place; and- (ii) the personal data about them has been disclosed to X.- (4) If the relevant transaction does not proceed or is not completed -- (a) X must destroy, or return to Y or Z (as the case may be), all personal data collected; and- (b) Y must destroy, or return to Z, all personal data collected.- 03 In this Part -' applicable individual ', in relation to an agency or NGE, includes a contractor, a customer, a director, an employee, an officer or a shareholder (where applicable) of the agency or NGE;' business asset transaction ' -- (a) means the purchase, sale, lease, merger or amalgamation or any other acquisition, disposal or financing of -- (i) an organisation or a portion of an organisation;- (ii) an interest in an organisation; or- (iii) any of the business or assets of an organisation, other than any personal data to be disclosed under paragraph 1(1) or 2(1), as the case may be; and
+
 
 
 
 Page 36 from document government-personal-data-protection-policies-jul21
 
-- (b) includes -- (i) the amalgamation of a corporation with one or more related corporations; and- (ii) the transfer or disposal of any of the business or assets of a corporation to a related corporation;'business trust' has the meaning given by section 2 of the Business Trusts Act (Cap. 31A);'corporation' and 'related corporation' have the meanings given by section 4(1) of the Companies Act (Cap. 50);'interest' means -- (a) in relation to a corporation - a share in that corporation;- (b) in relation to an entity other than a corporation - any right or interest (whether legal or equitable) in that entity, by whatever name called;- (c) in relation to a business trust - a unit in that business trust; and- (d) in relation to a trust other than a business trust - any right or interest (whether legal or equitable) in that trust, by whatever name called.
+
 
 
 
 Page 37 from document government-personal-data-protection-policies-jul21
 
-## Annex B Additional Bases for Collection, Use and Disclosure of Personal Data Without Consent## PART 1: COLLECTION AND/OR USE OF PERSONAL DATA## Division 1 - Research- 01 The  use  of  personal  data  about  an  individual  for  a  research  purpose (including historical or statistical research), if -- (a) the  research  purpose  cannot  reasonably  be  accomplished unless the personal data is used in an individually identifiable form;- (b) there is a clear public interest to using the personal data for the research purpose;- (c) the  results  of  the  research  will  not  be  used  to  make  any decision that affects the individual; and- (d) in the event that the results of the research are published, the agency publishes the results in a form that does not identify the individual.## Division 2 - Public interest- 01 The collection or use of personal data about an individual who is a current or former student of an educational institution by an agency for the purposes of policy formulation or review.
+
 
 
 
 Page 38 from document government-personal-data-protection-policies-jul21
 
-- 02 The collection or use of personal data about an individual who is a current or former patient of any of the following by a public agency for the purposes of policy formulation or review:- (a) a healthcare institution licensed under the Private Hospitals and Medical Clinics Act (Cap. 248);- (b) a licensee under the Healthcare Services Act 2020 (Act 3 of 2020);- (c) a prescribed healthcare body.- 03 The collection or use of personal data about any individual disclosed to any officer of a prescribed law enforcement agency, upon production of written authorisation signed by the head or director of that prescribed law enforcement agency or a person of a similar rank, certifying that the personal data is necessary for the purposes of the functions or duties of the officer.For the purposes of this paragraph 3, the term 'prescribed law enforcement agency' shall have the same meaning given to it in the Personal Data Protection Act (No. 26 of 2012).## PART 2: DISCLOSURE OF PERSONAL DATA WITHOUT CONSENT## Division 1 - Research- 01 The disclosure of personal data about an individual for a research purpose (including historical or statistical research), if -- (a) the research purpose cannot reasonably be accomplished unless the personal data is disclosed in an individually identifiable form;
+
 
 
 
 Page 39 from document government-personal-data-protection-policies-jul21
 
-- (b) it is impracticable for the agency to seek the consent of the individual for the disclosure;- (c) there is a clear public interest to disclosing the personal data for the research purpose;- (d) the results of the research will not be used to make a decision that affects the individual;- (e) in the event that the results of the research are published, the agency publishes the results in a form that does not identify the individual; and- (f) the organisation to which the personal data is to be disclosed has signed an agreement to comply with -- (i) the policies and procedures relating to the confidentiality of personal data of the agency that collected the personal data;- (ii) security and confidentiality conditions of the agency disclosing the personal data;- (iii) a requirement to remove or destroy individual identifiers at the earliest reasonable opportunity; and- (iv) a requirement not to use the personal data for any other purpose or to disclose the personal data in individually identifiable form without the express authorisation of the agency that disclosed the personal data.
+
 
 
 
 Page 40 from document government-personal-data-protection-policies-jul21
 
-## Annex C Exceptions from Access Requirement- 01 An agency is not required to comply with paragraph 27 in any of the following circumstances -- (a) opinion data kept solely for an evaluative purpose;- (b) any examination conducted by an education institution, examination scripts and, prior to the release of examination results, examination results;- (c) a document related to a prosecution if all proceedings related to the prosecution have not been completed;- (d) personal data which is subject to legal privilege;- (e) the personal data or other information should not be disclosed for public interest, legal, security, or commercial proprietary reasons;- (f) personal data collected, used or disclosed without consent, under Paragraph 5 of Part 2 of Annex A, for the purposes of an investigation if the investigation and associated proceedings and appeals have not been completed;- (g) the personal data of the beneficiaries of a private trust kept solely for the purpose of administering the trust;- (h) personal data kept by an arbitral institution or a mediation centre solely for the purposes of arbitration or mediation proceedings administered by the arbitral institution or mediation centre;
+
 
 
 
 Page 41 from document government-personal-data-protection-policies-jul21
 
-- (i) the personal data was collected or created by a mediator or arbitrator in the conduct of a mediation or arbitration for which he was appointed to act -- (i) under a collective agreement under the Industrial Relations Act (Cap. 136) or by agreement between the parties to the mediation or arbitration;- (ii) under any written law; or- (iii) by a court, arbitral institution or mediation centre; or- (j) any request -- (i) that would unreasonably interfere with the operations of the agency because of the repetitious or systematic nature of the requests;- (ii) if the burden or expense of providing access would be unreasonable to the agency or disproportionate to the individual's interests;- (iii) for information that does not exist or cannot be found;- (iv) for information that is trivial; or- (v) that is otherwise frivolous or vexatious.- 02 The Agency may make the determination in paragraph 1(j)(i) above based on the number and frequency of requests received.
+
 
 
 
 Page 42 from document government-personal-data-protection-policies-jul21
 
-## Annex D Exceptions from Correction Requirement- 01 An agency is not required to comply with paragraph 38, 39, 40, 41, 42, 43 and 44 in any of the following circumstances -- (a) data which will not cause any adverse consequences to the individual if not corrected, such as school records of students that are frozen from the point the student left the school;- (b) opinion data kept solely for an evaluative purpose;- (c) any examination conducted by an education institution, examination scripts and, prior to the release of examination results, examination results;- (d) a document related to a prosecution if all proceedings related to the prosecution have not been completed;- (e) the personal data of the beneficiaries of a private trust kept solely for the purpose of administering the trust; or- (f) personal data kept by an arbitral institution or a mediation centre solely for the purposes of arbitration or mediation proceedings administered by the arbitral institution or mediation centre.- 02 An agency is not required to transmit corrected personal data to any other organisation under paragraph 41(b) if it is not reasonably practicable or it involves a disproportionate effort for the agency to do so e.g. public records shared under open access (with or without a fee).
+
 
 
 
 Page 43 from document government-personal-data-protection-policies-jul21
 
-## Change Log|   S/N | Date of Change   | Description of Change                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-|-------|------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|     1 | 1 July 2021      | a. Introduced new provision on deemed consent by contractual necessity b. Revised existing exceptions to consent -business asset transaction purposes, employment relationship purposes and research purposes c. Elaborated what public agencies are required to do when they reject individuals' requests for access to their personal data, e.g. notify individuals of the rejection within the stated time and in accordance with the stated requirements, preserve a copy of the personal data concerned d. Clarified that the 'repetitious or systematic nature' of access requests referred to the number and frequency of requests received |
+
 
 
 
 Page 44 from document government-personal-data-protection-policies-jul21
 
-SMART NATION&amp;DIGITAL GOVERNMENT OFFICE
+
 
 

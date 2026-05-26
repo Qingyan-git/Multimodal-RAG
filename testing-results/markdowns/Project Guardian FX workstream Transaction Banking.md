@@ -250,55 +250,96 @@ Page 29 from document Project Guardian FX workstream Transaction Banking
 
 Page 30 from document Project Guardian FX workstream Transaction Banking
 
-- Actors and system boundary:
-  - User (left): initiates actions and requests price data; checks trading limit; checks token balance; "Get Price" request initiated via external flow.
-  - MTS Smart Contract cluster (center, three stacked blocks within a dashed boundary): comprises Price Oracle Contract, MTS Contract, Whale Token Contract (collectively “Whale Token Smart Contract”).
-  - FX Pricing from Banking Partners (right): external data/provider interface feeding pricing data into the system via MTS Service Provider.
-  - Token Reserve Bank (bottom-right): mint and burn token operations interfacing with Whale Token flows.
+- System topology: Multi-contract architecture with three stacked contract modules inside a dashed “MTS Smart Contract” envelope:
+  - Top module: Price Oracle Contract (dark blue)
+  - Middle module: MTS Contract (medium blue)
+  - Bottom module: Whale Token Smart Contract (light blue)
 
-- Core components (within the Whale Token Smart Contract boundary):
-  - Price Oracle Contract (top block, dark navy):
-    - Primary function: Deploy Price Oracle Smart Contract (from external perspective: “Deploy Price Oracle Smart Contract”).
-    - Interactions: Provides price data to MTS contracts; “Get Price” request from user reaches this contract.
-  - MTS Contract (middle block, medium blue):
-    - Primary function: Serves as central orchestration for MTS operations.
-    - Interactions: 
-      - Deploys MTS Smart Contract to the external environment (“Deploy MTS Smart Contract”).
-      - Sets the User White List via the MTS Service Provider (to control who can trade).
-      - Sets User Trading Limit (via the MTS Service Provider).
-      - Updates price data (receives updates from Price Oracle, or via the MTS Service Provider).
-  - Whale Token Contract (bottom block, lighter blue):
-    - Primary function: Manages Whale Token lifecycle and user balances.
-    - Interactions:
-      - Checks User Balance and Trading Limit (from user inputs and MTS Service Provider).
-      - Sets User Trading Limit (via MTS Service Provider).
-      - Mint & Burn Token operations (token supply management) connected to Token Reserve Bank.
+- Primary actors: User and MTS Service Provider (and external banks/token reserve)
 
-- Data flows and control flows (directional arrows and actions):
-  - User → Get Price: Initiates price retrieval through the UI/UX and triggers the Price Oracle path.
-  - User → Initiate MTS contract: Starts the deployment/initialization sequence for the MTS Smart Contract.
-  - User → Check Trading Limit: Requests validation of trading limits (via MTS Service Provider/MTS Contract).
-  - User → Check Token Balance: Requests balance information (via Whale Token Contract).
-  - Price Oracle Contract → MTS Contract / MTS Service Provider: Provide price data and price updates; “Deploy Price Oracle Smart Contract” is a setup action.
-  - MTS Service Provider ↔ FX Pricing from Banking Partners:
-    - Retrieve and synchronize pricing data from banking partners.
-    - Provide updated price data to the internal contracts (Price Oracle/MTS) for distribution.
-  - MTS Service Provider → Whale Token Contract: Set User White List and Set User Trading Limit commands; Mint & Burn Token interactions with Token Reserve Bank are also routed via the MTS Service Provider.
-  - Whale Token Contract ↔ Token Reserve Bank: Mint & Burn Token operations.
-  - MTS Service Provider → FX Pricing from Banking Partners and back: Orchestrates data synchronization and pricing feed continuity.
-  - Push/pull flows to external banking partners for pricing, via the MTS Service Provider.
+- Data/interaction flows (left to right): 
+  - User initiates an MTS contract → initiates MTS Smart Contract block
+  - User actions feeding Price Oracle: Get Price
+  - User actions feeding MTS Contract: Initiate MTS contract
+  - User actions feeding Whale Token Contract: Check Trading Limit; Check Token Balance
+  - MTS Service Provider and Banking Partners enable downstream operations and data sync
 
-- Data types and state elements (conceptual):
-  - User: identity, trading limit, token balance (in Whale Token).
-  - White List: set per user to authorize trading.
-  - Trading Limit: per-user numeric constraint controlling position sizes or transaction amounts.
-  - Token Balance: user-held Whale Token balance.
-  - Price Data: numeric/decimal value from FX pricing, updated via Price Oracle/MTS Service Provider.
-  - Mint/Burn: token supply actions recorded with timestamp and user.
+- Contract-specific actions (internal vertical flows within the dashed envelope):
+  - Price Oracle Contract:
+    - Deploy Price Oracle Smart Contract (from MTS Smart Contract)
+    - Sync data to off-chain system (external synchronization line to FX Pricing from Banking Partners)
+    - Update Price (from external price Oracle to MTS ecosystem)
+  - MTS Contract:
+    - Deploy MTS Smart Contract (from Price Oracle)
+    - Set User White List (via MTS Service Provider)
+    - Set User Trading Limit (via MTS Service Provider)
+  - Whale Token Smart Contract:
+    - Mint & Burn Token (via MTS Service Provider)
+    - Set User Trading Limit (via MTS Service Provider)
 
-- Semantic domain keywords (for indexing):
-  - Price Oracle Contract, MTS Smart Contract, Whale Token Smart Contract, Whale Token, Token Reserve Bank
-  - User onboarding, white-listing, trading-limit enforcement, token minting, token burning, price synchronization, FX pricing, banking-partner feed, on-chain deployment, MTS Service Provider, price update flow, token balance checks, trading initiation, limit checks, balance checks.MTSSmartContractDeployPriceSync data to off-OracleSmartchainsystemGetPriceContractPriceOracleContractUpdatePriceDeployMTSSmartContractFX PricingInitiateMTSfromcontractMTSMTSServiceBankingContractSetUserProviderPartnersUserWhiteListCheckSetUserTrading LimitTrading LimitWhale TokenCheckTokenContractMint&amp;BalanceBurnTokenTokenWhaleTokenReserveBankSmart ContractThe payment effectively takes place in 3 main stages - issuing, transferring and redeeming; with the token exchange occurring at the transfer token stage.IssueTokenTransferTokenRedeemTokenIssuerLiquidityIssuerBankAProviderBankB356SGDFiatSGDTokenSGDTokenUSDTokenUSDTokenUSDFiatUserUserMulti-tokenAntInternationalSwap ContractAntInternationalEntity AEntity BFigure 3: Illustration of payment flow.| Stage       | Activity                                                                                                                                                                                        |
+- External system interactions and data lineage:
+  - FX Pricing from Banking Partners: Receives sync data, feeds into FX Pricing module
+  - Token Reserve Bank: Holds minted/burned tokens as collateral/liquidity
+  - MTS Service Provider acts as central integration hub connecting Price Oracle, MTS, and Whale Token contracts to external bank pricing and token reserve infrastructure
+
+- Data/control entities:
+  - User profile with whitelist status, trading limit, token balance
+  - Price oracle data feed and deployed price (price feed state)
+  - Token ledger: mint/burn operations, token balance, reserve status
+  - Trading limit configurations and whitelist entries for users
+
+- Logical dependencies and sequencing:
+  - User initiates MTS contract → deploys MTS Smart Contract components (Price Oracle, MTS, Whale Token)
+  - Price Oracle updates price → MTS Contract updates user whitelist and trading limit via MTS Service Provider
+  - Whale Token Mint & Burn events occur in response to trading actions and liquidity management
+  - FX Pricing data from Banking Partners must be synchronized to off-chain system and re-fed into on-chain price oracle
+  - Token Reserve Bank maintains token mint/burn liquidity backing
+
+- Notes on relationships:
+  - “Get Price” input is consumed by Price Oracle Contract
+  - “Deploy Price Oracle Smart Contract” and “Deploy MTS Smart Contract” are sequential steps within the MTS Smart Contract envelope
+  - “Set User White List” and “Set User Trading Limit” are triggered by MTS Service Provider based on user eligibility
+  - Token Mint & Burn operations are synchronized with user trading activity and reserve liquidity
+  - Data synchronization arrows indicate bidirectional or unidirectional data flow between on-chain contracts, service provider, and off-chain FX pricing and bank systems
+
+- Entities for database indexing:
+  - Contract: Price Oracle Contract
+  - Contract: MTS Contract
+  - Contract: Whale Token Smart Contract
+  - Service: MTS Service Provider
+  - External: FX Pricing from Banking Partners
+  - External: Token Reserve Bank
+  - User: profile, whitelist status, trading limit, token balance
+  - Price data: current price, price feed source
+  - Token ledger: minted tokens, burned tokens, total supply
+  - Limits: per-user trading limit, whitelist entries
+
+- Flow summary (concise):
+  - User → Initiate MTS contract
+  - Price Oracle Contract: Get Price → Update Price
+  - MTS Contract: Deploy MTS Smart Contract; Set User White List; Set User Trading Limit
+  - Whale Token Contract: Check Token Balance; Mint & Burn Token
+  - FX Pricing from Banking Partners ↔ Sync data to off-chain system → feed back to on-chain price oracle
+  - Token Reserve Bank: holds minted/burned tokens as liquidity
+
+- Keywords for indexing:
+  - MTS Smart Contract, Price Oracle Contract, Whale Token Smart Contract
+  - User whitelist, trading limit, token balance
+  - Mint, Burn, Set User Trading Limit, Set User White List
+  - Deploy Price Oracle Smart Contract, Deploy MTS Smart Contract
+  - FX Pricing, Banking Partners, Token Reserve Bank
+  - On-chain price feed, off-chain sync, data synchronization
+
+- Semantic entities and relations (graph form):
+  - Node: User; edges: initiates MTS contract, checks trading limit, checks token balance
+  - Node: Price Oracle Contract; edges: gets price, updates price, deploys oracle contract
+  - Node: MTS Contract; edges: deploys MTS contract, sets user whitelist, sets user trading limit
+  - Node: Whale Token Smart Contract; edges: mint & burn token, set user trading limit
+  - Node: MTS Service Provider; edges: orchestrates deployments, sets whitelist, sets limits, mediates with banks
+  - Node: FX Pricing from Banking Partners; edges: sync data to off-chain system, feed price oracle
+  - Node: Token Reserve Bank; edges: holds minted/burned tokens
+
+This representation is optimized for vector-database indexing and semantic retrieval with explicit contracts, actions, and inter-component flows.MTSSmartContractDeployPriceSync data to off-OracleSmartchainsystemGetPriceContractPriceOracleContractUpdatePriceDeployMTSSmartContractFX PricingInitiateMTSfromcontractMTSMTSServiceBankingContractSetUserProviderPartnersUserWhiteListCheckSetUserTrading LimitTrading LimitWhale TokenCheckTokenContractMint&amp;BalanceBurnTokenTokenWhaleTokenReserveBankSmart ContractThe payment effectively takes place in 3 main stages - issuing, transferring and redeeming; with the token exchange occurring at the transfer token stage.IssueTokenTransferTokenRedeemTokenIssuerLiquidityIssuerBankAProviderBankB356SGDFiatSGDTokenSGDTokenUSDTokenUSDTokenUSDFiatUserUserMulti-tokenAntInternationalSwap ContractAntInternationalEntity AEntity BFigure 3: Illustration of payment flow.| Stage       | Activity                                                                                                                                                                                        |
 |-------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Issue Token | 1. Issuer Bank A in Singapore off-chain debits Ant International's Entity A cash account for SGD fiat currency 2. Issuer mints Bank A SGD token to Ant International's Entity A's token address |
 
@@ -388,24 +429,24 @@ Page 41 from document Project Guardian FX workstream Transaction Banking
 
 Page 42 from document Project Guardian FX workstream Transaction Banking
 
-creating a foundation for interoperability and consistency in processing settlements. This could have positive implications for how settlements are handled across multiple asset classes, including equities, commodities, and bonds.- Broader Adoption of Digital Solutions: Successful implementation in transaction banking use cases could act as a catalyst for wider industry adoption of tokenisation and shared ledger-based solutions, which could then drive improved efficiencies across different use cases benefiting from atomic payments and smart contracts.- Increased  Market  Confidence: Innovations that prove successful in digital payments including tokenised transfers may inspire greater trust and confidence in the  scalability  and  reliability  of  such  technologies.  This,  in  turn,  could  attract participants in other asset classes to adopt these solutions.In  conclusion,  tokenised  bank  liabilities  and  payments  have  the  potential  to  enhance efficiency, reduce risk, and improve liquidity in FX markets. Realising these benefits will require continued collaboration between industry participants and regulators to address key challenges, including the alignment of legal frameworks, the development of robust operational  standards,  and  the  refinement  of  regulatory  treatment  and  compliance processes.While there are transitional challenges as traditional and emerging systems co-exist, these are  not  insurmountable.  With  thoughtful  engagement  and  shared  commitment,  the industry is well-positioned to develop the clarity and best practices needed to support the safe and effective adoption of tokenised bank liabilities. As the ecosystem matures, these collective efforts will help lay the foundation for a more efficient, resilient, and inclusive global financial system.
+
 
 
 
 Page 43 from document Project Guardian FX workstream Transaction Banking
 
-## 9 References1. Financial Stability Board (FSB) (2024). G20 Roadmap for Enhancing Cross-border Payments.2. Bank for International Settlements (BIS) (2022). Extending and aligning payment system operating hours for cross-border payments.5. BIS (2023). Blueprint for the future monetary system: improving the old, enabling the new.6. Ibid.7. FSB (2020). Enhancing Cross-Border Payments: Stage 3 Roadmap.8. CLSSettlement. CLS Settlement.10. Bank of England (BOE) (2024). Once more unto the breach.11. FSB (2024). FSB Annual Progress Report on Meeting the Targets for Cross-border Payments, 2024 Report on Key Performance Indicators.12. BIS (2020). Payments without borders.13. BIS (2002). BIS Quarterly Review.14. Monetary Authority of Singapore (MAS) (2023). Project Guardian Open and Interoperable Networks.15. Ibid.17. Monetary Authority of Singapore (MAS) (2023). Project Guardian Interlinking Networks.19. Monetary Authority of Singapore (MAS) (2024). Project Guardian Fixed Income Framework.22. Global Layer 1 (GL1) (2024). Global Layer 1 Whitepaper23. GL1 (2024). Programmable Compliance Toolkit.24. Monetary Authority of Singapore (MAS) (2024). Project Guardian Fixed Income Framework.27. Oliver Wyman, J.P. Morgan (2021). Unlocking $120 Billion Value In Cross-Border Payments.28. BIS (2019). BIS Quarterly Review.29. Global Foreign Exchange Committee (2024). FX Global Code.30. UK Finance (2024). UK Finance announces successful outcome of Regulated Liability Network Experimentation Phase.31. Fintech Open Source Foundation (FINOS). Common Domain Model.32. International Swaps and Derivatives Association (ISDA). ISDA Digital Regulatory Reporting.34. ISDA (2025). Status of Netting Legislation.
+
 
 
 
 Page 44 from document Project Guardian FX workstream Transaction Banking
 
-35. ISDA (2023). Navigating Bankruptcy in Digital Asset Markets Netting and Collateral Enforceability.36. International Monetary Fund (IMF) (2023). Trust Bridges and Money Flows: A Digital Marketplace to Improve Cross-Border Payments.37. Regulated Liability Network (RLN). (2022). The Regulated Liability Network Digital Sovereign Currency.38. BIS (2024). Report for the G20 on tokenisation highlights the opportunities, risks and future considerations for central banks.
+
 
 
 
 Page 45 from document Project Guardian FX workstream Transaction Banking
 
-CopyrightMonetaryAuthorityofSingaporeAll rights reserved.No part of thispublication may be reproduced, permissionofthecopyrightowner.01/07/202545
+
 
 

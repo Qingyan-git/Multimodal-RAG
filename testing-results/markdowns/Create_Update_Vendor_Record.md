@@ -15,45 +15,97 @@ Page 2 from document Create_Update_Vendor_Record
 
 Page 3 from document Create_Update_Vendor_Record
 
-## 1. Create Vendor RecordExtraction summary for database serialization
+## 1. Create Vendor Record
+IMAGE FOUND, DESCRIPTION : - Title / header area:
+  - “Get started by logging in.” (primary heading)
+  - Subtext line: “Click here if you do not have an account” (here hyperlinked indicator)
 
-Document type: User onboarding / dashboard illustration with navigation options
+- User option cards (top section):
+  - Card 1: “For Business Users” with subheading “Login with Singpass”
+  - Card 2: “For Individual Users” with subheading “Login with Singpass”
+  - Each card has rounded rectangle white background with drop shadow
+  - Card 1 alignment: left; Card 2 alignment: right
 
-Layout regions
-- Title strip: "Get started by logging in." (blue text, positioned top-left)
-- Subheader line: "Click here if you do not have an account" (blue/orange link color emphasis; small font)
-- Hero action cards row (two distinct callouts):
-  - Card 1: "For Business Users" (blue text) with sublabel "Login with Singpass" (black text on white rounded card)
-  - Card 2: "For Individual Users" (red text) with sublabel "Login with Singpass" (black text on white rounded card)
-  - Cards have drop shadow, rounded corners, white background
-  - Small caption row beneath each card:
-    - Under Card 1: "For Local & Foreign Entities" (blue text)
-    - Under Card 2: "For Individuals" (blue text)
-  - Additional caption: "Click here if you are a foreign individual with an AGD Password" (blue/orange link style)
+- Secondary links (under the three main blocks):
+  - Text: “For Local & Foreign Entities” (blue link)
+  - Text: “For Individuals” (blue link)
+  - Text: “Click here if you are a foreign individual with an AGD Password” (blue link)
 
-- Main content region (illustration area, titled “INVOICE”)
-  - Large document graphic labeled "INVOICE" with folded corner
-  - Floating action bubbles:
-    - Bubble A: "Submit Invoices" (light blue rounded rectangle)
-    - Bubble B: "Monitor Payment Status" (left side, light blue rounded rectangle)
-    - Bubble C: "Update Vendor Details" (near center-bottom, light blue rounded rectangle)
-  - Visual elements:
-    - Human figure standing left, wearing dark pants and light top
-    - Person seated on ground right, purple clothing
-    - Large circular currency icon (coin) near bottom center
-    - Stylized trees with yellow/orange/red foliage to the right
-- Color palette notes:
-  - Primary blues (various shades) for headers and bubbles
-  - Red accent for the individual user header
-  - Grey background gradient
-- Visual relationship and flow:
-  - Top navigation area leads to two distinct user-type login paths
-  - Invoice illustration anchors main content with three operational bubbles indicating core actions
-  - Peripheral visual elements (people, currency icon, trees) support thematic context of invoicing and payments
-- Metadata for indexing:
-  - Keywords: "login", "Singpass", "business users", "individual users", "invoice", "Submit Invoices", "Monitor Payment Status", "Update Vendor Details", "AGD Password", "local & foreign entities"
-  - Entities: "Business Users", "Individual Users", "Local & Foreign Entities", "Individuals", "Invoices", "Vendor Details", "Payment Status", "Singpass", "AGD Password"
-  - Visual assets: "invoice document graphic", "speech-bubble calls-to-action", "currency coin", "people illustrations", "trees motif"Getstarted by loggingin.Clickhere if you do nothave anaccountFor BusinessForIndividualUsersUsersLoginwithSingpassLoginwithSingpassForLocal &amp;Foreign EntitiesForIndividualsClickhere ifyouareaforeignindividualwithanAGDPasswordINVOICESubmitinvoicesMonitorUpdatePayment StatusVendorDetailsLogin to Vendors@Gov portal (www.vendors.gov.sg).For more information on how to login, please refer to' Vendors@Gov Login User Guide '.
+- Main visual area:
+  - Large illustration of an invoice document with the word “INVOICE” prominently displayed at the top-left of the document
+  - Sub-elements on the invoice include multiple callout bubbles with text:
+    - Bubble 1 (near left): “Submit Invoices”
+    - Bubble 2 (center): “Update Vendor Details”
+    - Bubble 3 (left, near bottom): “Monitor Payment Status”
+  - A person figure standing left of the invoice interacting with the document
+  - Another seated person figure on the right holding a circular icon with a dollar sign
+  - Cartoon trees/foliage in yellow and orange color on the right side as decorative background
+
+- Iconography and actions:
+  - Central large cloud-like button or bubble near the invoice with no explicit label visible
+  - Visual emphasis on payment and vendor management processes
+
+- Overall layout semantics:
+  - Top navigation/intro area with user-type login options
+  - Informational/CTA area featuring an invoice workflow with three primary actions
+  - Graphical illustration conveying invoice processing, payment monitoring, and vendor details update
+  - Color palette: cool grays/blues with accent colors for bubbles and decorative trees
+
+- Data primitives suitable for vector indexing:
+  - Entities: UserType (For Business Users, For Individual Users), LoginMethod (Login with Singpass)
+  - Actions (Invoice-related): Submit Invoices, Update Vendor Details, Monitor Payment Status
+  - Document: INVOICE
+  - Roles: Local & Foreign Entities, Individuals
+  - Visual elements: Hero image (invoice doc with bubbles), two human figures, currency symbol, decorative trees
+
+- Relationships / flow:
+  - User selects a UserType (Business or Individual) to login via Singpass
+  - Access route links presented for local/foreign entities or individuals
+  - Invoice workflow relationship: Submit Invoices -> (implied) generate/monitor status -> Update Vendor Details
+  - Payment flow: Currency symbol suggests monetary transactions and payment status monitoring
+
+- Notable text blocks (for indexing):
+  - Get started by logging in.
+  - Click here if you do not have an account
+  - For Business Users — Login with Singpass
+  - For Individual Users — Login with Singpass
+  - For Local & Foreign Entities
+  - For Individuals
+  - Click here if you are a foreign individual with an AGD Password
+  - INVOICE
+  - Submit Invoices
+  - Update Vendor Details
+  - Monitor Payment Status
+
+- Visual metadata:
+  - Page/scene: Login and invoice processing splash screen
+  - Imagery: Invoice document graphic with three blue chat-bubbles/labels
+  - Calls-to-action: Login options, CTA bubbles on invoice
+
+- Structure for database serialization:
+  - Scene: UserLoginAndInvoiceWorkflow
+  - Nodes: 
+    - Node: UserLoginOptionBusiness (label: “For Business Users”, method: “Login with Singpass”)
+    - Node: UserLoginOptionIndividual (label: “For Individual Users”, method: “Login with Singpass”)
+    - Node: LocalAndForeignEntitiesLink (label: “For Local & Foreign Entities”)
+    - Node: IndividualsLink (label: “For Individuals”)
+    - Node: AGDPasswordInfoLink (label: “Click here if you are a foreign individual with an AGD Password”)
+    - Node: InvoiceDocument (label: “INVOICE”)
+    - Node: SubmitInvoicesAction (label: “Submit Invoices”)
+    - Node: UpdateVendorDetailsAction (label: “Update Vendor Details”)
+    - Node: MonitorPaymentStatusAction (label: “Monitor Payment Status”)
+    - Node: CurrencySymbolIcon (label: “$”)
+  - Edges / Flows:
+    - UserLoginOptionBusiness -> InvoiceDocument (via login flow)
+    - UserLoginOptionIndividual -> InvoiceDocument (via login flow)
+    - InvoiceDocument -> SubmitInvoicesAction
+    - InvoiceDocument -> UpdateVendorDetailsAction
+    - InvoiceDocument -> MonitorPaymentStatusAction
+  - Annotations:
+    - Scene purpose: authentication gateway with invoice processing workflow visualization
+    - Visual cues: blue bubbles denote actions; currency icon indicates payments
+
+Getstarted by loggingin.Clickhere if you do nothave anaccountFor BusinessForIndividualUsersUsersLoginwithSingpassLoginwithSingpassForLocal &amp;Foreign EntitiesForIndividualsClickhere ifyouareaforeignindividualwithanAGDPasswordINVOICESubmitinvoicesMonitorUpdatePayment StatusVendorDetailsLogin to Vendors@Gov portal (www.vendors.gov.sg).For more information on how to login, please refer to' Vendors@Gov Login User Guide '.
 
 
 
@@ -89,23 +141,42 @@ Page 8 from document Create_Update_Vendor_Record
 
 Page 9 from document Create_Update_Vendor_Record
 
-## 1. Create Vendor Record - Contact Details- Section: Contact Details
-  - Fields:
-    - Email Address: [input text, required]
-    - Contact No.: [input text, required]
+## 1. Create Vendor Record - Contact Details
+IMAGE FOUND, DESCRIPTION : - Section: Contact Details
+  - Field: Email Address *
+    - Type: text input
+    - Placeholder/Note: none shown
+  - Field: Contact No. *
+    - Type: text input
+    - Placeholder/Note: none shown
+
 - Section: Address
-  - Sub-fields:
-    - Country: [dropdown, required]
-    - Postal Code: [input text, required]
-    - State: [dropdown, required, default value selected: "Please Select"]
-    - City: [input text, required, default value shown: "SINGAPORE"]
-    - Address: [row of four input fields, all required]
-- Control: Clear Address Fields
-  - Button: "Clear Address Fields" (blue with white text) aligned to the right of the Address section
-- Visual notes:
-  - Form sections separated with spacing and light gray input boxes
-  - Field labels include asterisks denoting required fields
-  - Overall container has orange border framing the form areaContact DetailsEmuil Addrers *Contact No. *AddressClearAddress FieldsCountry *Postal Code *StateCityPlease SelectSINGAPOREAddrem"Hext- Your Contact Details and Address will be populated from MyInfo for individuals and EDH for companies. However, you may amend your details if they are inaccurately reflected. To amend your address, you may click on the 'Clear Address' button 3- Email address: All Vendors@Gov updates and softcopy remittance advices will be sent to this email address. Only one email address is allowed for each vendor record.- Contact No.: Please provide/verify your contact information.- ·- Country, Postal Code, State, City, Address: Company/ Organisation -Please provide/verify your business registered address. Individual -Please provide/verify your residential address. *Your address will be auto-populated according to the postal code you have input for Singapore addresses. After you have entered the contact details and address, click on 'Next' to proceed to the bank details page.
+  - Subsection: Country *
+    - Type: dropdown/select
+    - Placeholder/Note: none shown
+  - Subsection: Postal Code *
+    - Type: text input
+  - Subsection: State
+    - Type: dropdown/select
+    - Placeholder/Note: “Please Select”
+  - Subsection: City *
+    - Type: text input
+    - Current value: “SINGAPORE” (uppercase)
+  - Subsection: Address *
+    - Type: row of text inputs
+      - Input 1: text field
+      - Input 2: text field
+      - Input 3: text field
+      - Input 4: text field
+
+- UI Action:
+  - Button: Clear Address Fields
+  - Button Type/Style: blue fill with white text, positioned to the right of the Address section header
+
+- Visual/layout notes:
+  - The form is contained within an orange-outlined boundary.
+  - Section headers are bolded, with a clean, two-column layout for the top fields and a multi-field row for the address inputs.
+Contact DetailsEmuil Addrers *Contact No. *AddressClearAddress FieldsCountry *Postal Code *StateCityPlease SelectSINGAPOREAddrem"Hext- Your Contact Details and Address will be populated from MyInfo for individuals and EDH for companies. However, you may amend your details if they are inaccurately reflected. To amend your address, you may click on the 'Clear Address' button 3- Email address: All Vendors@Gov updates and softcopy remittance advices will be sent to this email address. Only one email address is allowed for each vendor record.- Contact No.: Please provide/verify your contact information.- ·- Country, Postal Code, State, City, Address: Company/ Organisation -Please provide/verify your business registered address. Individual -Please provide/verify your residential address. *Your address will be auto-populated according to the postal code you have input for Singapore addresses. After you have entered the contact details and address, click on 'Next' to proceed to the bank details page.
 
 
 
@@ -117,92 +188,86 @@ Page 10 from document Create_Update_Vendor_Record
 
 Page 11 from document Create_Update_Vendor_Record
 
-## 1. Create Vendor Record - Bank Details (IBG)- Page section: Bank Details
-- Payment Method (required): 
-  - Inter-Bank GIRO (selected)
-  - PayNow (unselected)
-  - Telegraphic Transfer (unselected)
+## 1. Create Vendor Record - Bank Details (IBG)
+IMAGE FOUND, DESCRIPTION : Bank Details
 
-- Bank details (outlined block):
-  - Bank *: Dropdown with placeholder "Please Select Bank..."
-  - Branch *: Text input (empty)
-  - Account Number *: Text input (empty)
+Payment Method *
+- Inter-Bank GIRO (selected)
+- PayNow
+- Telegraphic Transfer
 
-- GST Registered *:
-  - Yes (selected)
-  - No (unselected)
+Bank Details (outlined orange box)
+- Bank *: [Drop-down] Please Select Bank…
+- Branch *: [Drop-down/input] 
+- Account Number *: [Text input]
 
-- GST Registration Number *: Text input (empty)
+GST Registered *
+- Yes (selected)
+- No
 
-- Navigation controls:
-  - Back button (gray)
-  - Next button (blue)
+GST Registration Number *: [Text input]
 
-- Visual cues:
-  - Orange highlight framing the payment method section and the bank details row
-  - Vendor ID display area at top-right (masked)## BankDetailsYour Vendor IDPaymentMethod*Inter-Bank GIRO- [ ] PayNowTelegraphic TransferBonk *BrunchAecount Number .--Pleuse Select Dank--GST Registered *GST Registration NumberYesNoBackNert## Inter-Bank Giro (IBG) option selected.Select your bank and branch code, enter your account number.The bank account provided must be registered under the entity's name and ID. Bank details (Eg: Bank &amp; Branch code, Bank account) must be updated correctly. If you are unsure of your bank details, please contact your bank to confirm the correct information.Company/  Organization -You  should  provide  a  corporate  bank  account  that  is  registered  under  your  business registration name and ID (Eg: UEN).Individuals -You should provide a bank account that is registered under your personal name and ID (Eg: NRIC, FIN or Passport no.).
+Next action controls (bottom right)
+- Back (gray button)
+- Next (blue button)
+## BankDetailsYour Vendor IDPaymentMethod*Inter-Bank GIRO- [ ] PayNowTelegraphic TransferBonk *BrunchAecount Number .--Pleuse Select Dank--GST Registered *GST Registration NumberYesNoBackNert## Inter-Bank Giro (IBG) option selected.Select your bank and branch code, enter your account number.The bank account provided must be registered under the entity's name and ID. Bank details (Eg: Bank &amp; Branch code, Bank account) must be updated correctly. If you are unsure of your bank details, please contact your bank to confirm the correct information.Company/  Organization -You  should  provide  a  corporate  bank  account  that  is  registered  under  your  business registration name and ID (Eg: UEN).Individuals -You should provide a bank account that is registered under your personal name and ID (Eg: NRIC, FIN or Passport no.).
 
 
 
 Page 12 from document Create_Update_Vendor_Record
 
-## 1. Create Vendor Record - Bank Details (IBG)- Section: Bank Details
-  - Payment Method (required): 
-    - Inter-Bank GIRO (selected)
-    - PayNow (not selected)
-    - Telegraphic Transfer (not selected)
-  - Bank (required): a dropdown labeled "Please Select Bank..."
-  - Branch (required): a text/input field for branch
-  - Account Number (required): a text/input field
-  - GST Registered (required): 
-    - Yes (selected)
-    - No (not selected)
-  - GST Registration Number (required): a text/input field
-  - User actions: 
-    - Back button (gray)
-    - Next button (blue)BankDetailsYour Vendor ID:PaymentMethod*Inter-Bank GIROPayNowTelegraphic TransferBankBranch *Account Number--Pleuse Select Dank-GST Registered *GST Registration Number *YesNoBackNert## Inter-Bank Giro (IBG) option selected.## Select your GST registration status.- If you are GST Registered, please select 'Yes' for GST Registered option. Then, enter your GST registration number (Please enter only the numbers and omit the ' -' dash).- If you are not GST Registered, please select 'No' for GST Registered option' .NOTEGST registration update is not available for vendors who have registered a TT bank account. To update your GST registration details, please lodge a helpdesk ticket for assistance.
+## 1. Create Vendor Record - Bank Details (IBG)
+IMAGE FOUND, DESCRIPTION : - Section: Bank Details
+- Payment Method (required): Inter-Bank GIRO selected (radio)
+  - Other options (unselected): PayNow, Telegraphic Transfer
+- Bank (required): dropdown with placeholder “Please Select Bank…”
+- Branch (required): text/input field (empty)
+- Account Number (required): text/input field (empty)
+- GST Registered (required): Yes selected (radio), No option unselected
+- GST Registration Number (required): text/input field (empty) adjacent to the GST Registered row
+- Layout cues: fields arranged in a multi-column form; GST-related section highlighted with orange border, and the Inter-Bank GIRO option highlighted with orange border
+- Actions: Back button (left), Next button (right) positioned at bottom-right
+- UI notes: Vendor ID label at top-right.
+BankDetailsYour Vendor ID:PaymentMethod*Inter-Bank GIROPayNowTelegraphic TransferBankBranch *Account Number--Pleuse Select Dank-GST Registered *GST Registration Number *YesNoBackNert## Inter-Bank Giro (IBG) option selected.## Select your GST registration status.- If you are GST Registered, please select 'Yes' for GST Registered option. Then, enter your GST registration number (Please enter only the numbers and omit the ' -' dash).- If you are not GST Registered, please select 'No' for GST Registered option' .NOTEGST registration update is not available for vendors who have registered a TT bank account. To update your GST registration details, please lodge a helpdesk ticket for assistance.
 
 
 
 Page 13 from document Create_Update_Vendor_Record
 
-## 1. Create Vendor Record - Bank Details (IBG)Extracted form layout and field semantics for database serialization:
-
-- Bank field (required): Dropdown labeled "Please Select Bank" with placeholder. Type: categorical select; values to be populated from bank list.
-- Branch field (required): Dropdown with label "Branch". Type: categorical select; values to be populated per selected bank.
-- Account Number field (required): Text input with label "Account Number". Type: string/numeric code; length unknown; constraint: not null.
-- GST Registered field (required): Binary choice with label "GST Registered". Type: boolean; options: Yes, No. Default none selected.
-- GST Registration Number field (required): Text input with label "GST Registration Number". Type: string; constraint: required if GST Registered = Yes; length unspecified.
-- Action toolbar:
-  - Back button: Gray, secondary action; label "Back"; event: navigate to previous screen.
-  - Next button: Blue, primary action; label "Next"; event: proceed to form validation and next screen; highlighted with orange border in UI.
-
-Relationships and flow:
-- Bank → Branch: Branch options depend on selected Bank.
-- GST Registered → GST Registration Number: If GST Registered is Yes, GST Registration Number must be provided; if No, optional/hidden.
-- Validation: All fields marked with * are required before enabling Next.BankBranchAecount Number--Pleose Select DankGST Registered*GST Registration NumberYesNoBackNent## Inter-Bank Giro (IBG) option selected.After updating your payment details, click 'Next' and on the summary page, click 'Next' again to submit your vendor record request. Once approved, you will receive an email notification at your registered email address.
+## 1. Create Vendor Record - Bank Details (IBG)
+IMAGE FOUND, DESCRIPTION : - Form layout description:
+  - Bank field: labeled "Bank *" with a dropdown placeholder "Please Select Bank" and a down-arrow indicator suggesting a select box.
+  - Branch field: labeled "Branch *" with a dropdown/select box (no placeholder visible).
+  - Account Number field: labeled "Account Number *" with a text input box (single line).
+  - GST Registered field: labeled "GST Registered *" with two radio options:
+    - Yes (selected)
+    - No (unselected)
+  - GST Registration Number field: labeled "GST Registration Number *" with a single-line text input box.
+- Action buttons (aligned to the bottom-right):
+  - Back button: gray, labeled "Back".
+  - Next button: blue, labeled "Next", with an orange border emphasis around the button.
+- Logical flow:
+  - User selects Bank → Branch → enters Account Number → selects GST Registered (Yes/No) → if applicable enters GST Registration Number → proceeds by pressing Next.
+  - The Back button navigates to the previous screen. The Next button advances to the following screen.
+BankBranchAecount Number--Pleose Select DankGST Registered*GST Registration NumberYesNoBackNent## Inter-Bank Giro (IBG) option selected.After updating your payment details, click 'Next' and on the summary page, click 'Next' again to submit your vendor record request. Once approved, you will receive an email notification at your registered email address.
 
 
 
 Page 14 from document Create_Update_Vendor_Record
 
-## 1. Create Vendor Record - Bank Details (PayNow)- Section: Bank Details
-  - Payment Method (required): Options presented as radio buttons
-    - Inter-Bank GIRO (unselected)
-    - PayNOW (selected, highlighted with orange border)
-    - Telegraphic Transfer (unselected)
-
-- Subsection: Proxy Details (highlighted box)
-  - Proxy Type (required): Dropdown field with placeholder “--Please Select Proxy Type--”
-  - Proxy Value (required): Text input field (empty)
-
-- GST Registration (required): Radio button options
-  - Yes (unselected)
-  - No (selected)
-
-- GST Registration Number (labeled field): Value shown as “N.A.” (not applicable)
-
-- Status/Result banner (orange bar at bottom): Text indicates “PayNow (PAYN) option selected.”## PayNow  (PAYN) option selected.Bank DetailsPayment Method *Ihter-Bank GIROPayNowTelegraphic TranslerProxy TypeProxy Value--Plesse Select Proxy Type--GST Registered*GST Registration Number*YesNoN.A.YourVendoriSelect your proxy type and enter your proxy value. The PayNow proxy value refers to the unique indicator of the recipient which  may be used to receive payments via PayNow.- PayNow proxy should be within 8 to 17 characters.- Acceptable PayNow proxy values are as follows:- Individuals: NRIC/FIN Number (e.g. S1234567X)- Corporates: UEN (e.g. 201234567A) or UEN + 3-character suffix (e.g. 201234567A B12 , 201234567A 321 ), where a 3-character alphanumeric suffix can be added to your company's UEN to create multiple PayNow proxies. This is based off what proxy is registered with your bank and the respective bank account.Important:  Please  ensure that  your  bank  account  is  correctly  linked  with  the  PayNow  proxy  provided  to  avoid  payment errors. This can usually be done via the bank's iBanking website or mobile application. For clarifications on linking your PayNow proxy to your bank account, please contact your bank.
+## 1. Create Vendor Record - Bank Details (PayNow)
+IMAGE FOUND, DESCRIPTION : - Bank Details section
+  - Payment Method (required)
+    - Options: Inter-Bank GIRO, PayNow (selected), Telegraphic Transfer
+- Orange-outlined Proxy Details block
+  - Proxy Type (required): Dropdown with placeholder option "--Please Select Proxy Type--"
+  - Proxy Value (required): Text input field
+- GST Registered (required)
+  - Options: Yes, No
+- GST Registration Number
+  - Value: N.A.
+- Status message: "PayNow (PAYN) option selected." (orange banner)
+## PayNow  (PAYN) option selected.Bank DetailsPayment Method *Ihter-Bank GIROPayNowTelegraphic TranslerProxy TypeProxy Value--Plesse Select Proxy Type--GST Registered*GST Registration Number*YesNoN.A.YourVendoriSelect your proxy type and enter your proxy value. The PayNow proxy value refers to the unique indicator of the recipient which  may be used to receive payments via PayNow.- PayNow proxy should be within 8 to 17 characters.- Acceptable PayNow proxy values are as follows:- Individuals: NRIC/FIN Number (e.g. S1234567X)- Corporates: UEN (e.g. 201234567A) or UEN + 3-character suffix (e.g. 201234567A B12 , 201234567A 321 ), where a 3-character alphanumeric suffix can be added to your company's UEN to create multiple PayNow proxies. This is based off what proxy is registered with your bank and the respective bank account.Important:  Please  ensure that  your  bank  account  is  correctly  linked  with  the  PayNow  proxy  provided  to  avoid  payment errors. This can usually be done via the bank's iBanking website or mobile application. For clarifications on linking your PayNow proxy to your bank account, please contact your bank.
 
 
 
@@ -214,46 +279,59 @@ Page 15 from document Create_Update_Vendor_Record
 
 Page 16 from document Create_Update_Vendor_Record
 
-## 1. Create Vendor Record - Bank Details (TT)- Section: Bank Details
-  - Payment Method (required): Options shown — Inter-Bank GIRO, PayNow, Telegraphic Transfer. Telegraphic Transfer is selected.
-  - Bank Information (within an orange framed container):
-    - Country of Bank: Dropdown labeled “Select Bank Country” (required).
-    - Bank Name: Text input (required).
-    - Swift ID: Text input (required).
-    - Account Number: Text input (required).
-    - Bank Address: Multi-line text input.
-    - Clearing Code: Text input.
-    - Routing Code: Text input.
-    - Payment Details: Text input.
-  - Corresponding Bank Required: Radio group with options Yes and No (default appears to No).BankDetailsourVendor ID;PaymentMethodInter-BankGIROPayNowTelegraphicTransferCouniryal DankurkHomH!SaltID!Aarwunt Mumbe OCearig Cod Okoutng Coie OPymn Deuh oComsponding Bank RacuiridYiHo## Telegraphic Transfer (TT) option selected.Enter your TT bank details.The bank account provided must be registered under your entity's name with the bank.Please ensure to provide the correct bank details to avoid payment rejection by the bank. If you are unsure of your bank details, please contact your bank to confirm the information for your remittance transfer.
+## 1. Create Vendor Record - Bank Details (TT)
+IMAGE FOUND, DESCRIPTION : Bank Details section (Telegraphic Transfer selected)
+
+Payment Method
+- Options: Inter-Bank GIRO, PayNow, Telegraphic Transfer (selected)
+
+Form fields within the orange-bordered area:
+- Country of Bank: drop-down select (default placeholder “Select Bank Country”)
+- Bank Name: text input
+- Swift ID: text input
+- Account Number: text input
+- Bank Address: text input (multi-line layout area)
+- Clearing Code: text input
+- Routing Code: text input
+- Payment Details: text input
+- Corresponding Bank Required: radio group with Yes / No (default likely No)
+
+Additional UI elements:
+- Your Vendor ID (display area in the top-right corner)
+
+Notes:
+- The Telegraphic Transfer option is currently highlighted/selected.
+- The fields are arranged in a two-row grid within the orange outline, with the top row containing Country of Bank, Bank Name, Swift ID, and Account Number; the second row containing Bank Address and Clearing Code; and a lower row containing Routing Code and Payment Details. The “Corresponding Bank Required” field uses a Yes/No radio pair.
+BankDetailsourVendor ID;PaymentMethodInter-BankGIROPayNowTelegraphicTransferCouniryal DankurkHomH!SaltID!Aarwunt Mumbe OCearig Cod Okoutng Coie OPymn Deuh oComsponding Bank RacuiridYiHo## Telegraphic Transfer (TT) option selected.Enter your TT bank details.The bank account provided must be registered under your entity's name with the bank.Please ensure to provide the correct bank details to avoid payment rejection by the bank. If you are unsure of your bank details, please contact your bank to confirm the information for your remittance transfer.
 
 
 
 Page 17 from document Create_Update_Vendor_Record
 
-## 1. Create Vendor Record - Bank Details (TT)- Section: Bank Details (form area highlighted with orange border)
-- Payment Method options (radio group, not selected by default):
-  - Inter-Bank GIRO
-  - PayNow
-  - Telegraphic Transfer (selected)
-- Input fields within the orange-bordered form block:
-  - Country of Bank: dropdown labeled “Country of Bank” with placeholder “Select Bank Country”
-  - Bank Name: text input
-  - SWIFT ID: text input
-  - Account Number: text input
-  - Bank Address: multi-line text input
+## 1. Create Vendor Record - Bank Details (TT)
+IMAGE FOUND, DESCRIPTION : - Section: Bank Details
+- Payment Method options (radio group): 
+  - Inter-Bank GIRO (not selected)
+  - PayNow (not selected)
+  - Telegraphic Transfer (TT) (selected)
+- TT subsection framed in orange box (form fields grid):
+  - Country of Bank: dropdown “-Select Bank Country-”
+  - Bank Name: text input (required)
+  - Swift ID: text input (required)
+  - Account Number: text input (required)
+  - Bank Address: text input
   - Clearing Code: text input
   - Routing Code: text input
   - Payment Details: text input
-  - Corresponding Bank Required: radio group with options Yes and No (No pre-selected)
-- Instructional right panel notes (top-right banner):
-  - Header: “Telegraphic Transfer (TT) option selected.”
-- Explanatory text blocks on the right:
-  1) After updating the bank details, click ‘Next’ and on the summary page, click ‘Next’ again to submit your vendor record request.
-  2) You can only submit e-Invoices after your vendor record has been approved.
-  3) Note icon (image) followed by text:
-     - Update of Telegraphic Transfer (TT) bank details function is not available for local/foreign vendors who are transacting as an individual. To update your TT bank details, please lodge a helpdesk ticket.
-  4) GST registration update is not available for vendors who have registered a TT bank account. To update your GST registration details, please lodge a helpdesk ticket for assistance.Update  of  Telegraphic  Transfer  (TT)  bank  details function  is  not  available  for  local/foreign  vendors who  are  transacting  as  an    individual.  To  update your  TT  bank  details,  please  lodge  a  helpdesk ticket.GST registration update is not available for vendors who have registered a TT bank account. To update your GST registration details, please lodge a helpdesk ticket  for assistance.## Telegraphic Transfer (TT) option selected.After updating the bank details, click 'Next' and on the  summary  page,  click 'Next' again  to  submit your vendor record request.You can only submit e-Invoices after your vendor record has been approved.## Bank DetailsPayment Method *Inter-Bank GiROPayNowTelegraphic TransferCountryof BlankSwiftID"Stecx BankCoumryDank Address'ClearingCodeNOTEtoutingCodPaymentDeais
+  - Corresponding Bank Required: radio options Yes / No (default No: No selected or not specified)
+- Right panel header: “Telegraphic Transfer (TT) option selected.”
+- Instruction block (right column, informational):
+  - After updating the bank details, click Next and on the summary page, click Next again to submit your vendor record request.
+  - You can only submit e-Invoices after your vendor record has been approved.
+  - Note icon block: 
+    - Update of Telegraphic Transfer (TT) bank details function is not available for local/foreign vendors who are transacting as an individual. To update your TT bank details, please lodge a helpdesk ticket. (with a hyperlink labeled "helpdesk ticket")
+  - GST registration update is not available for vendors who have registered a TT bank account. To update your GST registration details, please lodge a helpdesk ticket for assistance. (with a hyperlink labeled "helpdesk ticket")
+Update  of  Telegraphic  Transfer  (TT)  bank  details function  is  not  available  for  local/foreign  vendors who  are  transacting  as  an    individual.  To  update your  TT  bank  details,  please  lodge  a  helpdesk ticket.GST registration update is not available for vendors who have registered a TT bank account. To update your GST registration details, please lodge a helpdesk ticket  for assistance.## Telegraphic Transfer (TT) option selected.After updating the bank details, click 'Next' and on the  summary  page,  click 'Next' again  to  submit your vendor record request.You can only submit e-Invoices after your vendor record has been approved.## Bank DetailsPayment Method *Inter-Bank GiROPayNowTelegraphic TransferCountryof BlankSwiftID"Stecx BankCoumryDank Address'ClearingCodeNOTEtoutingCodPaymentDeais
 
 
 
@@ -265,107 +343,94 @@ Page 18 from document Create_Update_Vendor_Record
 
 Page 19 from document Create_Update_Vendor_Record
 
-## 2. View/ Update Vendor Record Details- Document type: Welcome/login / onboarding screen for a SaaS or billing platform.
-- Visual regions and layout:
-  - Title banner at top: "Get started by logging in."
-  - Subtext line: "Click here if you do not have an account" with "here" as a highlighted link.
-  - Two prominent rectangular callouts near the top center:
-    - Left card: heading "For Business Users" with subheading "Login with Singpass".
-    - Right card: heading "For Individual Users" with subheading "Login with Singpass".
-  - Secondary guidance line beneath left/right cards:
-    - Left: "For Local & Foreign Entities" with a link-like "here" prompt.
-    - Right: "For Individuals" with a separate note "Click here if you are a foreign individual with an AGD Password" (implied as two fragments: one for individuals and a link for foreign individuals with AGD Password).
-  - Main illustrative content below: A large document/page graphic titled "INVOICE" with a folded corner motif (paper iconography).
-  - Interaction bubbles overlaying the invoice:
-    - A speech bubble near left side: "Submit Invoices".
-    - A speech bubble toward the center: "Monitor Payment Status".
-    - A speech bubble toward the lower center: "Update Vendor Details".
-  - Foreground characters:
-    - A standing person on the left facing the invoice.
-    - A seated person on the right interacting with a large circular dollar symbol coin.
-  - Decorative elements: stylized trees with yellow and orange foliage on the right side.
-- Semantic entities and actions:
-  - User authentication paths:
-    - Business Users login via Singpass.
-    - Individual Users login via Singpass.
-  - Sub-entity access options:
-    - Local & Foreign Entities path (with an optional “here” link).
-    - Individuals path (with potential AGD Password requirement for foreign individuals).
-  - Core workflow around invoices:
-    - Submit Invoices.
-    - Monitor Payment Status.
-    - Update Vendor Details.
-- Data points and UI affordances:
-  - Primary action cues are login cards for two user types.
-  - Inline navigation hints via small link-like text cues labeled “here”.
-  - Invoice document as the central data entity with associated management actions (submission, monitoring, vendor details).
-- Domain keywords (for indexing):
-  - User onboarding, login, Singpass, business users, individual users, entity management, invoice processing, submit invoices, monitor payment status, update vendor details, foreign entity, AGD password, payment workflow, vendor management, invoice document UI.Getstarted bylogging in.Clickhere if you donothave an accountFor BusinessForIndividualUsersUsersLoginwithSingpassLoginwithSingpassForLocal&amp;Foreign EntitiesForIndividualsClickhere ifyouare a foreign individual with anAGDPasswordINVOICESubmitinvoicesMonitorUpdatePayment StatusVendorDetailsLogin to Vendors@Gov portal (www.vendors.gov.sg).For more information on how to login, please refer to ' Vendors@Gov Login andRegistration User Guide '.
+## 2. View/ Update Vendor Record Details
+IMAGE FOUND, DESCRIPTION : - Overall layout: An illustrated onboarding/invoice processing infographic. Title area at top with “Get started by logging in.” followed by two parallel callouts and a large invoice illustration occupying the lower two-thirds.
+
+- Top navigation/help text:
+  - Primary header: “Get started by logging in.”
+  - Subheader: “Click here if you do not have an account” (with the word “here” styled as a hyperlink).
+
+- User-type choice section (two rounded white cards with shadows, aligned horizontally):
+  - Card 1 (blue accent for business users): 
+    - Heading: “For Business Users”
+    - Subheading: “Login with Singpass”
+  - Card 2 (red accent for individual users): 
+    - Heading: “For Individual Users”
+    - Subheading: “Login with Singpass”
+
+- Secondary help/links line (under the two cards):
+  - Left-aligned: “For Local & Foreign Entities”
+  - Right-aligned: “For Individuals”
+  - Small link text: “Click here if you are a foreign individual with an AGD Password” (with “here” as hyperlink)
+
+- Central illustration:
+  - Large stylized document labeled “INVOICE” with a folded corner at top-right.
+  - Three floating callout bubbles overlaying the invoice:
+    - Bubble A (left): “Monitor Payment Status”
+    - Bubble B (center): “Submit Invoices”
+    - Bubble C (center-right): “Update Vendor Details”
+  - Foreground figures:
+    - A standing male figure to the left interacting with the document.
+    - A seated person on the ground to the right, holding a circular object with a dollar sign.
+  - Decorative elements: two stylized trees (one yellow/orange, one orange/red) on the right side.
+
+- Data/interaction semantics:
+  - User authentication routes for two user cohorts: business users and individual users, each via Singpass login.
+  - Additional modules suggested by callouts: 
+    - Invoice submission (Submit Invoices)
+    - Invoice status monitoring (Monitor Payment Status)
+    - Vendor data management (Update Vendor Details)
+  - Contextual navigation/help: links to account creation, entity-specific guidance, and AGD password assistance.
+
+- Visual style attributes (for indexing):
+  - Color cues: blue for business, red for individual.
+  - UI elements: rounded cards with drop shadows; large header “INVOICE” with folded-page motif.
+  - Interaction hints: speech-bubble style callouts, user icons, and currency symbol graphic.
+Getstarted bylogging in.Clickhere if you donothave an accountFor BusinessForIndividualUsersUsersLoginwithSingpassLoginwithSingpassForLocal&amp;Foreign EntitiesForIndividualsClickhere ifyouare a foreign individual with anAGDPasswordINVOICESubmitinvoicesMonitorUpdatePayment StatusVendorDetailsLogin to Vendors@Gov portal (www.vendors.gov.sg).For more information on how to login, please refer to ' Vendors@Gov Login andRegistration User Guide '.
 
 
 
 Page 20 from document Create_Update_Vendor_Record
 
-## 2. View/ Update Vendor Record DetailsFor existing vendor, please navigate to ' Update Vendor Details ' to view or update your vendor record details.- Layout overview:
-  - Left vertical navigation panel with icons and sectional items:
-    - Home (breadcrumb style)
-    - E-Invoice (primary section)
-      - Create E-Invoice
-      - Upload Batch E-Invoices
-      - Upload Attachment
-      - View Invoicing Instructions
-      - Update Vendor Details (highlighted with orange border)
-  - Main content header toolbar (tab-like, horizontal):
-    - Tabs with numeric badges:
-      - All Invoices (active) showing 4
-      - Draft (0)
-      - Submitted (4)
-      - Processing (0)
-      - Approved (0)
-      - Paid (0)
-      - Rejected (0)
-  - Sub-header row with column labels for a data table (blue-taded header strip):
-    - S/NO.
-    - STATUS
-    - INVOICE NO.
-    - INVOICE DATE
-    - CLIENT AGENCY
-    - CURRENCY
-    - INVOICE AMOUNT
-    - ACTIONS
-  - Data grid/body:
-    - Repeated rows of row placeholders with alternating grayscale shading typical of a dense table grid (likely listing individual invoices with the above columns). Each row includes cells corresponding to the header columns.
-  - Visual emphasis:
-    - Active state on All Invoices tab
-    - Left navigation item Update Vendor Details highlighted with orange outline
-    - Sub-panel header and data area separated by light borders and soft blue-gray color scheme
-- Data transformation semantics for DB indexing:
-  - Entities:
-    - Section: E-Invoice
-    - Subsection: Update Vendor Details (UI action)
-    - View: View Invoicing Instructions (UI action)
-    - Invoices dataset: All Invoices (filtered view)
-  - Dashboard metrics (top bar):
-    - All Invoices: count = 4
-    - Draft: count = 0
-    - Submitted: count = 4
-    - Processing: count = 0
-    - Approved: count = 0
-    - Paid: count = 0
-    - Rejected: count = 0
-  - Table schema:
-    - Columns: 
-      1. S/NO. (serial number)
-      2. STATUS (invoice status badge/value)
-      3. INVOICE NO. (identifier)
-      4. INVOICE DATE (date)
-      5. CLIENT AGENCY (text)
-      6. CURRENCY (ISO currency code)
-      7. INVOICE AMOUNT (numeric, currency-formatted)
-      8. ACTIONS (per-row action controls)
-  - Row data: placeholder rows (dense list of invoices with the above fields; exact values not provided)
-- Semantic keywords for indexing:
-  - E-Invoice portal UI, left navigation, Update Vendor Details, Invoicing Instructions, All Invoices, dashboard metrics, invoice table, table headers, currency, invoice amount, status, client agency, invoice date, serial number, actions column, gray row striping, blue header striping.Home &gt;函4这00E-Invoice &gt;All InvoicesDraftSubmittedProcessingApprovedPaidRejected&gt;Create E-lnvoiceINVOICEINVOICE&gt;UploadBatchE-lnvoicesS/NO.STATUSINVOICENO.DATECLIENTAGENCYCURRENCYAMOUNTACTIONS&gt; Upload AttachmentView Invoicing InstructionsUpdate VendorDetails&gt;
+## 2. View/ Update Vendor Record DetailsFor existing vendor, please navigate to ' Update Vendor Details ' to view or update your vendor record details.
+IMAGE FOUND, DESCRIPTION : - Left navigation panel:
+  - Home (icon: house)
+  - E-Invoice (icon: document)
+    - Create E-Invoice
+    - Upload Batch E-Invoices
+    - Upload Attachment
+  - View Invoicing Instructions
+  - Update Vendor Details (orange highlighted selection)
+
+- Main content header (top action/tabs):
+  - All Invoices: count 4
+  - Draft: count 0
+  - Submitted: count 4
+  - Processing: count 0
+  - Approved: count 0
+  - Paid: count 0
+  - Rejected: count 0
+  - Additional vertical ellipsis menu on far right
+
+- Sub-header table row (data grid header):
+  - Columns (left to right):
+    - S/No.
+    - Status (with small triangle/indicator)
+    - Invoice No.
+    - Invoice Date
+    - Client Agency
+    - Currency
+    - Invoice Amount
+    - Actions (checkbox or action control)
+
+- Data grid body:
+  - Repeated rows of invoice entries with uniform hashed/blurred content indicating multiple rows; placeholders correspond to the values for each column (serial, status, invoice number, date, client agency, currency, amount, and available actions).
+  - Visual styling consistent with a tabular invoice list: alternating light gray rows, dense horizontal separators.
+
+- Functional notes:
+  - The UI represents an e-invoice management module with a tabbed summary of invoice states and a detailed list grid beneath, enabling per-invoice actions via the Actions column.
+  - The left panel’s highlighted “Update Vendor Details” indicates the current focus or selected feature.
+Home &gt;函4这00E-Invoice &gt;All InvoicesDraftSubmittedProcessingApprovedPaidRejected&gt;Create E-lnvoiceINVOICEINVOICE&gt;UploadBatchE-lnvoicesS/NO.STATUSINVOICENO.DATECLIENTAGENCYCURRENCYAMOUNTACTIONS&gt; Upload AttachmentView Invoicing InstructionsUpdate VendorDetails&gt;
 
 
 
@@ -389,20 +454,27 @@ Page 23 from document Create_Update_Vendor_Record
 
 Page 24 from document Create_Update_Vendor_Record
 
-## 2. View/ Update Vendor Record Details - Contact Details- Section: Contact Details
-  - Email Address: [text input field; required]
-  - Contact No.: [text input field; required]
+## 2. View/ Update Vendor Record Details - Contact Details
+IMAGE FOUND, DESCRIPTION : - Form Section: Contact Details
+  - Fields:
+    - Email Address (required)
+    - Contact No. (required)
 
-- Section: Address
-  - Country: [dropdown/select; required]
-  - Postal Code: [text input; required]
-  - State: [dropdown/select; required; default option: “Please Select”]
-  - City: [text input; required; default value: “SINGAPORE”]
-  - Address: [row of text input fields; multiple fields across a single line]
-    - Address 1: [text input]
-    - Address 2: [text input]
-    - Address 3: [text input]
-    - Address 4: [text input]Contact DetailsEmail Address *Contact No.AddressCountry *Postal Code *StateCityPlease SelectSINGAPOREAddrem"Hext2Update your Contact Details and Address.- Email address: All  Vendors@Gov updates and softcopy remittance advices will be sent to this email address. Only one email address is allowed for each vendor record.- Contact No.: Please provide your contact information.- Please provide your business registered address.- Country, Postal Code, State, City, Address: Company/ Organisation Individual -Please provide your residential address.After you have entered the contact details and address, click on 'Next' to proceed to the bank details page.
+- Form Section: Address
+  - Subsection: Location Details
+    - Country (required): dropdown selector
+    - Postal Code (required): text input
+    - State: dropdown selector (default option shown: Please Select)
+    - City (required): text input (pre-filled value shown: SINGAPORE)
+  - Subsection: Street Address
+    - Address (required): four individual text inputs arranged in a single row (likely addressing multiple address lines: Address 1, Address 2, Address 3, Address 4 as placeholders)
+
+- Layout/flow notes:
+  - All fields labeled with asterisk denote required.
+  - City field shows a default or preselected value of SINGAPORE.
+  - State and Country are dropdown controls, indicating standardized value sets.
+  - The design presents two main form groups: Contact Details and Address (with subfields for Country, Postal Code, State, City, and multi-line Address).
+Contact DetailsEmail Address *Contact No.AddressCountry *Postal Code *StateCityPlease SelectSINGAPOREAddrem"Hext2Update your Contact Details and Address.- Email address: All  Vendors@Gov updates and softcopy remittance advices will be sent to this email address. Only one email address is allowed for each vendor record.- Contact No.: Please provide your contact information.- Please provide your business registered address.- Country, Postal Code, State, City, Address: Company/ Organisation Individual -Please provide your residential address.After you have entered the contact details and address, click on 'Next' to proceed to the bank details page.
 
 
 
@@ -414,122 +486,113 @@ Page 25 from document Create_Update_Vendor_Record
 
 Page 26 from document Create_Update_Vendor_Record
 
-## 2. View/ Update Vendor Record Details - Bank Details (IBG)- Section: Bank Details
-- Payment Method (required): Inter-Bank GIRO (selected); PayNow (not selected); Telegraphic Transfer (not selected)
-- Bank details (outlined block, orange): 
-  - Bank *: Dropdown labeled “Please Select Bank…”
-  - Branch *: Text input (with dropdown on the right)
-  - Account Number *: Text input
-- GST Registered *: Yes (selected); No (not selected)
-- GST Registration Number *: Text input (for GST number)
-- Layout controls (bottom-right): Back button (gray), Next button (blue)BankDetailsYour Vendor IDPaymentMethod*Inter-Bank GIRO- [ ] PayNowTelegraphic TransferBonk *BrunchAecount Number .--Pleuse Select Dank--GST Registered *GST Registration NumberYesNoBackNert## Inter-Bank Giro (IBG) option selected.Select your bank and branch code, enter your account number.The bank account provided must be registered under the entity's name and ID. Bank details (Eg: Bank &amp; Branch code, Bank account) must be updated correctly. If you are unsure of your bank details, please contact your bank to confirm the correct information.Company/  Organization -You  should  provide  a  corporate  bank  account  that  is  registered  under  your  business registration name and ID (Eg: UEN).Individuals -You should provide a bank account that is registered under your personal name and ID (Eg: NRIC, FIN or Passport no.).
+## 2. View/ Update Vendor Record Details - Bank Details (IBG)
+IMAGE FOUND, DESCRIPTION : - Document type: Bank Details form (UI screen for payment setup)
+
+- Payment Method section (mandatory field indicator "*"):
+  - Options (radio buttons):
+    - Inter-Bank GIRO (selected)
+    - PayNow
+    - Telegraphic Transfer
+
+- Bank Details section (outlined with orange border):
+  - Bank* (dropdown): Label suggests a select list with placeholder "Please Select Bank..."
+  - Branch* (dropdown): Empty input field next to Bank
+  - Account Number* (text input): Single-line input field with placeholder
+  - The three fields are positioned on a single row within the orange outline
+
+- GST Registered* (radio button group):
+  - Options:
+    - Yes (selected)
+    - No
+
+- GST Registration Number* (text input): Empty single-line input field next to the GST status row
+
+- Action buttons (bottom right):
+  - Back (gray button)
+  - Next (blue button)
+
+- Visual notes:
+  - “Your Vendor ID” label appears in the top-right corner with a blurred/obfuscated value.
+  - Overall layout uses left-aligned labels with corresponding input controls to the right; required fields are marked with an asterisk.
+
+- Datapoints and keys for database indexing:
+  - payment_method: "Inter-Bank GIRO" (default selected)
+  - bank: [string] (selected from dropdown; placeholder text: "Please Select Bank...")
+  - branch: [string] (dropdown)
+  - account_number: [string]
+  - gst_registered: true
+  - gst_registration_number: [string]
+  - vendor_id: [obfuscated value]
+BankDetailsYour Vendor IDPaymentMethod*Inter-Bank GIRO- [ ] PayNowTelegraphic TransferBonk *BrunchAecount Number .--Pleuse Select Dank--GST Registered *GST Registration NumberYesNoBackNert## Inter-Bank Giro (IBG) option selected.Select your bank and branch code, enter your account number.The bank account provided must be registered under the entity's name and ID. Bank details (Eg: Bank &amp; Branch code, Bank account) must be updated correctly. If you are unsure of your bank details, please contact your bank to confirm the correct information.Company/  Organization -You  should  provide  a  corporate  bank  account  that  is  registered  under  your  business registration name and ID (Eg: UEN).Individuals -You should provide a bank account that is registered under your personal name and ID (Eg: NRIC, FIN or Passport no.).
 
 
 
 Page 27 from document Create_Update_Vendor_Record
 
-## 2. View/ Update Vendor Record Details - Bank Details (IBG)- Section: Bank Details
-  - Payment Method (required)
+## 2. View/ Update Vendor Record Details - Bank Details (IBG)
+IMAGE FOUND, DESCRIPTION : - Section: Bank Details
+  - Payment Method * (required)
     - Inter-Bank GIRO (selected)
-    - PayNow (unselected)
-    - Telegraphic Transfer (unselected)
-  - Bank (required): dropdown field labeled “Please Select Bank”
-  - Branch (required): empty text input
-  - Account Number (required): text input
-  - GST Registered (required)
-    - Yes (selected)
-    - No (unselected)
-  - GST Registration Number (required): text input (aligned with GST Registered)
-- Action controls (bottom-right)
-  - Back button (gray)
-  - Next button (blue)BankDetailsYour Vendor IDPaymentMethod*Inter-Bank GIROPayNowTelegraphic TransferBankBrunchAccount Number--Pleuse Select Dank-GST Registered *GST Registration Number *YesNoBackNert## Inter-Bank Giro (IBG) option selected.## Select your GST registration status.- If you are GST Registered, please select 'Yes' for GST Registered option. Then, enter your GST registration number (Please enter only the numbers and omit the ' -' dash).- If you are not GST Registered, please select 'No' for GST Registered option' .NOTEGST registration update is not available for vendors who have registered a TT bank account. To update your GST registration details, please lodge a helpdesk ticket for assistance.
+    - PayNow (not selected)
+    - Telegraphic Transfer (not selected)
+- Fields (layout in two-row form):
+  - Bank * (dropdown): “Please Select Bank”
+  - Branch * (text field or dropdown)
+  - Account Number * (text field)
+- GST Registered * (required)
+  - Yes (selected)
+  - No (not selected)
+- GST Registration Number * (text field)
+- Action Buttons:
+  - Back (disabled/implied)
+  - Next (enabled)
+BankDetailsYour Vendor IDPaymentMethod*Inter-Bank GIROPayNowTelegraphic TransferBankBrunchAccount Number--Pleuse Select Dank-GST Registered *GST Registration Number *YesNoBackNert## Inter-Bank Giro (IBG) option selected.## Select your GST registration status.- If you are GST Registered, please select 'Yes' for GST Registered option. Then, enter your GST registration number (Please enter only the numbers and omit the ' -' dash).- If you are not GST Registered, please select 'No' for GST Registered option' .NOTEGST registration update is not available for vendors who have registered a TT bank account. To update your GST registration details, please lodge a helpdesk ticket for assistance.
 
 
 
 Page 28 from document Create_Update_Vendor_Record
 
-## 2. View/ Update Vendor Record Details - Bank Details (IBG)- Form layout: Bank selection field labeled "Please Select Bank" with a dropdown control.
-- Adjacent fields: 
-  - "Branch" with a dropdown control.
-  - "Account Number" with a single-line text input.
-- Subsection: "GST Registered" with two radio options:
-  - "Yes" (selected)
-  - "No" (unselected)
-- Field: "GST Registration Number" with a single-line text input.
-- Action buttons at the bottom right:
-  - A grey "Back" button.
-  - A blue highlighted "Next" button (outlined in orange in the image for emphasis).BankBranchAecount Number--Pleose Select DankGST Registered*GST Registration NumberYesNoBackNent## Inter-Bank Giro (IBG) option selected.After updating your payment details, click 'Next' and on the summary page, click 'Next' again to submit your vendor record request.Once approved, you will receive an email notification at your registered email address.
+## 2. View/ Update Vendor Record Details - Bank Details (IBG)
+IMAGE FOUND, DESCRIPTION : - Bank: Dropdown field with placeholder text "Please Select Bank" (required)
+- Branch: Dropdown field (required)
+- Account Number: Text input field (required)
+- GST Registered: Radio group with options: Yes (selected) and No
+- GST Registration Number: Text input field (required)
+- Next action: Primary action button labeled "Next" (outlined/blue) on the bottom-right; a secondary action button labeled "Back" (gray) to its left
+
+Layout relationships and flow:
+- User selects a bank from Bank dropdown.
+- User selects a branch from Branch dropdown.
+- User enters an account number in the Account Number field.
+- User indicates GST registration status via the Yes/No radio group.
+- If GST registered is Yes, user enters GST Registration Number.
+- User proceeds by clicking the "Next" button; the "Back" button allows returning to the previous step.
+BankBranchAecount Number--Pleose Select DankGST Registered*GST Registration NumberYesNoBackNent## Inter-Bank Giro (IBG) option selected.After updating your payment details, click 'Next' and on the summary page, click 'Next' again to submit your vendor record request.Once approved, you will receive an email notification at your registered email address.
 
 
 
 Page 29 from document Create_Update_Vendor_Record
 
-## 2. View/ Update Vendor Record Details - Bank Details (PayNowSemantic textual equivalent for database serialization
+## 2. View/ Update Vendor Record Details - Bank Details (PayNow
+IMAGE FOUND, DESCRIPTION : - Section: Bank Details
+- Payment Method (required): 
+  - Inter-Bank GIRO (radio option, not selected)
+  - PayNow (radio option, selected) [highlighted orange box around this option]
+  - Telegraphic Transfer (radio option, not selected)
 
-Document: Bank Details (form section)
+- Proxy Details (within orange-framed card)
+  - Proxy Type * (dropdown): options include “--Please Select Proxy Type--” (default placeholder)
+  - Proxy Value * (text input): single-line text field (empty)
 
-1) Payment Method (required)
-- Options:
-  - Inter-Bank GIRO (radio button, unselected)
-  - PayNow (radio button, selected)
-  - Telegraphic Transfer (radio button, unselected)
+- GST Registered * (radio group)
+  - Yes (radio option, not selected)
+  - No (radio option, not selected)
 
-2) PayNow proxy details (highlighted group, orange border)
-- Proxy Type * (dropdown)
-  - Options: --Please Select Proxy Type--
-- Proxy Value * (text input)
+- GST Registration Number * (text field): shows “N.A.” (not applicable)
 
-3) GST Registered * (radio group)
-- Yes (radio button)
-- No (radio button)
-
-4) GST Registration Number * (text field)
-- Value: N.A. (default/placeholder)
-
-Additional UI notes
-- Right-aligned: Your Vendor ID (masked visual)
-- Bottom highlighted section: "PayNow (PAYN) option selected." (orange banner)
-
-Relationships and flow
-- User selects PayNow as Payment Method -> activates the PayNow Proxy details group (Proxy Type, Proxy Value)
-- GST Registered choice is independent of PayNow group; GST Number field remains, with value N.A. shown
-- Validation implied by asterisk (*) indicates required fields: Proxy Type, Proxy Value, GST Registered, GST Registration Number
-
-Data points and labels
-- Payment Method: PayNow (selected)
-- Proxy Type: [dropdown value: --Please Select Proxy Type--]
-- Proxy Value: [text input: empty]
-- GST Registered: Yes/No (default shown as an option; no selection indicated in image)
-- GST Registration Number: N.A. (displayed)
-- UI cue: "PayNow (PAYN) option selected." banner indicates current mode
-
-Keywords for indexing
-- Bank Details form, Payment Method selection, PayNow option, Inter-Bank GIRO, Telegraphic Transfer
-- PayNow proxy configuration, Proxy Type dropdown, Proxy Value input
-- GST Registered indicator, GST Registration Number field, N.A. value
-- UI banner, vendor identifier, orange bordered input cluster
-
-If needed, produce a structured JSON schema:
-{
-  "section": "Bank Details",
-  "paymentMethod": {
-    "selected": "PayNow",
-    "options": ["Inter-Bank GIRO", "PayNow", "Telegraphic Transfer"]
-  },
-  "payNowProxy": {
-    "type": null,  // or "Please Select Proxy Type"
-    "value": ""
-  },
-  "gstRegistered": {
-    "selected": null,
-    "options": ["Yes", "No"]
-  },
-  "gstRegistrationNumber": "N.A.",
-  "uiNotes": [
-    "Your Vendor ID present",
-    "PayNow option selected banner"
-  ]
-}## PayNow  (PAYN) option selected.Bank DetailsYourVendoriPayment Method *Ihter-Bank GIROPayNowTelegraphic TranslerProxy Type *Proxy Value *--Plese Select Proxy Type--GST Registered *GST Registration Number *YesNoN.A.Select your proxy type and enter your proxy value. The PayNow proxy value refers to the unique indicator of the recipient which  may be used to receive payments via PayNow.- PayNow proxy should be within 8 to 17 characters.- Acceptable PayNow proxy values are as follows:- Individuals: NRIC/FIN Number (e.g. S1234567X)- Corporates: UEN (e.g. 201234567A) or UEN + 3-character suffix (e.g. 201234567A B12 , 201234567A 321 ), where a 3-character alphanumeric suffix can be added to your company's UEN to create multiple PayNow proxies. This is based off what proxy is registered with your bank and the respective bank account.Important:  Please  ensure that  your  bank  account  is  correctly  linked  with  the  PayNow  proxy  provided  to  avoid  payment errors. This can usually be done via the bank's iBanking website or mobile application. For clarifications on linking your PayNow proxy to your bank account, please contact your bank.
+- Footer note: “PayNow (PAYN) option selected.” (orange banner at bottom)
+## PayNow  (PAYN) option selected.Bank DetailsYourVendoriPayment Method *Ihter-Bank GIROPayNowTelegraphic TranslerProxy Type *Proxy Value *--Plese Select Proxy Type--GST Registered *GST Registration Number *YesNoN.A.Select your proxy type and enter your proxy value. The PayNow proxy value refers to the unique indicator of the recipient which  may be used to receive payments via PayNow.- PayNow proxy should be within 8 to 17 characters.- Acceptable PayNow proxy values are as follows:- Individuals: NRIC/FIN Number (e.g. S1234567X)- Corporates: UEN (e.g. 201234567A) or UEN + 3-character suffix (e.g. 201234567A B12 , 201234567A 321 ), where a 3-character alphanumeric suffix can be added to your company's UEN to create multiple PayNow proxies. This is based off what proxy is registered with your bank and the respective bank account.Important:  Please  ensure that  your  bank  account  is  correctly  linked  with  the  PayNow  proxy  provided  to  avoid  payment errors. This can usually be done via the bank's iBanking website or mobile application. For clarifications on linking your PayNow proxy to your bank account, please contact your bank.
 
 
 
@@ -541,66 +604,68 @@ Page 30 from document Create_Update_Vendor_Record
 
 Page 31 from document Create_Update_Vendor_Record
 
-## 2. View/ Update Vendor Record Details - Bank Details (TT)- Document region: Bank Details section (form area with orange border)
-- Payment Method selection (radio group):
-  - Options: Inter-Bank GIRO, PayNow, Telegraphic Transfer (selected: Telegraphic Transfer)
-- Bank Details form fields (horizontal row layout inside orange border):
-  - Country/Bank: dropdown control labeled "Country of Bank" with placeholder “— Select Bank Country —”
-  - Bank Name: text input (required)
-  - Swift ID: text input (required)
-  - Account Number: text input (required)
-  - Bank Address: multiline text area
-  - Clearing Code: text input
-  - Routing Code: text input
-  - Payment Details: text input
-- Corresponding Bank Required: radio group with options Yes, No (default selection not indicated)
-- Vendor/ID indicator: top-right placeholder "Your Vendor ID" with masked or blurred value (non-identifying)
-- Layout: single large orange-bordered container enclosing all fields; fields appear in a two-row to multi-column grid arrangement with labeled inputs. 
-- Semantic keys for database indexing:
-  - form_name: Bank Details
-  - payment_method: Telegraphic Transfer
-  - fields:
-    - country_of_bank
-    - bank_name
-    - swift_id
-    - account_number
-    - bank_address
-    - clearing_code
-    - routing_code
-    - payment_details
-    - corresponding_bank_required (Yes/No)
-  - vendor_id: (extracted as Vendor ID placeholder, not the actual value)
-- Data dependencies and flow:
-  - User selects payment_method -> Telegraphic Transfer
-  - User fills country_of_bank, bank_name, swift_id, account_number (and optionally bank_address, clearing_code, routing_code, payment_details)
-  - User selects corresponding_bank_required (Yes/No)
-- Observed visual cues:
-  - Required fields denoted with an asterisk (*) next to labels
-  - Some fields show small info icons or help dots next to labels (e.g., account_number, swift_id)
-  - Overall color hint: orange emphasis border and selection highlight for Telegraphic TransferBankDetailsourVendor ID;PaymentMethodInter-BankGIROPayNowTelegraphicTransferCeuntry al DonkurkHomH!SaltID!Aarwunt Mumber O=ftn fesk Counry =Dank Adreu!Cearig Cod Okoutng Coie OPymm Deuh oComsponding Bank RaqyinidYisHo## Telegraphic Transfer (TT) option selected.Enter your TT bank details.The bank account provided must be registered under your entity's name with the bank.Please ensure to provide the correct bank details to avoid payment rejection by the bank. If you are unsure of your bank details, please contact your bank to confirm the information for your remittance transfer.
+## 2. View/ Update Vendor Record Details - Bank Details (TT)
+IMAGE FOUND, DESCRIPTION : Bank Details section
+
+Payment Method
+- Options:
+  - Inter-Bank GIRO
+  - PayNow
+  - Telegraphic Transfer (selected)
+
+Bank details form (outlined orange box) with fields:
+1) Country of Bank: Prefilled dropdown (example: - Singapore Bank Country -)
+2) Bank Name: text input
+3) Swift ID: text input
+4) Account Number: text input
+5) Bank Address: multi-line text input
+6) Clearing Code: text input
+7) Routing Code: text input
+8) Payment Details: text input
+9) Corresponding Bank Required: radio group
+   - Yes
+   - No (selected)
+
+Layout/flow and relationships
+- The selected payment method Telegraphic Transfer drives the visibility of the bank-details subform.
+- Each field in the subform is a mandatory or optional entry (indicated by asterisk on the UI) to capture payment routing information.
+- The “Corresponding Bank Required” option determines whether an additional bank is needed for the transfer.
+
+Semantic keywords for indexing
+- Bank Details, Telegraphic Transfer, SWIFT ID, Account Number, Bank Address, Clearing Code, Routing Code, Payment Details, Corresponding Bank Required, Yes/No, Country of Bank, Bank Name, Payment Method.
+BankDetailsourVendor ID;PaymentMethodInter-BankGIROPayNowTelegraphicTransferCeuntry al DonkurkHomH!SaltID!Aarwunt Mumber O=ftn fesk Counry =Dank Adreu!Cearig Cod Okoutng Coie OPymm Deuh oComsponding Bank RaqyinidYisHo## Telegraphic Transfer (TT) option selected.Enter your TT bank details.The bank account provided must be registered under your entity's name with the bank.Please ensure to provide the correct bank details to avoid payment rejection by the bank. If you are unsure of your bank details, please contact your bank to confirm the information for your remittance transfer.
 
 
 
 Page 32 from document Create_Update_Vendor_Record
 
-## 2. View/ Update Vendor Record Details - Bank Details (TT)- Document: Bank Details section (Payment Method section displayed)
-- Payment method options (radio buttons):
+## 2. View/ Update Vendor Record Details - Bank Details (TT)
+IMAGE FOUND, DESCRIPTION : Semantic text extraction for database serialization
+
+Section: Bank Details
+- Payment Method options (single-select):
   - Inter-Bank GIRO
   - PayNow
-  - Telegraphic Transfer (selected)
-- Form region (outlined in orange) with fields and labels:
-  1. Country of Bank (dropdown selector)
-  2. Bank Name (text input)
-  3. Swift ID (text input)
-  4. Account Number (text input)
-  5. Bank Address (text input)
-  6. Clearing Code (text input)
-  7. Routing Code (text input)
-  8. Payment Details (text input)
-- Corresponding Bank Required (radio group):
+  - Telegrahic Transfer (selected)
+- Selected payment method: Telegraphic Transfer (note: label appears as “Telegrahic Transfer” in the image with a highlighted selection box)
+
+Input fields (grouped in a single form block, orange outline):
+- Country of Bank: select dropdown → options not displayed
+- Bank Name: text input
+- Swift ID*: text input
+- Account Number*: text input
+- Bank Address*: text input
+- Clearing Code*: text input
+- Routing Code*: text input
+- Payment Details: text input
+- Corresponding Bank Required: radio group
   - Yes
   - No
-- Visuals: Selected option is Telegraphic Transfer; the remaining options are unselected. The orange outline highlights the Telegraphic Transfer option and the entire form block.## Bank DetailsPayment Method +Inter-Bank GIROPayNowTelegraphic TransferCountry ofBankSwiftID"StexBankCoomryTankAddresgClearingCodePaymtntOetaisUpdate  of  Telegraphic  Transfer  (TT)  bank  details function  is  not  available  for  local/foreign  vendors who  are  transacting  as  an    individual.  To  update your  TT  bank  details,  please  lodge  a  helpdesk ticket.GST registration update is not available for vendors who have registered a TT bank account. To update your GST registration details, please lodge a helpdesk ticket  for assistance.## Telegraphic Transfer (TT) option selected.After updating the bank details, click 'Next' and on the  summary  page,  click 'Next' again  to  submit your vendor record request.You can only submit e-Invoices after your vendor record has been approved.NOTE
+
+Notes:
+- Required fields indicated by asterisk (*) next to labels
+- The entire bank details section is framed with an orange border, and the selected payment method is highlighted with an orange border around the option.
+## Bank DetailsPayment Method +Inter-Bank GIROPayNowTelegraphic TransferCountry ofBankSwiftID"StexBankCoomryTankAddresgClearingCodePaymtntOetaisUpdate  of  Telegraphic  Transfer  (TT)  bank  details function  is  not  available  for  local/foreign  vendors who  are  transacting  as  an    individual.  To  update your  TT  bank  details,  please  lodge  a  helpdesk ticket.GST registration update is not available for vendors who have registered a TT bank account. To update your GST registration details, please lodge a helpdesk ticket  for assistance.## Telegraphic Transfer (TT) option selected.After updating the bank details, click 'Next' and on the  summary  page,  click 'Next' again  to  submit your vendor record request.You can only submit e-Invoices after your vendor record has been approved.NOTE
 
 
 

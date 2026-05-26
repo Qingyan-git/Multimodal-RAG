@@ -94,10 +94,14 @@ async def insert_page(filename,markdown,page_no):
             .upsert(
                 {'pdf_id':pdf_id,'markdown':markdown,'num':page_no},
                 ignore_duplicates=False,
-                returning='minimal'
             )
             .execute()
         )
+
+        if response.data:
+            page_id = response.data[0]['page_id']
+            
+            return page_id
 
     except Exception as e:
         print(f'Unable to insert page {page_no} from {filename} into supabase, error {e}\n\n')
@@ -125,6 +129,34 @@ async def retrieve_pdf_path(filename):
     except Exception as e:
         print(f'Unable to retrieve answer pages for files {file in filenames}, error \n{e}\n\n')
         raise
+
+
+async def retrieve_files(page_ids):
+
+    try:
+        client = await get_connection()
+
+        response = await (client
+            .table('pages')
+            .select('pdfs(name),num')
+            .in_('page_id',page_ids)
+            .execute()
+        )
+
+        sources = []
+        for row in response.data:
+            item = {
+                'name' : row['pdfs']['name'],
+                'page_no' : row['num']
+            }
+            sources.append(item)
+
+        return sources
+
+    except Exception as e:
+        print(f'Unable to retrieve answer files for pages {page_id in page_ids}, error \n{e}\n\n')
+        raise
+
 
 
 

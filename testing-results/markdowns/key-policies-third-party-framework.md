@@ -15,18 +15,26 @@ Page 2 from document key-policies-third-party-framework
 
 Page 3 from document key-policies-third-party-framework
 
-04## Lifecycle of the Third-Party1 Management Framework- 01    Evaluation and Selection- Diagram type: Circular, cyclic flow illustrating a Third-Party Management Framework with three core phases arranged around a central title.
-- Central element: Text “Third-Party Management Framework” in blue, positioned at the center of the circle.
-- Node 1 (top): Icon of three people with a checkmark in a gray circular badge. Represents approval or verification of third-party participants.
-- Node 2 (right): Icon of a checklist on a blue notepad with a pen in a gray circular badge. Labeled “02 Contracting and On-boarding” to indicate the contracting and onboarding phase.
-- Node 3 (bottom): Icon of a gear with a hand in a gray circular badge. Represents service management or operational enablement.
-- Node 4 (left): Icon of two people with bidirectional arrows, gray circular badge. Labeled “Transition Out,” indicating transition or offboarding activities.
-- Flow: A continuous circular loop (two-tone blue arc) connecting the four nodes in the sequence: Top node → Right node (02 Contracting and On-boarding) → Bottom node → Left node (Transition Out) → back to Top node, signifying an ongoing, cyclical framework.
-- Section labels (visible): 
-  - Left margin: “Transition Out” aligned with Node 4.
-  - Right margin: “02 Contracting and On-boarding” aligned with Node 2.
-  - Bottom area (partial): “03 Service Management” suggests a third stage associated with the bottom node, implying a multi-step framework with sequential numbering (02, 03).
-- Visual style: Circular layout, gray circular avatars for each node, blue accent for the central title and the circular flow segments, with simple vector icons representing each phase.Third-PartyManagementFramework02Contractingand On-boardingTransition03    Service ManagementOut## DEFINITION- 1 Third Party is defined as a party (other than a data subject a or an Agency b ) which:- (i) delivers, develops, implements, operates, provides or otherwise supplies ICT systems or services to an Agency, or- (ii) collects, stores or otherwise processes data for an Agency.- a Data subject refers to the individual or entity to which the data relates.- b Agency refers to Organs of State, Ministries, Departments and Statutory Boards.
+04## Lifecycle of the Third-Party1 Management Framework- 01    Evaluation and Selection- Diagram type: Circular flow diagram labeled “Third-Party Management Framework” at center.
+- Structure: Four node stages connected in a clockwise loop with directional flow arrows implied by circular arc segments.
+- Node 1 (top, circular icon): Team/people icon with checkmark (likely representing verification/approval or governance).
+- Node 2 (right, circular icon): Checklist and pen icon (representing Contracting and On-boarding). Associated label: “02 Contracting and On-boarding.”
+- Node 3 (bottom, circular icon): Gear and hand icon (representing Service Management). Associated label: “03 Service Management.”
+- Node 4 (left, circular icon): Two figures exchanging a handshake (representing Transition Out). Associated label: “Transition Out.”
+- Central label: “Third-Party Management Framework.”
+- Visual cues: 
+  - Outer circular path divided into two color segments (cyan/blue) indicating progression around the cycle.
+  - Each node is contained in a gray circular badge positioned on the loop at four equidistant points.
+- Hierarchy/sequence:
+  - Step 01 appears to correspond to the top node (verification/governance) though the numeral is not explicitly shown next to that node in this crop.
+  - Step 02 corresponds to Contracting and On-boarding (right-hand node).
+  - Step 03 corresponds to Service Management (bottom node).
+  - Step 04 corresponds to Transition Out (left-hand node).
+- Data extraction ready for vector DB:
+  - Entity: Third-Party Management Framework
+  - Nodes: N1_Verification/Governance, N2_Contracting_Onboarding, N3_Service_Management, N4_Transition_Out
+  - Relationships: N1 → N2 → N3 → N4 → N1 (circular workflow)
+  - Visual features: circular flow with two-color arc, gray circular badges, icons per node, central title.Third-PartyManagementFramework02Contractingand On-boardingTransition03    Service ManagementOut## DEFINITION- 1 Third Party is defined as a party (other than a data subject a or an Agency b ) which:- (i) delivers, develops, implements, operates, provides or otherwise supplies ICT systems or services to an Agency, or- (ii) collects, stores or otherwise processes data for an Agency.- a Data subject refers to the individual or entity to which the data relates.- b Agency refers to Organs of State, Ministries, Departments and Statutory Boards.
 
 
 

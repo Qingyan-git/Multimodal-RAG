@@ -4,10 +4,11 @@ from PIL import Image
 import os
 import sys
 import re
+import torch
 from dotenv import load_dotenv
 
 from docling.datamodel.base_models import InputFormat
-from docling.datamodel.pipeline_options import PdfPipelineOptions
+from docling.datamodel.pipeline_options import PdfPipelineOptions, AcceleratorOptions
 from docling.document_converter import DocumentConverter, PdfFormatOption
 from docling_core.types.doc import PictureItem, DoclingDocument
 from docling_core.transforms.serializer.markdown import MarkdownDocSerializer
@@ -39,6 +40,10 @@ def save_to_file(filename,content,filepath=os.getenv('markdown_path'),method='w'
 
 
 def is_useable_image(img, page_w, page_h, min_dim=100, area_threshold=0.20):
+
+    if not img.prov:
+        return False
+        
     prov = img.prov[0]
     bbox = prov.bbox
     
@@ -82,15 +87,15 @@ async def get_page_markdown(document,page_no,openai_model):
                 task = openai_model.get_image_description(pil_image)
                 image_tasks.append(task)
                 item_markdown = f'<-- PLACEHOLDER FOR IMAGE FOUND -->'
-                item = {'type' : 'image_placeholder', 'index' : len(image_tasks)-1}
+                parsed_item = {'type' : 'image_placeholder', 'index' : len(image_tasks)-1}
             else:
                 item_markdown = item.caption_text(doc=document)
-                item = {'type' : 'content', 'markdown' : item_markdown}
+                parsed_item = {'type' : 'content', 'markdown' : item_markdown}
         else:
             item_markdown = serializer.serialize(item=item).text
-            item = {'type' : 'content', 'markdown' : item_markdown}
+            parsed_item = {'type' : 'content', 'markdown' : item_markdown}
 
-        items.append(item)
+        items.append(parsed_item)
 
 
     image_descriptions = await asyncio.gather(*image_tasks)
@@ -98,7 +103,7 @@ async def get_page_markdown(document,page_no,openai_model):
     page_markdown = []
     for item in items:
         if item['type'] == 'image_placeholder':
-            page_markdown.append(image_descriptions[item['index']])
+            page_markdown.append(f'\nIMAGE FOUND, DESCRIPTION : ' + image_descriptions[item['index']] + '\n')
         else:
             page_markdown.append(item['markdown'])
 
@@ -113,28 +118,41 @@ async def parse_pdf(filepath,document,openai_model,colqwen_model,sparse_embedder
     filename = filepath.name
     await insert_pdf(filename,filepath)
 
+    semaphore = asyncio.Semaphore(3)
+
     async def _process_page(page_no):
+        async with semaphore:
 
-        markdown = await get_page_markdown(document,page_no,openai_model)
+            markdown = await get_page_markdown(document,page_no,openai_model)
 
-        sparse = await sparse_embedder.embed(markdown)
-        await insert_page(filename,markdown,page_no)
-        
-        page = document.pages[page_no]
-        pil_image = page.image.pil_image
-        coarse, multi = await colqwen_model.get_image_embedding(pil_image)
+            sparse = await sparse_embedder.embed(markdown)
+            page_id = await insert_page(filename,markdown,page_no)
+            
+            page = document.pages[page_no]
 
-        embedding = {
-            'filename' : filename,
-            'page_no' : page_no,
-            'sparse' : sparse,
-            'coarse' : coarse,
-            'multi' : multi
-        }
+            # print(page.image)
 
-        vector = format_point(embedding)
+            if page.image is not None and getattr(page.image, 'pil_image', None) is not None:
+                pil_image = page.image.pil_image
+            else:
+                try:
+                    pil_image = page.render_to_pil()
+                except Exception:
+                    page_w = getattr(getattr(page, 'size', None), 'width', 595) or 595
+                    page_h = getattr(getattr(page, 'size', None), 'height', 842) or 842
+                    pil_image = Image.new("RGB", (int(page_w), int(page_h)), "white")
+            coarse, multi = await colqwen_model.get_image_embedding(pil_image)
 
-        return markdown, vector
+            embedding = {
+                'page_id' : page_id,
+                'sparse' : sparse,
+                'coarse' : coarse,
+                'multi' : multi
+            }
+
+            vector = format_point(embedding)
+
+            return markdown, vector
 
     tasks = [_process_page(page_no) for page_no in document.pages.keys()]
     results = await asyncio.gather(*tasks)
@@ -158,10 +176,16 @@ async def ingest_all_pdfs():
         pipeline_options.do_table_structure = True
         pipeline_options.do_code_enrichment = True
         pipeline_options.do_formula_enrichment = True
+        accelerator_options = AcceleratorOptions(
+            num_threads=8, 
+            device = "cuda" if torch.cuda.is_available() else "cpu"
+        )
+        pipeline_options.accelerator_options = accelerator_options
+
         docling_converter = DocumentConverter(
             format_options={
                 InputFormat.PDF: PdfFormatOption(pipeline_options=pipeline_options)
-            }
+            },
         )
         openai_model = OpenAIModel()
         colqwen_model = ColQwenModel()
@@ -173,7 +197,8 @@ async def ingest_all_pdfs():
 
                     print(f'Processing {file.name}\n\n')
 
-                    document = docling_converter.convert(file).document
+                    conversion_result = await asyncio.to_thread(docling_converter.convert, file)
+                    document = conversion_result.document
                     await parse_pdf(file,document,openai_model,colqwen_model,sparse_embedder)
 
                     print(f'Done\n\n')

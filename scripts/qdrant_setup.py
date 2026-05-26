@@ -112,13 +112,12 @@ def format_point(embedding):
             "page_embeddings": embedding['multi'],
 
             "splade_vector": models.SparseVector(
-                indices=embedding['sparse'].indices,
-                values=embedding['sparse'].values
+                indices=embedding['sparse']['indices'],
+                values=embedding['sparse']['values']
             )
         },
         payload={
-            "filename": embedding['filename'],
-            "page_no": embedding['page_no']
+            "page_id" : embedding['page_id']
         }
     )
 
@@ -145,47 +144,47 @@ async def upload_points(points, batch_size=16):
 async def similarity_search(splade_vector, coarse_vector, query_embeddings):
 
     try :
-
+        client = await get_qdrant_client()
         name = os.getenv('qdrant_collection_name')
 
-        prefetch = [
-            models.Prefetch(
-                query=splade_vector,
-                using="splade_vector",
-                limit=50,
-            ),
-            models.Prefetch(
-                query=coarse_vector,
-                using="coarse_embedding",
-                limit=50,
-            ),
-        ]
+        rrf_prefetch = [
+                        models.Prefetch(
+                            query=splade_vector,
+                            using="splade_vector",
+                            limit=50
+                        ),
+                        models.Prefetch(
+                            query=coarse_vector,
+                            using="coarse_embedding",
+                            limit=50
+                        )
+                    ]
+
+        reranking_prefetch=[
+                models.Prefetch(
+                    query=models.FusionQuery(fusion=models.Fusion.RRF),
+                    limit=50,             # Candidate oversampling window size
+                    prefetch=rrf_prefetch
+                )
+            ]
 
         results = await client.query_points(
-            collection_name,
-            query=models.FusionQuery(fusion=models.Fusion.RRF),
+            name,
+            query=query_embeddings,
             using='page_embeddings',
-            prefetch=prefetch,
+            prefetch=reranking_prefetch,
             with_payload=True,
             limit=5,
         )
 
+        pages = []
+        for point in results.points:
+            page_id = point.payload.get('page_id')
+            pages.append(page_id)
 
-        files = {}
-        for point in response.points:
-            filename = point.payload.get('filename')
-            page_no = point.payload.get('page_no')
-            if filename in files:
-                filename['page_no'].append(page_no)
-            else:
-                filename['page_no'] = [page_no]
+        # print(f'\n\nResults : {pages}\n\n')
 
-        for pages in files.values():
-            pages = set(pages)
-            
-        print(f'Results : {files}')
-
-        return files
+        return pages
 
     except Exception as e:
         print(f'Unable to perform similarity search on qdrant, error \n{e}\n\n')

@@ -147,12 +147,11 @@ class ColQwenModel:
 
     def __init__(self):
         name = os.getenv('colqwen_model')
-        device = "cpu"
-        
+
         self.model = ColQwen2.from_pretrained(
             name,
             torch_dtype=torch.bfloat16,
-            device_map="cpu",  # or "mps" if on Apple Silicon
+            device_map='auto',
             attn_implementation="flash_attention_2" if is_flash_attn_2_available() else None,
         ).eval()
         self.processor = ColQwen2Processor.from_pretrained(name,trust_remote_code=True)
@@ -165,7 +164,8 @@ class ColQwenModel:
 
 
     def _calculate_embedding(self, image):
-        inputs = self.processor.process_images(images=[image]).to(self.model.device)
+        inputs = self.processor.process_images(images=[image])
+        inputs = {k: v.to(self.model.device) for k, v in inputs.items()}
         with torch.no_grad():
             embeddings = self.model(**inputs)
             embeddings = embeddings / embeddings.norm(dim=-1, keepdim=True)
@@ -189,20 +189,20 @@ class ColQwenModel:
         return coarse_vector, embeddings_multivector
 
 
-    def _embed_query(query):
+    def _embed_query(self,query):
         inputs = self.processor.process_queries(queries=[query])
         inputs = {k: v.to(self.model.device) for k, v in inputs.items()}
 
         with torch.no_grad():
             embeddings = self.model(**inputs)
             embeddings = embeddings / embeddings.norm(dim=-1, keepdim=True)
-            coarse_vector = _get_coarse_embedding(embeddings).flatten().tolist()
+            coarse_vector = self. _get_coarse_embedding(embeddings).flatten().tolist()
             embeddings = embeddings.squeeze(0).to(torch.float32).cpu().tolist()
 
         return coarse_vector, embeddings
 
     
-    async def embed_query(query):
+    async def embed_query(self,query):
         loop = asyncio.get_running_loop()
 
         coarse_vector, embeddings = await loop.run_in_executor(
@@ -223,17 +223,20 @@ class SparseEmbedder:
 
     
     def _calculate_embedding(self, page_markdown):
-        embeddings = list(self.model.embed(page_markdown))
-        return embeddings[0]
+        embedding = list(self.model.embed(page_markdown))[0]
+        return {
+            "indices": embedding.indices.tolist(),
+            "values": embedding.values.tolist()
+        }
 
 
-    async def embed(self, page_markdown):
+    async def embed(self, item):
         loop = asyncio.get_running_loop()
 
-        page_embedding = await loop.run_in_executor(
+        embedding = await loop.run_in_executor(
             None,
             self._calculate_embedding,
-            page_markdown
+            item
         )
 
-        return page_embedding
+        return embedding

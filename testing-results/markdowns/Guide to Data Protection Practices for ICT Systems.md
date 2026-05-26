@@ -51,45 +51,40 @@ Page 6 from document Guide to Data Protection Practices for ICT Systems
 
 Page 7 from document Guide to Data Protection Practices for ICT Systems
 
-ADER- Diagram type: Circular phased data protection framework with three main subsections feeding into three column topics.
+ADERData Protection Practices for ICT Systems
 
-- Central concept: Data Protection Practices for ICT Systems (center of cycle).
+Diagram type and structure:
+- Central circular diagram titled "Data Protection Practices for ICT Systems" with three colored segments forming a circular flow: blue (Policy/Risk Management), green (SOP/IT Operations), and teal/green (ICT Controls). The circle is labeled with three sub-areas around the perimeter: Policy/Risk Management, SOP/IT Operations, ICT Controls, indicating a cyclical relationship among them.
+- A vertical connector from the center circle leads to a three-column layout below, each column representing one main area.
 
-- Circular flow components (top arc segments; clockwise):
-  - Blue segment labeled: Policy/Risk Management
-  - Green segment labeled: SOP/IT Operations
-  - Teal/blue-green segment labeled: ICT Controls
+Subsections and content:
 
-- Relationships and data flow:
-  - The central Data Protection Practices for ICT Systems are connected to three sub-sections via the circular flow, indicating integration between Policy/Risk Management, SOP/IT Operations, and ICT Controls.
+1) Policy/Risk Management for ICT systems (left column, blue header)
+- Governance
+- Collection of personal data
+- Notification of purpose
+- Managing consent
+- Access, correction and accuracy of personal data
+- Housekeeping of personal data
+- Retention of personal data
 
-- Left column: Policy/Risk Management for ICT systems (blue header)
-  - Governance
-  - Collection of personal data
-  - Notification of purpose
-  - Managing consent
-  - Access, correction and accuracy of personal data
-  - Housekeeping of personal data
-  - Retention of personal data
+2) ICT Controls (middle column, teal header)
+- Authentication, authorisation and passwords
+- Computer networks
+- Database security
+- Web applications/website security
+- ICT security and testing
 
-- Middle column: ICT Controls (teal/green header)
-  - Authentication, authorisation and passwords
-  - Computer networks
-  - Database security
-  - Web applications/website security
-  - ICT security and testing
+3) SOP/IT Operations (right column, green header)
+- Security awareness
+- Personal computers and other computing devices
+- Portable computing devices and removable storage media
+- Compliance, monitoring, alerts, testing and audits
+- Cloud computing
 
-- Right column: SOP/IT Operations (green header)
-  - Security awareness
-  - Personal computers and other computing devices
-  - Portable computing devices and removable storage media
-  - Compliance, monitoring, alerts, testing and audits
-  - Cloud computing
-
-- Visual layout semantics:
-  - Three-column comparison/controls framework aligned under a top-level circular protection cycle.
-  - Each column has a distinct header color and bulleted list of requirements or topics.
-  - The flow implies interdependency: Policy/Risk Management, ICT Controls, and SOP/IT Operations collectively constitute Data Protection Practices for ICT Systems.The data protection practices for ICT systems are grouped into three main sections and their respective sub-sections as shown below.•Governance- Collection of personal data- Notification of purpose- Managing consent- Access, correction and accuracy of personal data- Housekeeping of personal data- Retention of personal data## Policy/Risk Management for ICT systems- Authentication, authorisation and passwords- Computer networks•Database security- Web applications/ website security- ICT security and testing## ICT Controls- Security awareness•Personal computersand other computingdevices- Portable computing devices and removable storage media- Compliance, monitoring, alerts, testing and audits- Cloud computingICT ControlsDataProtectionPractices forICT SystemsPolicy/Risk ManagementSOP/IT Operations## SOP/IT Operations
+Visual relationships and flow:
+- The circular data protection practices hub connects to the three main columns via a vertical linkage, indicating that Policy/Risk Management, ICT Controls, and SOP/IT Operations collectively support data protection.
+- The circle’s segments imply cyclic dependencies: Policy/Risk Management connects to SOP/IT Operations and ICT Controls, which in turn relate back to overarching governance and protection practices.The data protection practices for ICT systems are grouped into three main sections and their respective sub-sections as shown below.•Governance- Collection of personal data- Notification of purpose- Managing consent- Access, correction and accuracy of personal data- Housekeeping of personal data- Retention of personal data## Policy/Risk Management for ICT systems- Authentication, authorisation and passwords- Computer networks•Database security- Web applications/ website security- ICT security and testing## ICT Controls- Security awareness•Personal computersand other computingdevices- Portable computing devices and removable storage media- Compliance, monitoring, alerts, testing and audits- Cloud computingICT ControlsDataProtectionPractices forICT SystemsPolicy/Risk ManagementSOP/IT Operations## SOP/IT Operations
 
 
 
