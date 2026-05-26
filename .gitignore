@@ -2,3 +2,4 @@
 .venv
 .3.12-venv
 **/__pycache__/
+venv/
