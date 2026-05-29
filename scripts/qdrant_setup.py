@@ -147,42 +147,31 @@ async def similarity_search(splade_vector, coarse_vector, query_embeddings):
         client = await get_qdrant_client()
         name = os.getenv('qdrant_collection_name')
 
-        rrf_prefetch = [
-                        models.Prefetch(
-                            query=splade_vector,
-                            using="splade_vector",
-                            limit=50
-                        ),
-                        models.Prefetch(
-                            query=coarse_vector,
-                            using="coarse_embedding",
-                            limit=50
-                        )
-                    ]
+        response = client.query_points(
+            collection_name=name,
 
-        reranking_prefetch=[
+            prefetch=[
                 models.Prefetch(
-                    query=models.FusionQuery(fusion=models.Fusion.RRF),
-                    limit=50,             # Candidate oversampling window size
-                    prefetch=rrf_prefetch
-                )
-            ]
-
-        results = await client.query_points(
-            name,
-            query=query_embeddings,
-            using='page_embeddings',
-            prefetch=reranking_prefetch,
-            with_payload=True,
-            limit=5,
+                    query=coarse_vector,
+                    using="coarse_embedding",
+                    limit=50
+                ),
+                models.Prefetch(
+                    query=qdrant_vector,
+                    using="splade_vector",
+                    limit=50
+                ),
+            ],
+            query=page_embeddings,
+            using="page_embeddings",
+            limit=20
         )
 
-        pages = []
-        for point in results.points:
+        pages = {}
+        for point in response.points:
+            score = point.score
             page_id = point.payload.get('page_id')
-            pages.append(page_id)
-
-        # print(f'\n\nResults : {pages}\n\n')
+            pages[page_id] = {'image_score' : score}
 
         return pages
 

@@ -13,9 +13,80 @@ from docling.document_converter import DocumentConverter, PdfFormatOption
 
 from scripts.supabase_setup import retrieve_pdf_path, retrieve_files
 from scripts.qdrant_setup import similarity_search
-from scripts.models import OpenAIModel, ColQwenModel, SparseEmbedder
+from scripts.models import OpenAIModel, ColQwenModel, SparseEmbedder, Jina
 
 
+
+def apply_rrf(results, k=60):
+
+    """
+    Need to adapt this code to use the other data structure of {page_id:{'text_score':text_score,'image_score':image_score}}
+    """
+
+    colqwen_sorted = sorted(
+        results, 
+        key=lambda x: x.get("image_score", 0), 
+        reverse=True
+    )
+    
+    jina_sorted = sorted(
+        results, 
+        key=lambda x: x.get("text_score", 0), 
+        reverse=True
+    )
+
+    colqwen_rank_map = {doc["page_id"]: rank for rank, doc in enumerate(colqwen_sorted)}
+    jina_rank_map = {doc["page_id"]: rank for rank, doc in enumerate(jina_sorted)}
+
+    # dynamic selection (image)
+    image_scores = [item["image_score"] for item in results]
+    max_image_score = max(image_scores)
+    image_cutoff= max_image_score * 0.8
+
+    image_docs = [doc for doc in results if doc["image_score"] >= image_cutoff]
+
+    # dynamic selection (text)
+    TEXT_ABSOLUTE_THRESHOLD = 0.30
+
+    text_docs = [doc for doc in results if doc["text_score"] >= TEXT_ABSOLUTE_THRESHOLD]
+
+    
+    rrf_scores = {}
+
+    for doc in image_docs:
+        page_id = doc["page_id"]
+        rank = colqwen_rank_map[page_id]
+        rrf_scores[page_id] = 1.0 / (k + (rank + 1))
+        
+    for doc in text_docs:
+        page_id = doc["page_id"]
+        rank = jina_rank_map[page_id]
+        if page_id in rrf_scores:
+            rrf_scores[page_id] += 1.0 / (k + (rank + 1))
+        else:
+            rrf_scores[page_id] = 1.0 / (k + (rank + 1))
+            
+    final_hybrid_results = []
+
+    for doc in results:
+        page_id = doc["page_id"]
+        if page_id in rrf_scores:
+            doc["rrf_score"] = rrf_scores[page_id]
+            final_hybrid_results.append(doc)
+        
+    final_hybrid_results.sort(key=lambda x: x["rrf_score"], reverse=True)
+    
+    return final_hybrid_results
+
+
+async def get_sources(splade,coarse,embeddings,doc_cache,cache_lock):
+    similar_pages = await similarity_search(splade,coarse,embeddings)
+    pages_with_markdown = await retrieve_markdowns(similar_pages)
+    pages_with_scores = Jina().text_rerank(pages_with_markdown)
+    for page_id in pages_with_scores:
+        pages_with_scores[page_id].pop("markdown", None)
+
+    #Now pages_with_scores looks like this : {page_id : {'image_score' : image_score, 'text_score' : text_score}}
 
 
 async def get_source_images(splade,coarse,embeddings,converter,doc_cache,cache_lock):
@@ -53,7 +124,7 @@ async def answer_testset(filepath,converter,openai,colqwen,sparse):
     questions = df.iloc[:, 0]
     results = []
 
-    semaphore = asyncio.Semaphore(3)
+    semaphore = asyncio.Semaphore(5)
     doc_cache = {}
     cache_lock = asyncio.Lock()
 

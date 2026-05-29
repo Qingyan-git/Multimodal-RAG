@@ -15,26 +15,27 @@ Page 2 from document key-policies-third-party-framework
 
 Page 3 from document key-policies-third-party-framework
 
-04## Lifecycle of the Third-Party1 Management Framework- 01    Evaluation and Selection- Diagram type: Circular flow diagram labeled “Third-Party Management Framework” at center.
-- Structure: Four node stages connected in a clockwise loop with directional flow arrows implied by circular arc segments.
-- Node 1 (top, circular icon): Team/people icon with checkmark (likely representing verification/approval or governance).
-- Node 2 (right, circular icon): Checklist and pen icon (representing Contracting and On-boarding). Associated label: “02 Contracting and On-boarding.”
-- Node 3 (bottom, circular icon): Gear and hand icon (representing Service Management). Associated label: “03 Service Management.”
-- Node 4 (left, circular icon): Two figures exchanging a handshake (representing Transition Out). Associated label: “Transition Out.”
-- Central label: “Third-Party Management Framework.”
-- Visual cues: 
-  - Outer circular path divided into two color segments (cyan/blue) indicating progression around the cycle.
-  - Each node is contained in a gray circular badge positioned on the loop at four equidistant points.
-- Hierarchy/sequence:
-  - Step 01 appears to correspond to the top node (verification/governance) though the numeral is not explicitly shown next to that node in this crop.
-  - Step 02 corresponds to Contracting and On-boarding (right-hand node).
-  - Step 03 corresponds to Service Management (bottom node).
-  - Step 04 corresponds to Transition Out (left-hand node).
-- Data extraction ready for vector DB:
-  - Entity: Third-Party Management Framework
-  - Nodes: N1_Verification/Governance, N2_Contracting_Onboarding, N3_Service_Management, N4_Transition_Out
-  - Relationships: N1 → N2 → N3 → N4 → N1 (circular workflow)
-  - Visual features: circular flow with two-color arc, gray circular badges, icons per node, central title.Third-PartyManagementFramework02Contractingand On-boardingTransition03    Service ManagementOut## DEFINITION- 1 Third Party is defined as a party (other than a data subject a or an Agency b ) which:- (i) delivers, develops, implements, operates, provides or otherwise supplies ICT systems or services to an Agency, or- (ii) collects, stores or otherwise processes data for an Agency.- a Data subject refers to the individual or entity to which the data relates.- b Agency refers to Organs of State, Ministries, Departments and Statutory Boards.
+04## Lifecycle of the Third-Party1 Management Framework- 01    Evaluation and Selection
+IMAGE FOUND, DESCRIPTION : - Central diagram: Third-Party Management Framework (circular flow with four key nodes around a cycle)
+- Node positions and labels (clockwise from top-right): 
+  1) Node A (top-right): "02 Contracting and On-boarding" with icon of a checklist/document and pen
+  2) Node B (bottom): "03 Service Management" with icon of a hand supporting a gear
+  3) Node C (bottom-left): "Transition Out" with icon of two people exchanging a document (handoff)
+  4) Node D (top-left): (implied) an icon representing governance/approval with people and a check mark
+- Flow directions and connections:
+  - Circular ring connects nodes A → B → C → D → back to A, forming a continuous lifecycle
+  - Arrowless ring segments indicate sequential phases; emphasis on cyclic governance
+- Visual elements and icons:
+  - Top center node depicts a group of people with a checkmark, suggesting governance/approval or oversight
+  - Right node (02) shows a checklist/document icon indicating contracting and onboarding activities
+  - Bottom node (03) shows a gear and hand icon indicating service management and operational support
+  - Left node shows two people with a bidirectional arrow indicating transition or handoff between parties
+- Semantics and relationships:
+  - "Contracting and On-boarding" leads to "Service Management" as the next lifecycle stage
+  - "Service Management" leads to "Transition Out" as the subsequent stage
+  - "Transition Out" feeds back into the governance/approval node, closing the cycle
+- Overall: A cyclical Third-Party Management Framework consisting of four stages in the order: Contracting and On-boarding → Service Management → Transition Out → Governance/Approval (cycle returns to start)
+Third-PartyManagementFramework02Contractingand On-boardingTransition03    Service ManagementOut## DEFINITION- 1 Third Party is defined as a party (other than a data subject a or an Agency b ) which:- (i) delivers, develops, implements, operates, provides or otherwise supplies ICT systems or services to an Agency, or- (ii) collects, stores or otherwise processes data for an Agency.- a Data subject refers to the individual or entity to which the data relates.- b Agency refers to Organs of State, Ministries, Departments and Statutory Boards.
 
 
 

@@ -51,40 +51,82 @@ Page 6 from document Guide to Data Protection Practices for ICT Systems
 
 Page 7 from document Guide to Data Protection Practices for ICT Systems
 
-ADERData Protection Practices for ICT Systems
+ADER
+IMAGE FOUND, DESCRIPTION : - Title/central theme: Data Protection Practices for ICT Systems
 
-Diagram type and structure:
-- Central circular diagram titled "Data Protection Practices for ICT Systems" with three colored segments forming a circular flow: blue (Policy/Risk Management), green (SOP/IT Operations), and teal/green (ICT Controls). The circle is labeled with three sub-areas around the perimeter: Policy/Risk Management, SOP/IT Operations, ICT Controls, indicating a cyclical relationship among them.
-- A vertical connector from the center circle leads to a three-column layout below, each column representing one main area.
+- Top circular diagram (cyclic workflow/guardrail loop):
+  - Segments (clockwise order):
+    1) SOP/IT Operations
+    2) ICT Controls
+    3) Policy/Risk Management for ICT systems
+  - Directional flow: The arc from each segment connects to the next, forming a continuous governance loop around “Data Protection Practices for ICT Systems”
+  - Central label: Data Protection Practices for ICT Systems
+  - Outer ring descriptors (implicit in diagram): SOP/IT Operations, ICT Controls, Policy/Risk Management for ICT systems (each as a governance domain)
 
-Subsections and content:
+- Left column block: Policy/Risk Management for ICT systems
+  - Bullet items:
+    - Governance
+    - Collection of personal data
+    - Notification of purpose
+    - Managing consent
+    - Access, correction and accuracy of personal data
+    - Housekeeping of personal data
+    - Retention of personal data
 
-1) Policy/Risk Management for ICT systems (left column, blue header)
-- Governance
-- Collection of personal data
-- Notification of purpose
-- Managing consent
-- Access, correction and accuracy of personal data
-- Housekeeping of personal data
-- Retention of personal data
+- Middle column block: ICT Controls
+  - Bullet items:
+    - Authentication, authorisation and passwords
+    - Computer networks
+    - Database security
+    - Web applications/website security
+    - ICT security and testing
 
-2) ICT Controls (middle column, teal header)
-- Authentication, authorisation and passwords
-- Computer networks
-- Database security
-- Web applications/website security
-- ICT security and testing
+- Right column block: SOP/IT Operations
+  - Bullet items:
+    - Security awareness
+    - Personal computers and other computing devices
+    - Portable computing devices and removable storage media
+    - Compliance, monitoring, alerts, testing and audits
+    - Cloud computing
 
-3) SOP/IT Operations (right column, green header)
-- Security awareness
-- Personal computers and other computing devices
-- Portable computing devices and removable storage media
-- Compliance, monitoring, alerts, testing and audits
-- Cloud computing
+- Visual cues:
+  - Three-column layout representing three governance domains
+  - Each domain is color-coded (left: blue, middle: teal, right: green)
+  - Central circular badge indicates integration of governance domains into Data Protection Practices for ICT Systems
 
-Visual relationships and flow:
-- The circular data protection practices hub connects to the three main columns via a vertical linkage, indicating that Policy/Risk Management, ICT Controls, and SOP/IT Operations collectively support data protection.
-- The circle’s segments imply cyclic dependencies: Policy/Risk Management connects to SOP/IT Operations and ICT Controls, which in turn relate back to overarching governance and protection practices.The data protection practices for ICT systems are grouped into three main sections and their respective sub-sections as shown below.•Governance- Collection of personal data- Notification of purpose- Managing consent- Access, correction and accuracy of personal data- Housekeeping of personal data- Retention of personal data## Policy/Risk Management for ICT systems- Authentication, authorisation and passwords- Computer networks•Database security- Web applications/ website security- ICT security and testing## ICT Controls- Security awareness•Personal computersand other computingdevices- Portable computing devices and removable storage media- Compliance, monitoring, alerts, testing and audits- Cloud computingICT ControlsDataProtectionPractices forICT SystemsPolicy/Risk ManagementSOP/IT Operations## SOP/IT Operations
+- Relationships and flow:
+  - Policy/Risk Management for ICT systems drives ICT Controls
+  - ICT Controls support SOP/IT Operations
+  - SOP/IT Operations provide operational enforcement and feedback to ICT Controls and Policy/Risk Management, forming a cyclical governance loop for data protection
+
+- Domain-specific keywords for indexing:
+  - Data Protection Practices for ICT Systems
+  - Policy/Risk Management
+  - Governance
+  - Personal data collection, consent, and accuracy
+  - Data retention and housekeeping
+  - Authentication, access control, and passwords
+  - Computer networks security
+  - Database security
+  - Web applications security
+  - ICT security testing
+  - SOP/IT Operations
+  - Security awareness
+  - Computing devices (personal, portable, removable media)
+  - Compliance, monitoring, alerts, audits
+  - Cloud computing compliance and governance
+
+- Metadata entities:
+  - Entities: Policy/Risk Management for ICT systems (blue), ICT Controls (teal), SOP/IT Operations (green)
+  - Relationship: Policy/Risk Management → ICT Controls → SOP/IT Operations → back to Policy/Risk Management (circular governance)
+  - Central concept: Data Protection Practices for ICT Systems
+  - Data types referenced: personal data, purpose notification, consent, authentication data, network data, database data, web data, device data, storage media
+
+- Extraction completeness:
+  - All listed bullet items across the three domain blocks are captured
+  - Diagrammatic relationships and circular governance flow are described with directional linkage
+  - Color-coding and layout (three-column components) are noted for reconstruction in a vector-DB-friendly schema
+The data protection practices for ICT systems are grouped into three main sections and their respective sub-sections as shown below.•Governance- Collection of personal data- Notification of purpose- Managing consent- Access, correction and accuracy of personal data- Housekeeping of personal data- Retention of personal data## Policy/Risk Management for ICT systems- Authentication, authorisation and passwords- Computer networks•Database security- Web applications/ website security- ICT security and testing## ICT Controls- Security awareness•Personal computersand other computingdevices- Portable computing devices and removable storage media- Compliance, monitoring, alerts, testing and audits- Cloud computingICT ControlsDataProtectionPractices forICT SystemsPolicy/Risk ManagementSOP/IT Operations## SOP/IT Operations
 
 
 
@@ -457,31 +499,19 @@ Page 33 from document Guide to Data Protection Practices for ICT Systems
 
 Page 34 from document Guide to Data Protection Practices for ICT Systems
 
-| Good ICT Practices                                                                                                                                                                                                                                                                    | Practice Met   | Practice Met   | Practice Met   | Practice Met   | Action Plan   |
-|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------|----------------|----------------|----------------|---------------|
-| Basic Practices                                                                                                                                                                                                                                                                       | Comply         | Partial Comply | Not Comply     | Not Applicable |               |
-| Detection and Analysis                                                                                                                                                                                                                                                                |                |                |                |                |               |
-| i. The organisation has an SOPfor gathering forensic and operational evidence for the purposes of incident resolution and legal proceedings.                                                                                                                                          |                |                |                |                |               |
-| j. Possess knowledge of stakeholders and fiduciary obligations regarding incident reporting when a cyber incident occurs.                                                                                                                                                             |                |                |                |                |               |
-| Containment, Eradication & Recovery                                                                                                                                                                                                                                                   |                |                |                |                |               |
-| k. Able to develop a containment strategy whenresponding to a cyber incident that can range from isolating compromised devices to closing vulnerable ports and mail servers.                                                                                                          |                |                |                |                |               |
-| l. Understand the need to carry out threat eradication on affected systems before resuming operations, which can taketheformofwipingoutthemalware,disablingbreached accounts and patching exploited vulnerabilities.                                                                  |                |                |                |                |               |
-| m. Understand the steps required to recover affected systems and resume operations, including restoring systems from backups, enforcing password changes, tightening network perimeter security, etc.                                                                                 |                |                |                |                |               |
-| n. Even after a threat has been eliminated, the organisation recognises the need to continue monitoring their network for signs of intrusion and to maintain vigilance.                                                                                                               |                |                |                |                |               |
-| Post-Incident Review                                                                                                                                                                                                                                                                  |                |                |                |                |               |
-| o. After incident resolution, the organisation conducts a post-incident review to identify and resolve deficiencies in the incident response plan, build on lessons learnt and assess if additional security measures are required to strengthen the organisation's security posture. |                |                |                |                |               |
+
 
 
 
 Page 35 from document Guide to Data Protection Practices for ICT Systems
 
-ADDITIONAL RESOURCES
+
 
 
 
 Page 36 from document Guide to Data Protection Practices for ICT Systems
 
-## ADDITIONAL RESOURCESOrganisations and their vendors are encouraged to refer to the following resources on the PDPC website, which provide more information on the areas that are mentioned briefly in this guide.## [Advisory Guidelines](https://www.pdpc.gov.sg/ag)- Chapter 17 of the Advisory Guidelines on Key Concepts under the PDPA (The Protection Obligation)- Chapter 18 of the Advisory Guidelines on Key Concepts under the PDPA (The Retention Limitation Obligation)- [Chapter 6 of the Advisory Guidelines on the PDPA for Selected Topics (Online Activities)](https://www.pdpc.gov.sg/guidelines-and-consultation/2020/02/advisory-guidelines-on-the-personal-data-protection-act-for-selected-topics)- Chapter 20 of the Advisory Guidelines on Key Concepts under the PDPA (The Data Breach Notification Obligation)## PDPC Resources- [Handbook on How to Guard Against Common Types of Data Breaches](https://www.pdpc.gov.sg/help-and-resources)- [Guide to Managing Data Intermediaries](https://www.pdpc.gov.sg/help-and-resources/2020/09/guide-to-managing-data-intermediaries)- [Guide on Managing and Notifying Data Breaches under the PDPA](https://www.pdpc.gov.sg/help-and-resources/2021/01/data-breach-management-guide)- [Guide to Basic Data Anonymisation Techniques](https://www.pdpc.gov.sg/help-and-resources/2018/01/guide-to-basic-data-anonymisation-techniques)- [The Accountability Obligation under the PDPA](https://www.pdpc.gov.sg/accountability)## Other Resources- SS ISO/IEC 27001 &amp; 27002 and MTCS SS584 standards can be found on the Singapore Standards Council website- [Guide to Cybersecurity for Law Practices](https://www.lawsociety.org.sg/wp-content/uploads/2020/03/Guide-to-Cybersecurity.pdf)
+
 
 
 
@@ -493,6 +523,6 @@ Page 37 from document Guide to Data Protection Practices for ICT Systems
 
 Page 38 from document Guide to Data Protection Practices for ICT Systems
 
-BROUGHT TO YOU BYIN PARTNERSHIP WITHAS PART OFCopyright 2021 - Personal Data Protection Commission Singapore (PDPC)The contents herein are not intended to be an authoritative statement of the law or a substitute for legal or other professional advice. The PDPC and its members, officers, employees and delegates shall not be responsible for any inaccuracy, error or omission in this publication or liable for any damage or loss of any kind as a result of any use of or reliance on this publication.The contents of this publication are protected by copyright, trademark or other forms of proprietary rights and may not be reproduced, republished or transmitted in any form or by any means, in whole or in part, without written permission.
+
 
 

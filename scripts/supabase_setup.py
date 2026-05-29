@@ -131,27 +131,24 @@ async def retrieve_pdf_path(filename):
         raise
 
 
-async def retrieve_files(page_ids):
+async def retrieve_markdowns(pages):
 
     try:
         client = await get_connection()
-
+        page_ids = list(pages.keys())
         response = await (client
             .table('pages')
-            .select('pdfs(name),num')
+            .select('page_id,markdown')
             .in_('page_id',page_ids)
             .execute()
         )
 
-        sources = []
         for row in response.data:
-            item = {
-                'name' : row['pdfs']['name'],
-                'page_no' : row['num']
-            }
-            sources.append(item)
+            page_id = row['page_id']
+            markdown = row['markdown']
+            pages[page_id]['markdown'] = markdown
 
-        return sources
+        return pages
 
     except Exception as e:
         print(f'Unable to retrieve answer files for pages {page_id in page_ids}, error \n{e}\n\n')

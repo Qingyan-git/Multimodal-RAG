@@ -250,96 +250,64 @@ Page 29 from document Project Guardian FX workstream Transaction Banking
 
 Page 30 from document Project Guardian FX workstream Transaction Banking
 
-- System topology: Multi-contract architecture with three stacked contract modules inside a dashed “MTS Smart Contract” envelope:
-  - Top module: Price Oracle Contract (dark blue)
-  - Middle module: MTS Contract (medium blue)
-  - Bottom module: Whale Token Smart Contract (light blue)
 
-- Primary actors: User and MTS Service Provider (and external banks/token reserve)
+IMAGE FOUND, DESCRIPTION : - Actors and roles:
+  - User (external actor) initiates interactions with the MTS system.
+  - MTS System Provider (internal service boundary) enables contract provisioning and price management.
+  - Token Reserve Bank (external entity) holds and issues Token Minting/Burning operations.
+  - FX Pricing from Banking Partners (external data source for pricing) feeds pricing data to the MTS system.
 
-- Data/interaction flows (left to right): 
-  - User initiates an MTS contract → initiates MTS Smart Contract block
-  - User actions feeding Price Oracle: Get Price
-  - User actions feeding MTS Contract: Initiate MTS contract
-  - User actions feeding Whale Token Contract: Check Trading Limit; Check Token Balance
-  - MTS Service Provider and Banking Partners enable downstream operations and data sync
+- Core entities (contracts):
+  - Price Oracle Contract
+    - Purpose: Provide price data to other contracts and external systems.
+    - Key interactions:
+      - Get Price: User initiates or provider queries price from Price Oracle Contract.
+      - Deploy Price Oracle Contract: MTS smart contract deployment path via MTS Smart Contract boundary.
+      - Sync data to off-chain system: FX Pricing from Banking Partners to external system (sync price data off-chain).
+  - MTS Contract
+    - Purpose: Central MTS trading/transaction contract coordinating order flow and limits.
+    - Key interactions:
+      - Deploy MTS Contract: Deployment pathway from MTS Smart Contract.
+      - Update Price: Price Oracle updates price used by MTS.
+      - Deploy MTS Service White List: Interaction with white list management.
+      - Set User Trading Limit: Configure user-specific trading limits.
+      - Check Trading Limit: Validate user trading limit before orders.
+      - Check Token Balance: Validate user token balance before trades.
+  - Whale Token Contract
+    - Purpose: Manage minting and burning of Whale Tokens (stable/asset token mechanics).
+    - Key interactions:
+      - Mint & Burn Token: Operations triggered by MTS or user actions via Whale Token Contract.
+      - Set User White List: Interaction with user eligibility controls (implied by white list context).
+  - Whale Token Smart Contract (sub-component)
+    - Purpose: Implementation layer for Whale Token mechanics.
+    - Key interactions:
+      - Mint & Burn Token: Core token supply adjustments.
 
-- Contract-specific actions (internal vertical flows within the dashed envelope):
-  - Price Oracle Contract:
-    - Deploy Price Oracle Smart Contract (from MTS Smart Contract)
-    - Sync data to off-chain system (external synchronization line to FX Pricing from Banking Partners)
-    - Update Price (from external price Oracle to MTS ecosystem)
-  - MTS Contract:
-    - Deploy MTS Smart Contract (from Price Oracle)
-    - Set User White List (via MTS Service Provider)
-    - Set User Trading Limit (via MTS Service Provider)
-  - Whale Token Smart Contract:
-    - Mint & Burn Token (via MTS Service Provider)
-    - Set User Trading Limit (via MTS Service Provider)
+- External systems and data flows:
+  - FX Pricing from Banking Partners
+    - Source of foreign exchange price data.
+    - Flow: FX Pricing data is consumed by MTS system to update pricing on contracts (Price Oracle / MTS).
+  - Token Reserve Bank
+    - Source/sink for token minting and burning actions.
+    - Flow: Mints or burns Whale Tokens in response to user actions or contract logic.
 
-- External system interactions and data lineage:
-  - FX Pricing from Banking Partners: Receives sync data, feeds into FX Pricing module
-  - Token Reserve Bank: Holds minted/burned tokens as collateral/liquidity
-  - MTS Service Provider acts as central integration hub connecting Price Oracle, MTS, and Whale Token contracts to external bank pricing and token reserve infrastructure
-
-- Data/control entities:
-  - User profile with whitelist status, trading limit, token balance
-  - Price oracle data feed and deployed price (price feed state)
-  - Token ledger: mint/burn operations, token balance, reserve status
-  - Trading limit configurations and whitelist entries for users
+- Data flows and directional relationships:
+  - User → Get Price: User requests price data to Price Oracle Contract.
+  - MTS Smart Contract boundary → Deploy/Initialize: Deploy Price Oracle Contract; Deploy MTS Contract; Deploy MTS White List.
+  - Price Oracle Contract → MTS Contract: Update Price to share current price data used for trading decisions.
+  - Whale Token Contract → User / MTS System: Mint & Burn Token actions, token supply management; interacts with Whale Token Smart Contract for actual token operations.
+  - Token Reserve Bank ↔ Whale Token Contract: Mint/Burn operations initiated by Whale Token Contract are settled with Token Reserve Bank.
+  - FX Pricing from Banking Partners → MTS System / Price Oracle: Price data ingestion feed that updates internal price references.
+  - MTS Contract → User: Enforces Set User Trading Limit and checks on trading actions.
+  - MTS Service Provider → External Sync: Sync data to off-chain system (external accounting or settlement).
 
 - Logical dependencies and sequencing:
-  - User initiates MTS contract → deploys MTS Smart Contract components (Price Oracle, MTS, Whale Token)
-  - Price Oracle updates price → MTS Contract updates user whitelist and trading limit via MTS Service Provider
-  - Whale Token Mint & Burn events occur in response to trading actions and liquidity management
-  - FX Pricing data from Banking Partners must be synchronized to off-chain system and re-fed into on-chain price oracle
-  - Token Reserve Bank maintains token mint/burn liquidity backing
-
-- Notes on relationships:
-  - “Get Price” input is consumed by Price Oracle Contract
-  - “Deploy Price Oracle Smart Contract” and “Deploy MTS Smart Contract” are sequential steps within the MTS Smart Contract envelope
-  - “Set User White List” and “Set User Trading Limit” are triggered by MTS Service Provider based on user eligibility
-  - Token Mint & Burn operations are synchronized with user trading activity and reserve liquidity
-  - Data synchronization arrows indicate bidirectional or unidirectional data flow between on-chain contracts, service provider, and off-chain FX pricing and bank systems
-
-- Entities for database indexing:
-  - Contract: Price Oracle Contract
-  - Contract: MTS Contract
-  - Contract: Whale Token Smart Contract
-  - Service: MTS Service Provider
-  - External: FX Pricing from Banking Partners
-  - External: Token Reserve Bank
-  - User: profile, whitelist status, trading limit, token balance
-  - Price data: current price, price feed source
-  - Token ledger: minted tokens, burned tokens, total supply
-  - Limits: per-user trading limit, whitelist entries
-
-- Flow summary (concise):
-  - User → Initiate MTS contract
-  - Price Oracle Contract: Get Price → Update Price
-  - MTS Contract: Deploy MTS Smart Contract; Set User White List; Set User Trading Limit
-  - Whale Token Contract: Check Token Balance; Mint & Burn Token
-  - FX Pricing from Banking Partners ↔ Sync data to off-chain system → feed back to on-chain price oracle
-  - Token Reserve Bank: holds minted/burned tokens as liquidity
-
-- Keywords for indexing:
-  - MTS Smart Contract, Price Oracle Contract, Whale Token Smart Contract
-  - User whitelist, trading limit, token balance
-  - Mint, Burn, Set User Trading Limit, Set User White List
-  - Deploy Price Oracle Smart Contract, Deploy MTS Smart Contract
-  - FX Pricing, Banking Partners, Token Reserve Bank
-  - On-chain price feed, off-chain sync, data synchronization
-
-- Semantic entities and relations (graph form):
-  - Node: User; edges: initiates MTS contract, checks trading limit, checks token balance
-  - Node: Price Oracle Contract; edges: gets price, updates price, deploys oracle contract
-  - Node: MTS Contract; edges: deploys MTS contract, sets user whitelist, sets user trading limit
-  - Node: Whale Token Smart Contract; edges: mint & burn token, set user trading limit
-  - Node: MTS Service Provider; edges: orchestrates deployments, sets whitelist, sets limits, mediates with banks
-  - Node: FX Pricing from Banking Partners; edges: sync data to off-chain system, feed price oracle
-  - Node: Token Reserve Bank; edges: holds minted/burned tokens
-
-This representation is optimized for vector-database indexing and semantic retrieval with explicit contracts, actions, and inter-component flows.MTSSmartContractDeployPriceSync data to off-OracleSmartchainsystemGetPriceContractPriceOracleContractUpdatePriceDeployMTSSmartContractFX PricingInitiateMTSfromcontractMTSMTSServiceBankingContractSetUserProviderPartnersUserWhiteListCheckSetUserTrading LimitTrading LimitWhale TokenCheckTokenContractMint&amp;BalanceBurnTokenTokenWhaleTokenReserveBankSmart ContractThe payment effectively takes place in 3 main stages - issuing, transferring and redeeming; with the token exchange occurring at the transfer token stage.IssueTokenTransferTokenRedeemTokenIssuerLiquidityIssuerBankAProviderBankB356SGDFiatSGDTokenSGDTokenUSDTokenUSDTokenUSDFiatUserUserMulti-tokenAntInternationalSwap ContractAntInternationalEntity AEntity BFigure 3: Illustration of payment flow.| Stage       | Activity                                                                                                                                                                                        |
+  - Deployment sequence: Deploy Price Oracle Contract and Deploy MTS Contract via MTS Smart Contract; Deploy MTS Service Provider white list; Set up User Trading Limits and white list.
+  - Price data flow: FX Pricing from Banking Partners → Price Oracle Contract / MTS Contract → Used for trading and settlement.
+  - Token lifecycle: User actions trigger Whale Token Mint/Burn via Whale Token Contract, coordinated with Token Reserve Bank for actual token reserve changes.
+  - Compliance/eligibility: Set User Trading Limit and Check Trading Limit gates before allowing trades; Check Token Balance gates before token transfers.
+  - Settlement/Off-chain: Sync data from MTS system to off-chain banking system via FX Pricing updates and contract state changes.
+MTSSmartContractDeployPriceSync data to off-OracleSmartchainsystemGetPriceContractPriceOracleContractUpdatePriceDeployMTSSmartContractFX PricingInitiateMTSfromcontractMTSMTSServiceBankingContractSetUserProviderPartnersUserWhiteListCheckSetUserTrading LimitTrading LimitWhale TokenCheckTokenContractMint&amp;BalanceBurnTokenTokenWhaleTokenReserveBankSmart ContractThe payment effectively takes place in 3 main stages - issuing, transferring and redeeming; with the token exchange occurring at the transfer token stage.IssueTokenTransferTokenRedeemTokenIssuerLiquidityIssuerBankAProviderBankB356SGDFiatSGDTokenSGDTokenUSDTokenUSDTokenUSDFiatUserUserMulti-tokenAntInternationalSwap ContractAntInternationalEntity AEntity BFigure 3: Illustration of payment flow.| Stage       | Activity                                                                                                                                                                                        |
 |-------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Issue Token | 1. Issuer Bank A in Singapore off-chain debits Ant International's Entity A cash account for SGD fiat currency 2. Issuer mints Bank A SGD token to Ant International's Entity A's token address |
 
@@ -363,67 +331,55 @@ To overcome this and still drive shared ledger adoption, BNY Treasury Services a
 
 Page 33 from document Project Guardian FX workstream Transaction Banking
 
-The bilateral connection between the two banks can be replicated across strategic partners, globally. This solution offers an alternative to both existing messaging networks, and the need  for  a  central,  single  coordination  point,  enhancing  the  resiliency  of  both  banks' operations. There are critical opportunities to introduce new fraud mitigation tools into the process given the 'speed bump' introduced by the escrow of funds in the HTLC. Making payments  faster  and  safer  is  critical  to  BNY  and  OCBC's  strategy  and  the  industry's continued growth.## 6.3 Use case 3: HSBC - Payment vs Payment orchestration## OverviewCross-border FX settlement for inter-bank FX trades can be complex and manual due to different risk management and payment systems. There are industry needs for safer and instantaneous settlement with reduction of settlement and credit risks, improved liquidity pools, and capital efficiencies. A multi-participant PvP solution using shared ledger will be able to mitigate the challenges. This solution also supports alignment with FX Global Code Settlement  Risk  Principles  35  and  50,  the  Financial  Stability  Board's  G20  roadmap  for enhancing cross-border payments, and the CPMI's Stage 2 report to the G20.OSTTRA - an industry leading post trade infrastructure solution, provides service offering for participants to match, confirm and pay FX cash flows (PvP) with reduction of Herstatt risk and flexible settlement windows. Outstanding exposures can continuously be netted to reduce  daily  settlement  limits  and  unlock  capital,  allowing  more  trade  volumes  to  be conducted.HSBC's key role will be as a full supporter and a network participant of this solution across all supported currencies including emerging market currencies (e.g., CNH). HSBC has been using this solution internally for over 6 years, settled over 9.4 Tn USD, and have realised the benefits of using PvP amongst 18 entities.Figure 5: High level illustration of solution designCustomersCorporateParticipantsSettlingAdministratorAccountBanksPayeesD00oMatchPVP1.CompressPayThere are several reasons why the solution has been successful and operational for over 6 years:  firstly,  the  solution  relies  on  fiat  money  using  existing  bank  account  structures; secondly, the solution is an overlay to existing systems and solutions used by the industry; and  thirdly,  the  implementation  of  shared  ledger  as  a  smart  workflow  and  payment orchestration layer leverages existing risk and control frameworks.Current  industry  challenges  also  include  interoperability  across  multiple  platforms  and networks, increasing ecosystems' complexity and hence operational risks. Migration from legacy to digital can also be costly and takes time. Trading counterparties may not have full visibility of their forward-looking FX cash flows which may result in missed payments and overdraft fees.
+The bilateral connection between the two banks can be replicated across strategic partners, globally. This solution offers an alternative to both existing messaging networks, and the need  for  a  central,  single  coordination  point,  enhancing  the  resiliency  of  both  banks' operations. There are critical opportunities to introduce new fraud mitigation tools into the process given the 'speed bump' introduced by the escrow of funds in the HTLC. Making payments  faster  and  safer  is  critical  to  BNY  and  OCBC's  strategy  and  the  industry's continued growth.## 6.3 Use case 3: HSBC - Payment vs Payment orchestration## OverviewCross-border FX settlement for inter-bank FX trades can be complex and manual due to different risk management and payment systems. There are industry needs for safer and instantaneous settlement with reduction of settlement and credit risks, improved liquidity pools, and capital efficiencies. A multi-participant PvP solution using shared ledger will be able to mitigate the challenges. This solution also supports alignment with FX Global Code Settlement  Risk  Principles  35  and  50,  the  Financial  Stability  Board's  G20  roadmap  for enhancing cross-border payments, and the CPMI's Stage 2 report to the G20.OSTTRA - an industry leading post trade infrastructure solution, provides service offering for participants to match, confirm and pay FX cash flows (PvP) with reduction of Herstatt risk and flexible settlement windows. Outstanding exposures can continuously be netted to reduce  daily  settlement  limits  and  unlock  capital,  allowing  more  trade  volumes  to  be conducted.HSBC's key role will be as a full supporter and a network participant of this solution across all supported currencies including emerging market currencies (e.g., CNH). HSBC has been using this solution internally for over 6 years, settled over 9.4 Tn USD, and have realised the benefits of using PvP amongst 18 entities.Figure 5: High level illustration of solution designCustomersCorporateParticipantsSettlingAdministratorAccountBanksPayeesD00oMatchPVP1.CompressPayThere are several reasons why the solution has been successful and operational for over 6 years:  firstly,  the  solution  relies  on  fiat  money  using  existing  bank  account  structures; secondly, the solution is an overlay to existing systems and solutions used by the industry; and  thirdly,  the  implementation  of  shared  ledger  as  a  smart  workflow  and  payment orchestration layer leverages existing risk and control frameworks.Current  industry  challenges  also  include  interoperability  across  multiple  platforms  and networks, increasing ecosystems' complexity and hence operational risks. Migration from legacy to digital can also be costly and takes time. Trading counterparties may not have full
 
 
 
 Page 34 from document Project Guardian FX workstream Transaction Banking
 
-Current  industry  challenges  also  include  interoperability  across  multiple  platforms  and networks, increasing ecosystems' complexity and hence operational risks. Migration from legacy to digital can also be costly and takes time. Trading counterparties may not have full visibility of their forward-looking FX cash flows which may result in missed payments and overdraft fees.Benefits of the OSTTRA PvP solution (by joining as a network participant) will help to solve the following:- Lower costs by removing confirmations, reconciliations and external fees.- Single view of settlement lifecycle across multiple global systems.- Transparency of forward-looking FX cash flows.- Full audit trail from trade capture to cross-border settlement.- Reduced  Herstatt  risk  through  utilisation  of  shared  ledger  to  orchestrate  PvP settlement.- Lower implementation costs, as it's an overlay of existing infrastructure.- Direct API integration available to allow transfer of funds within secs.Future benefits will be enablement of cash flow compressions of outstanding exposures using 'settle to market' payments to reduce counterparty risks and capital requirements.## Business process and solution - straight through processing solutionThe PvP process is designed to follow straight through processing (STP) after onboarding and connectivity has been set up with the OSTTRA shared ledger network. Operational staff will have full graphical user interface (GUI) dashboard for monitoring of the trade lifecycles from trade matching to funding, PvP, and de-funding before completion of the day end obligations.  Exceptional  management  processes  are  available  if  counterparties  wish  to settle outside of the network bi-laterally. The detailed steps are as follows:- Trading counterparties send their trades to OSTTRA in real time.- Trades will be matched by OSTTRA before inclusion in the netting set by currency and counterparty.- On settlement day, pre-settlement netting amounts are matched and agreed by participants which triggers messages to participants' post trade systems for funding of their obligations.- Once funds are received from both sides, a PvP event will occur to reflect change of fund ownership (funds are transferred between trading counterparties' accounts only, OSTTRA is not the intermediary, only acting as an orchestrator of the process).
+
 
 
 
 Page 35 from document Project Guardian FX workstream Transaction Banking
 
-- Funds will move back to designated nostros before market cut-off times.- Participants trading system will need to send trades to OSTTRA in real time.- Participants' post-trade systems will need to be connected (e.g., MQ) to OSTTRA to receive instructions for trade confirmation and funding events.Figure 6: Illustration of business and solution flowCounterparty1TradeOSTTRATradeCounterparty2TradeCaptureTRMTradeCaptureTradeMatchedTradeTradeCurrencyPairCurrencyPairRelease Trigger 1Release Trigger 2PostTradeBatonPost TradeMT202MT910MT202MT900MT202FundingFund transferFund transferFundingPvPAccountsAccountsAccountsOSTTRA service relies on existing network for trade matching and shared ledger (provided by Baton Systems) for record of obligations and orchestration.## Key Learnings and future developments/possibilitiesThis proposed solution needs a network of participants to realise the benefits. With more emphasis on conducting safer and instantaneous cross-border payments, a shared ledger PvP solution will have a significant role to play for reduction of bi-lateral settlement and counterparty  risks. It can  also provide  better  liquidity and  a  reduction  in  capital requirements, unlocking more trading and efficiencies.Direct  API  connectivity  with  participants  also  helps  to  reduce  the  current  network messaging (SWIFT) dependencies &amp; delays from minutes to seconds.OSTTRA  (network  operator)  is  already  connected  with  many  wholesale  banks  and corporates from their existing solutions. With their open APIs, onboarding to this network as a participant will cost less to implement, it's an overlay to existing infrastructures.As the market is trying to solve interoperability, this proposed pilot and recommendation to join can help to solve many of the current challenges.While the suggested use case is mainly for FX related cash flows, this solution is asset class agnostic and so it can easily be expanded for cross asset cash flows in the future.
+
 
 
 
 Page 36 from document Project Guardian FX workstream Transaction Banking
 
-## 7 Developing standardised documentation for tokenised FX transactionsThe  use  cases  above  provide  illustrations  on  possible  implementation  and  potential benefits through the adoption of tokenised bank liabilities and shared ledger solutions. An industry-wide framework that is broadly accepted will accelerate technology adoption by reducing  legal  uncertainty  and  standardising  operations.  This  standardisation  will  help achieve consistency, transparency and efficiency across markets.## 7.1 Existing industry standardsAssociated standards and frameworks have been developed in the FX market to ensure transparency,  efficiency  and  risk  management.  These  standards  are  also  applicable  to transaction  banking  involving  FX  payments.  They  play  a  crucial  role  in  fostering  user confidence and the smooth functioning of the transaction banking market and will act as the  foundation  for  further  development  alongside  the  increased  use  of  tokenised  bank liabilities.| Standards                                       | Examples                                                                                                                                                                                                                                                                                                                                                                               |
-|-------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Messaging and communication                     | • SWIFT Messaging (notably for post-trade and asset servicing). • FIX Protocol (notably for trading) • Adoption of ISO 20022 XML format for trade reporting                                                                                                                                                                                                                            |
-| Standard identifiers for trades and parties     | • Examples of instrument identifiers include Unique Trade Identifiers (UTI) and Unique Product Identifiers (UPI) • Legal Entity Identifier (LEI).                                                                                                                                                                                                                                      |
-| Settlements                                     | • Settlement cycles - T+2 for the vast majority of currencies and T+1 for USD/CAD, USD/TRY, USD/PHP and USD/RUB. • Ideally, PVP settlement and ideally net settlement to alleviate daylight (or Herstatt) risk. 28                                                                                                                                                                     |
-| Regulatory compliance and reporting obligations | • Regulatory compliance and reporting are essential for market integrity, customer protection, and financial stability. Examples include: - Trade reporting for example the MFID II pre and post trade reporting in the EU and Dodd-Frank Act in the US OTC derivatives products, for which ISDA has developed the Digital Regulatory Reporting solution using the common domain model |
+
 
 
 
 Page 37 from document Project Guardian FX workstream Transaction Banking
 
-Table 6: Current Standards and Frameworks Governing the FX Market
 
-| Standards                   | Examples                                                                                                                                                    |
-|-----------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|                             | - Business conduct disclosure standards, to which end ISDA has published the Foreign Exchange Disclosure Annex to the DFA Disclosure and other standards.   |
-| Industry best practices     | • FX Global Code 29                                                                                                                                         |
-| Documentation               | • ISDA Master Agreement • The 1998 FX and Currency Option Definitions jointly published by ISDA, EMTA and the Foreign Exchange Committee.                   |
-| Messaging and communication | • SWIFT Messaging (notably for post-trade and asset servicing). • FIX Protocol (notably for trading) • Adoption of ISO 20022 XML format for trade reporting |## 7.2 Ongoing industry initiatives and regulatory developmentsInternationally,  policymakers  are  leading  efforts  in  exploring  the  use  of  tokenised  bank liabilities and shared ledgers in settlements.  Apart from the BIS and FSB examples cited, other examples include :- Germany :  The  German  Banking  Industry  Committee  (GBIC)  has  published  a whitepaper on the Commercial Bank Money Token (CBMT).- Hong  Kong :  The  Hong  Kong  Government  has  launched  Project  Ensemble,  a wholesale central bank digital currency (wCBDC) project to support the development of the tokenisation market in Hong Kong. One of the sandbox pilot strands is to encourage the use of tokenised deposits.- Singapore :  The  Monetary  Authority  of  Singapore  (MAS)  has  announced  the development of an SGD Testnet to facilitate financial institutions access to common settlement assets for market testing purpose.- South Korea : In South Korea, a live pilot of tokenised deposits, involving 100,000 individuals, started during the October-December quarter of 2024.- United Kingdom : UK Finance, an industry group representing the financial services industry,  has  worked  with  a  number  of  its  members  and  partners  on  a  new Regulated Liability Network (RLN) experimentation phase. 3029 The FX Global Code is a set of global principles of good practice in the foreign exchange market, developed to provide a common set of guidelines to promote the integrity and effective functioning of the wholesale foreign exchange market. https://www.globalfxc.org/fx-global-code/.30 Further information available at: https://www.ukfinance.org.uk/news-and-insight/press-release/uk-finance-announces-successfuloutcome-regulated-liability-network.
 
 
 
 Page 38 from document Project Guardian FX workstream Transaction Banking
 
-- Project Agorá ,  led by the BIS Innovation Hub, together with seven central banks and commercial banks from each jurisdiction, will test for improvements in the speed  and  cost  of  cross-border  payments  by  utilising  technologies  such  as tokenisation and 'smart contracts'.## Development of consistent industry standards for dataTo this end, consistent digital representation standards will also facilitate the development of  smart  contracts.  The  Common Domain Model 31 ('CDM') is  a  standardised,  machinereadable, and machine-executable data and process model for how financial products are traded and managed across the transaction lifecycle. Adoption of the CDM will enable a consistent hierarchical representation of trade data across trades, portfolios and events. It also allows for standard processing of trade lifecycle events, such as reporting under ISDA's Digital Regulatory Reporting initiative, which significantly reduces the time, resources and cost needed to implement reporting regulations in multiple jurisdictions. 32 While the CDM was initially launched for derivatives, it is now used for repos, securities lending and bonds and is hosted by the Fintech Open Source Foundation (FINOS).## Value of standardised documentationStandardised  documents  play  a  critical  role  in  financial  transactions  by  promoting consistency, transparency, and efficiency across markets. They reduce legal uncertainty by providing commonly accepted terms and conditions, which help parties understand their rights and obligations clearly. This consistency minimises the risk of disputes and litigation, fostering  smoother  negotiations  and  faster  execution  of  transactions.  Ultimately,  it enhances market stability, reduces transaction costs, and promotes broader participation in global financial markets, especially in complex transactions like derivatives.## Developing standardised documentation for tokenised depositsThe Project Guardian FX workstream has identified that one of the practical challenges is the lack of standard terms in FX transactions using tokenised bank liabilities. Specifically for tokenised deposits, ISDA has been asked to develop industry standard documentation to facilitate use of tokenised deposits in FX transactions. One approach would be to leverage the existing ISDA documentation framework and develop model provisions (the ' Additional Provisions ')  for  parties  that  wish  to  settle  deliverable  FX  spot,  forward,  and  swap transactions under an ISDA Master Agreement using deposit tokens, each denominated in a single fiat currency and issued or held on a shared ledger-based settlement platform. The Additional Provisions contemplate that such transactions will incorporate the definitions and provisions contained in the 1998 FX and Currency Option Definitions as published by ISDA,  Emerging  Markets  Traders  Association  and  the  Foreign  Exchange  Committee  (the ' 1998  FX  Definitions ') 33 ,  or,  as  applicable,  the  2021  ISDA  Interest  Rate  Derivatives Definitions (the ' 2021 Definitions ') as published by ISDA. The chart below illustrates the ISDA documentation framework for FX transactions:31    Further information about the common domain model is available at https://www.finos.org/common-domain-model.32 Further  information  about  the  ISDA  Digital  Regulatory  Reporting  initiative  is  available  at  https://www.isda.org/isda-solutionsinfohub/isda-digital-regulatory-reporting/.33    ISDA is in the process of updating the 1998 FX Definitions, with the industry implementation phrase set to run from late 2025 to November 2027.
+
 
 
 
 Page 39 from document Project Guardian FX workstream Transaction Banking
 
-The Project Guardian FX workstream has identified that one of the practical challenges is the lack of standard terms in FX transactions using tokenised bank liabilities. Specifically for tokenised deposits, ISDA has been asked to develop industry standard documentation to facilitate use of tokenised deposits in FX transactions. One approach would be to leverage the existing ISDA documentation framework and develop model provisions (the ' Additional Provisions ')  for  parties  that  wish  to  settle  deliverable  FX  spot,  forward,  and  swap transactions under an ISDA Master Agreement using deposit tokens, each denominated in a single fiat currency and issued or held on a shared ledger-based settlement platform. The Additional Provisions contemplate that such transactions will incorporate the definitions and provisions contained in the 1998 FX and Currency Option Definitions as published by ISDA,  Emerging  Markets  Traders  Association  and  the  Foreign  Exchange  Committee  (the ' 1998  FX  Definitions ') 33 ,  or,  as  applicable,  the  2021  ISDA  Interest  Rate  Derivatives Definitions (the ' 2021 Definitions ') as published by ISDA. The chart below illustrates the ISDA documentation framework for FX transactions:Figure 7: FX and Currency Options Documentation ArchitectureMasterAgreementDefinitionsCredit Support1992MasterAgreement·1998FXandCurrencyOptionDefinitionsDocuments2002MasterAgreement(Multicurrency-Crossborder)/·2021InterestRateDerivativesDefinitions·Supplementto1998FXandCurrency2002MasterAgreementProtocolOptionDefinitionsConfirmations·ISDALong-formconfirmationsShort-formconfirmationsMasterConfirmationAgreementsEMTATemplateTerms## Changes to the FX Definitions to accommodate tokenised modelsThe Additional Provisions assume that the tokens in question record a sum of fiat cash in an account with the relevant participating banks, and are in registered or claims form. The liquidity provider will hold a pool of tokens from the participating banks which it will use to provide liquidity services to users. A user who holds tokenised deposits in one currency and wants  to  exchange  it  for  another  currency  may  enter  into  an  FX  transaction  with  the liquidity provider. The amendments assume that the liquidity provider and each user have signed,  a  2002  ISDA  Master  Agreement  and  envisage  that  the  transactions  will  be documented using a deliverable FX confirmation incorporating the 1998 FX and Currency Option Definitions 1998 FX Definitions as supplemented by  these additional provisions. Although the Additional Provisions are drafted for the specific use case envisaged by the Project Guardian industry pilots, they may further be used as a reference and adapted as necessary, taking into account differences in token design and transaction structures.Adapting  the  'Additional  Provisions'  to  accommodate  tokenised  models  would  require amendments to capture changes to timing, operating models, and the role of platforms. Preliminary studies indicate that these changes could potentially include:- changes to the 'Business Day' definition to permit 24/7 settlement;- including a definition of 'tokenised deposits' and clarifying that cash and currency includes tokenised deposits;- clarifying  how  payments  under  the  transactions  will  be  made  in  the  context  of tokenised deposits;- including,  to  the  extent  needed,  contingency  provisions  to  cater  for  platform related events; and- including  representations  from  counterparties  of  their  continued  access  to  the platform in order to allow settlement on platform.
+
 
 
 
 Page 40 from document Project Guardian FX workstream Transaction Banking
 
-## Enforceability of close-out netting and collateral arrangementsThe  enforceability  of  the  ISDA  Master  Agreement  and  Credit  Support  Documents  are supported by the netting and collateral opinions obtained by ISDA. 34 The principal focus of the opinions has always been on ensuring enforceability of netting and a related collateral arrangement  against  a  party  that  is  subject  to  insolvency  proceedings.  This  is  because mandatory insolvency rules come into operation that could potentially disrupt close-out netting and/or a related collateral arrangement. Applying existing insolvency law rules to a new asset class inevitably raises legal characterisation and other questions that must be tackled to provide the necessary certainty. ISDA has published a white paper 35 exploring the application of close-out netting to digital asset derivatives and the enforceability of collateral arrangements that involve transfers or exchanges of digital assets. The insolvency laws in each applicable jurisdiction should be considered in the context of tokenised assets. In the jurisdictions which have enacted specific legislation providing the legal basis for the issuance and ownership status of shared ledger-based tokens, the treatment of such tokens in  an  insolvency  situation  may  be  expressly  catered for.  In  jurisdictions  without  specific enabling legislation, general insolvency laws principles will need to be applied.In the context of tokenised deposits, the nature of the customer's rights against an issuer will lend to the nature of its claim against that entity in any insolvency proceedings.34 A list of the jurisdictions from which ISDA has obtained netting and collateral opinions appears on the ISDA website at www.isda.org, together with a list of the jurisdictions around the world that have enacted or are considering enacting netting legislation.35  https://www.isda.org/2023/01/26/navigating-bankruptcy-in-digital-asset-markets-netting-and-collateral-enforceability/01/07/2025
+
 
 
 
 Page 41 from document Project Guardian FX workstream Transaction Banking
 
-## 8 ConclusionThe future of finance points towards an interconnected ecosystem where tokenised assets can  be  traded  and  settled  globally,  with  settlement  finality  between  counterparties. Achieving  this  vision  requires  progress  on  two  fronts.  First,  the  development  of  multipurpose shared ledger infrastructures that can support the exchange of tokenised assets and money while meeting regulatory expectations. Secondly, the development of robust connectivity protocols with liquidity providers serving as intermediaries to bridge different ledger platforms 36 , and across multiple trading venues. 37## Moving forwardFinancial institutions would need to adapt their existing processes and infrastructures to prepare for the growing tokenised asset market. This paper has examined several use cases that demonstrate how FX transactions can integrate with tokenised asset infrastructures, highlighting how shared ledger networks can enhance operational efficiency. As both the technology and protocols mature, and as industry participants advance their applications, current interoperability challenges with existing systems will likely be resolved.Innovation and transformation in financial markets must extend beyond individual asset classes and institutions. Project Guardian provides a platform for industry participants to develop common standards across different capital markets products, enabling tokenised assets to scale sustainably and pool liquidity.The improved efficiencies achieved in transaction banking could generate broader benefits across financial market and enhance settlement processing for other asset classes 38 :- Liquidity  Optimisation: Enhanced  transaction  banking  efficiency  could  free  up liquidity  by  reducing  funds  in  transit  and  capital  tied  up  in  for  pre-funding  of payments. However, it is imperative to address the potential fragmentation of the liquidity  pool  and  fungibility  of  liquidity  pools  arising  from  programmability  of tokenised bank liabilities.- Risk  Reduction: Streamlined  cross-border  payments  and  FX  settlements  could minimise  counterparty  and  settlement  risk,  given  that  a  common  risk-free settlement asset and settlement finality could be jointly adopted by the market.- Market Standardisation: The adoption of tokenised bank liabilities by more market participants may encourage broader standardisation across the different systems,36 As discussed in the IMF Article A Digital Marketplace to Improve Cross-Border Payments ; at https://www.imf.org/en/Publications/fintech-notes/Issues/2023/03/03/Trust-Bridges-and-Money-Flows-A-Digital-Marketplaceto-Improve-Cross-Border-Payments-528038.37 Another example is the Regulated Liability Network (RLN) proposal for a regulated financial market infrastructure that can deliver an interoperable network for various facets of the sovereign currency system: central bank money, commercial bank money, emoney and regulated stablecoins. https://regulatedliabilitynetwork.org/. The IMF (see paper in footnote 2) has considered a global clearinghouse to intermediate swap arrangements between central banks.38 The BIS Reports on Tokenised Assets has explored the implications of tokenisation on financial markets, including its potential to reduce  settlement  risks  and  enhance  market  efficiency.  Studies  on  Continuous  Linked  Settlement  (CLS)  and  Payment-versusPayment (PVP) systems have demonstrated how reducing settlement risk in one area of FX can positively influence broader markets. Various papers from SWIFT, ISDA, and financial institutions often discuss the cascading effects of technological adoption in financial services.
+
 
 
 

@@ -240,3 +240,38 @@ class SparseEmbedder:
         )
 
         return embedding
+
+
+
+class Jina:
+
+    def __init__(self):
+        self.url = os.getenv('jina_url')
+        self.headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {JINA_API_KEY}"
+        }
+
+    def text_rerank(self, query, sources):
+        ordered_page_ids = list(sources.keys())
+        markdowns = [sources[page_id]['markdown'] for page_id in ordered_page_ids]
+        
+        data = {
+            "model": "jina-reranker-v3",
+            "query": query,
+            "documents": markdowns,
+            "top_n": len(markdowns)
+        }
+
+        response = requests.post(self.url, headers=self.headers, json=data).json()
+
+        for item in response.get("results", []):
+            origin = item["index"]            
+            score = item["relevance_score"]
+
+            page_id = ordered_page_ids[origin]
+
+            sources[page_id]["text_score"] = score
+
+        return sources
+

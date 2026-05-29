@@ -1,12 +1,6 @@
 
 
 
-Page 1 from document government-personal-data-protection-policies-jul21
-
-## Government Personal Data Protection Policies## Jul 2021The publication of this document is simply for the information of the public. The policies operate subject to the requirements of law, contract, and other Government policies and rules governing data in general. The Government may, in its sole discretion, update the policies set out in this document without publishing such updates. The Government will not be liable for any loss or damage that may be incurred on account of relying on any information contained in this document.SMARTNATION&amp;DIGITALGOVERNMENTOFFICE
-
-
-
 Page 2 from document government-personal-data-protection-policies-jul21
 
 | Foreword                                                                                       |   3 |
@@ -260,6 +254,20 @@ Page 33 from document government-personal-data-protection-policies-jul21
 
 
 
+Page 43 from document government-personal-data-protection-policies-jul21
+
+## Change Log|   S/N | Date of Change   | Description of Change                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+|-------|------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|     1 | 1 July 2021      | a. Introduced new provision on deemed consent by contractual necessity b. Revised existing exceptions to consent -business asset transaction purposes, employment relationship purposes and research purposes c. Elaborated what public agencies are required to do when they reject individuals' requests for access to their personal data, e.g. notify individuals of the rejection within the stated time and in accordance with the stated requirements, preserve a copy of the personal data concerned d. Clarified that the 'repetitious or systematic nature' of access requests referred to the number and frequency of requests received |
+
+
+
+Page 1 from document government-personal-data-protection-policies-jul21
+
+
+
+
+
 Page 34 from document government-personal-data-protection-policies-jul21
 
 
@@ -309,12 +317,6 @@ Page 41 from document government-personal-data-protection-policies-jul21
 
 
 Page 42 from document government-personal-data-protection-policies-jul21
-
-
-
-
-
-Page 43 from document government-personal-data-protection-policies-jul21
 
 
 
