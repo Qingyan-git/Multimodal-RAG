@@ -58,15 +58,30 @@ Page 9 from document smartnation2-report
 Page 10 from document smartnation2-report
 
 Personal Data Protection Act enacted in 2012, Public Sector (Governance) Act enacted in 2018 to maximise value of data in trusted, safe environment One of the biggest tests for Singapore's Smart Nation initiatives was the COVID-19 pandemic, which unfolded from early 2020. Singapore's economic and social activities went online. Technology became central to Singapore's fight against the virus. The robust digital capabilities that we developed over the years enabled us to respond swiftly and effectively.- We kept Singaporeans safe with digital tools such as SafeEntry and TraceTogether, which allowed contact tracing to be conducted at scale. We set up and launched a vaccine appointment system in less than a month, which facilitated vaccinations for over 90% of our population in one year.- We kept our economy and society going. We ensured learning could continue in schools, swiftly shifting to full home-based learning with the use of digital platforms and tools. We were able to disburse economic and social support schemes quickly through online platforms.- We kept Singaporeans up to date with trusted sources of information, through platforms such as Gov.sg and the GoWhere website. This helped the public collect supplies such as face masks and find clinics.
-IMAGE FOUND, DESCRIPTION : - Global map visualization with multiple geolocated markers connected by lines, representing a distributed network of SafeEntry nodes.
-- Central figure: an illustrated person standing to the left, holding a mobile device (smartphone) with a prominent SafeEntry emblem on the screen.
-- Left-side device: a tall smartphone with a large SafeEntry circular logo superimposed on the screen, containing a stylized icon (three vertical bars with a rounded top) and the text “SafeEntry” in the logo’s banner.
-- Map layer: stylized world map in light peach color with numerous circular marker icons positioned at various geographic points (continents/regions).
-- Marker icons: round pins with SafeEntry logo, consisting of a white circular badge with the SafeEntry emblem and red/orange accent ring.
-- Connector elements: thin white lines linking several map markers, indicating relationships or data flow between locations.
-- Supplemental UI: a small floating SafeEntry badge icon appears near bottom-left of the smartphone device, repeating the logo and branding.
-- Color scheme: pastel peach/orange world map, white marker interiors, red/orange logo accents, and dark gray/blue device and figure outlines.
-- Semantic roles: depiction of a distributed SafeEntry presence (global coverage), user-device authentication/verification on mobile, and networked entry points for a contactless or digital health/safe-entry system.
+IMAGE FOUND, DESCRIPTION : - System overview: Global SafeEntry digital validation and contactless check-in system depicted as a mobile app ecosystem with worldwide node distribution.
+
+- Primary components:
+  - Mobile device (smartphone) interface showing SafeEntry branding and a large circular red “TRACE TOGETHER READY” seal on screen, implying a digital verification badge for entry.
+  - A person wearing headset stands beside the device, indicating user interaction or support.
+  - Global map visualization representing distributed SafeEntry nodes across regions, connected by network lines.
+
+- Nodes and symbols on map:
+  - Multiple SafeEntry circular icons with a stylized door or entry symbol inside each circle, labeled “SafeEntry.”
+  - Red location pin markers scattered across continents to denote specific entry-check points or activation sites.
+  - Some icons have a thin white border and red fill; others are blue-gray map markers for alternate locations.
+  - Connecting lines show directional data flow or network connectivity between nodes, suggesting centralized verification or data synchronization.
+
+- Data flow semantics:
+  - User interacts with SafeEntry mobile app to obtain or present a verification badge.
+  - Verification badge (on device and in iconography) indicates acceptance by SafeEntry for entry permissions.
+  - Networked map depicts centralized or distributed verification servers communicating status to devices at various geographic locations.
+
+- Visual semantics and branding:
+  - Recurrent SafeEntry logo: a split door icon on a circular badge with the text “SafeEntry.”
+  - Color palette dominated by red, white, and light blue tones, with map tint in pale pink/beige.
+
+- Intended use-case interpretation:
+  - A digital health passport/entry credential system enabling verified entry through SafeEntry badges, with global deployment points enabling check-ins at multiple locations.
 SafeEntryl09:00SafeEntryoEntryOSateEntryofeEntryCSateEntrySafeEntryHERECORCSafeEntrySafeEntryWe set up and launched a vaccine appointment system in less than a month, which facilitated vaccinations for&gt;90% of our population in one year Singaporeans from all walks of life stepped up to care for others in the community. Technology amplified their impact. Citizens created videos to teach children about the pandemic. Others raised funds online for those hard-hit by COVID-19. The pandemic proved our mettle and spirit as we used technology to overcome novel challenges as a nation.
 
 
@@ -80,16 +95,18 @@ Page 11 from document smartnation2-report
 Page 12 from document smartnation2-report
 
 
-IMAGE FOUND, DESCRIPTION : - Document type: Photograph of a supermarket interior (likely a lifestyle or instructional image)
-- Scene description: An adult male customer (gray-haired, wearing a blue polo) and a young girl (pink dress) standing at a store aisle with shelves of groceries behind them. The man holds a smartphone in his right hand and is smiling while looking at the device. The girl is holding a large rainbow-colored lollipop. A cashier or store staff member in a blue vest is visible on the left foreground, facing away from the camera.
-- Interaction/action: The man appears to be using a smartphone to scan or display information to the girl, possibly demonstrating a digital payment, loyalty app, or QR/price check. The girl is watching attentively.
-- Setting details: Grocery store aisle with packaged products (oils, snacks) on the shelves. A vertical promotional sign or label is visible behind the man near the shelves. The background includes typical retail lighting and ceiling structures.
-- Visual elements and composition: 
-  - Foreground: Partial view of a staff member in a blue uniform; man and girl in the middle ground; lollipop as a focal accessory.
-  - Midground: Shelves with yellow- and orange-packaged items; cash/register area not visible.
-  - Background: Additional shelves with beverages and other groceries; overhead lighting; store signage.
-- Thematic interpretation: Intergenerational consumer engagement; use of mobile device for in-store interaction; family-friendly shopping moment; emphasis on in-store technology and customer service.
-- Potential metadata keywords: chapter 1, improving citizens’ lives, checkout, digital literacy, in-store app, mobile scanning, customer service, family shopper, supermarket, grocery store, promotional signage.
+IMAGE FOUND, DESCRIPTION : - Scene: A convenience store or supermarket checkout area with bright aisle lighting and product shelves in the background.
+- Primary subjects: An adult man (wearing a blue polo shirt) and a young girl (wearing a pink sleeveless dress) standing side by side facing a cashier.
+- Interaction: The man is holding a smartphone in his right hand, appearing to show or scan something on the device to the cashier. The girl is smiling and holding a large blue-and-green swirled lollipop.
+- Cashier: A person in a blue uniform is partially visible on the left side of the frame, facing the man and girl, likely processing a transaction on a handheld device or register screen.
+- Environment details:
+  - Shelves stocked with snack items and yellow-orange product packages behind the subjects.
+  - A green-framed sign or display hanging from the ceiling near the counter.
+  - Overhead signage and a circular “Check Out” sign visible near the ceiling.
+- Composition notes:
+  - Foreground: The man and girl are the focal points, centered toward the right, with the cashier on the left edge.
+  - Background: Grocery aisles and product shelves provide context of a retail setting.
+- Visual cues: The colors are warm and saturated; the man appears to be assisting the girl with a digital device, suggesting a checkout or customer service interaction. The overall mood is friendly and collaborative.
 ## CHAPTER 1Improving Citizens' Lives2CHECKOUTorstnutsCDC VoucherAcceptedHere燕窝
 
 
@@ -150,225 +167,73 @@ Page 21 from document smartnation2-report
 
 Page 22 from document smartnation2-report
 
-## Improving Citizens' Lives## vi. Lifelong learningJust  as  technology  can  help  us  keep  fit and  healthy,  it  can  also  keep  our  minds active  and  engaged.  We  have  used  digital technologies to make knowledge come alive for all Singaporeans and support them in their lifelong learning journeys.## a.  Supporting our children's educationAs  children  progress  through  school, parents may find it challenging to keep up with a multitude of tasks: tracking when  their  children's  enrichment and  co-curricular  activities  are  held, signing  consent  forms  for  trips,  and more. The Ministry of Education's (MOE) Parents Gateway app consolidates this information online, enabling parents to read and respond on the go. Parents can even book appointments for parentteacher meetings on the application.The Parents Gateway app enables parents to read and respond on the go## Glimpses of the Future## Making online content simpler for studentsOnline  content  is  typically  written  in language pitched at the reading level of adults  and  may  present  challenges  for students with literacy barriers. This can be discouraging for students and make them reluctant to read.Simpler is an AI-powered browser plugin which allows students to access online content at their preferred reading level. Students can select any text in their browser and simplified versions will appear on a side panel for their convenience. Simpler also  helps  define  and  explain  technical terms. With this plugin, students can focus on  learning  rather  than  struggling  to decipher text.Simpler  is  currently  undergoing  a  pilot test involving over 110 students taking up G1 English Language. 7 Initial feedback has been promising, with teachers and students describing its use as a seamless, enjoyable learning experience.Future iterations of Simpler could offer even  more  personalised,  supportive learning environments for students and possibly simplify texts in languages other than English.P
+
 
 
 
 Page 23 from document smartnation2-report
 
-## b.  Enjoying our librariesMany Singaporeans cherish a visit to the nearby library where they can immerse themselves in a world of books, stories, and learn something new. Through technology, we can extend these unique experiences digitally for more citizens to enjoy.Initiatives  under  the  National  Library Board's (NLB) LAB25 (Libraries and Archives Blueprint  2025)  leverage  technology to  reimagine  libraries  and  archives  in Singapore. For example, StoryGen allows users to put their own twists on well-loved stories and see them come alive in an AIpowered  multimedia  experience.  This prototype service was first launched at the Central Public Library and is currently roving at other libraries.Libraries  also  provide  an  inviting environment for Singaporeans to learn and apply new digital skills; users can pick up information literacy skills and experiment  with  technologies  like 3D printing.Citizens can also access library resources while on the move. With the NLB mobile app, Singaporeans have convenient access to a growing range of digital resources, such as e-books and online courses.AI-enabled multimedia and human imagination come together in StoryGen, where library visitors make their own stories come alive.Image Source:National Library BoardAn Unexpected Allylonely,not dangerous.s.He showed themea monster.RahulInitiatives under the National Library Board's LAB25 leverage technology to reimagine libraries and archives in Singapore.
+
 
 
 
 Page 24 from document smartnation2-report
 
-## Improving Citizens' Lives## vii. Caring for one anotherTechnology can help us better care for our loved ones and the needy.## a.  CaregivingDigital apps like HealthHub support those who need to take  care  of  their  loved ones. With their consent, caregivers can view  loved  ones'  health  records  such as vaccination history and test reports online. They can also create and track appointments on these platforms.Caregivers can use the care services recommender function on the SupportGoWhere  website  to  identify schemes and services that they may need, including  mental  health  and  financial assistance initiatives.## b.  Protecting seniors in needWe use technology to support seniors who live independently, keeping them connected to their communities.HealthHub## Help at all hours for seniors through wireless alertsTo  provide  timely  help  to  seniors  in need, HDB and GovTech will expand the provision of wireless alert alarm systems to households with at least one senior aged 60 and above and living in about 170 rental blocks islandwide. Seniors who press the alert device in their homes will be connected to CareLine, a 24/7 hotline that responds to those in distress and provides round-the-clock emergency response services.  This  initiative  is  expected  to benefit nearly 27,000 seniors.
+
 
 
 
 Page 25 from document smartnation2-report
 
-## A personalised care ecosystem for independent seniorsSocial  service  agency  Lions  Befrienders  has created a personalised digital care ecosystemthe I-OK Ecosystem-to support the independence and safety of the seniors they serve.Lions Befrienders has distributed 1,000 IM-OK tablets that seniors can use to let their nextof-kin, Lions Befrienders' staff, or volunteers know that they are well by tapping the 'I'm OK' button on the device at scheduled times. The tablets can also send reminders to seniors to take their medications.One such user is Madam Jackie Cheng, a 64-yearold retiree who lives alone and benefits from the daily check-ins through the IM-OK tablet.One morning, Madam Cheng experienced severe vertigo which left her too dizzy to get out of bed. As she missed her check-in on the IM-OK device, a notification was sent to her nephew, prompting him to visit her and take her to the doctor. Madam Cheng has since recovered well.Senior beneficiaries learning how to use the IM-OK device.Image Source:Lions Befrienders Service Association (Singapore)## c.  Supporting one another in times of needDigital technologies can be deployed to mobilise citizens to support one another during emergencies.## Enabling swift emergency assistanceMany  cardiac  arrest  or minor fire cases that the Singapore Civil Defence Force (SCDF) receives may be quickly attended to by the public in the vicinity. Anyone  can  register  asSCOFLa  Community First Responder (CFR) via SCDF's myResponder app.  The app alerts CFRs to nearby cases of cardiac arrest and minor fires. A chat function allows CFRs to communicate with the SCDF Operations Centre to get real-time guidance.Since myResponder's launch in 2015, over 180,000 CFRs have registered themselves and 80 lives have been saved by CFRs who attended to cardiac arrest cases through the app.
+
 
 
 
 Page 26 from document smartnation2-report
 
-## Improving Citizens' Lives## Smart Nation 2.0: A Refreshed Vision B.We have made significant progress in how we use technology to overcome challenges and improve lives. Our investments across digital economy, society, government, and security have paid off and raised Singapore's international standing. Several global indicators recognise Singapore as a leader in areas like digital infrastructure and inclusion.The landscape of digital technologies is evolving rapidly. Generative AI tools have progressed from completing text paragraphs to generating realistic videos and writing code. On the horizon, emerging technologies like quantum computing have the potential to usher in a new era of technological advancement.Such developments present a world of new opportunities for Singapore and for humanity.- Augmented or virtual reality can help connect people across distances and times.- AI is already enabling us to deliver more personalised, tailored services to citizens. It could accelerate drug discovery for the healthcare sector and spur new treatment options for patients.- Quantum technology could be used to secure our communication channels against malicious interception of data. It could help us better understand our world and propel breakthroughs in fields like physics, chemistry, and materials science.AI口00011001111000
+
 
 
 
 Page 27 from document smartnation2-report
 
-## However, digital developments have also given rise to new challenges.- Online harms such as scams, cyberbullying, misinformation, and disinformation challenge our sense of safety and wellbeing. 8 Cybersecurity incidents and digital outages have also led to significant financial losses and disruptions.3- Technology-induced isolation, 9 mental health concerns, and online polarisation strain our social fabric. Digital exclusion can also worsen socioeconomic inequalities and deepen social divides.- Workers worry about job disruptions and their impact on livelihoods. Some feel that technology is changing too quickly and in ways that do not benefit them. 10UPGRADEOur refreshed Smart Nation vision must address these needs and concerns. We still believe that technology can be harnessed for good. We must continue to seize new opportunities and reap the benefits that digital developments can bring.But we need to go beyond a narrow focus on digitalisation. We must continuously examine the impact of technology on our humanity and society. We must shape and direct digital developments toward outcomes that benefit Singaporeans. We must always be guided by the need to uphold our shared values as a nation to move forward together.But we need to go beyond a narrow focus on digitalisation. We must continuously examine the impact of technology on our humanity and society. We must shape and direct digital developments toward outcomes that benefit Singaporeans. We must always be guided by the need to uphold our shared values as a nation to move forward together.8 Annual Scams and Cybercrime Brief 2023, Singapore Police Force, 18 February 2024.9 Singapore Perspectives 2024 Pre-Conference Poll, Institute of Policy Studies, 29 January 2024. The poll found that young people aged 21 to 34 were more likely to report higher levels of social isolation and loneliness, with 53% of respondents finding it easier to talk to people online than offline.10   2024 Edelman Trust Barometer, Edelman Trust Institute, 14 January 2024.
+
 
 
 
 Page 28 from document smartnation2-report
 
-## Smart Nation 2.0: Our Vision and Compass for the Future C.Smart Nation 2.0 seeks to achieve three key goals: Trust, Growth, and Community.We aspire to be a Smart Nation that we can trust, a Smart Nation that helps us grow, and a Smart Nation that keeps us together.More than a destination, these goals serve as our compass to shape how we use technology to improve citizens' lives and create a thriving digital future for all. They also reflect key areas of feedback and concern that citizens have raised over the years, gathered through surveys, research, and other feedback channels. 11
-IMAGE FOUND, DESCRIPTION : - Visual structure: Split infographic with a left stacked circular/segmented wedge diagram and right-side text blocks aligned to corresponding left segments.
 
-- Left column (segmented wedge diagram) with three labeled sectors:
-  1) Sector label: Trust (top-left). Visuals: two people; lock icon; pale purple background circle wedge.
-  2) Sector label: Growth (middle-left). Visuals: person ascending/using graph with red upward arrow; background wedge in gray tones.
-  3) Sector label: Community (bottom-left). Visuals: people with a heart/handholding imagery; wheelchair icon; pink-tale background wedge.
-
-- Right column (text sections corresponding to left sectors) with three paired blocks, each consisting of a bold heading in purple/red and a descriptive paragraph in darker text, separated by horizontal divider lines:
-  1) Paired block 1
-     - Heading: "A Smart Nation that we can trust," (bold; color emphasis on trust-related wording)
-     - Paragraph: "because Singaporeans must be able to go online with confidence, knowing that our digital systems are reliable and that their safety is not compromised."
-  2) Paired block 2
-     - Heading: "A Smart Nation that helps us grow," (bold; emphasis on growth)
-     - Paragraph: "because technology must be harnessed to empower our people and enterprises to learn and excel in better ways."
-  3) Paired block 3
-     - Heading: "A Smart Nation that keeps us together," (bold; emphasis on togetherness)
-     - Paragraph: "because technology must be used to bring our communities together and strengthen our society."
-
-- Data points / signals:
-  - Trust: association with online confidence and safety integrity of digital systems.
-  - Growth: empowerment of people and enterprises; learning and performance improvement.
-  - Community: digital cohesion, inclusion of diverse groups (e.g., accessibility for persons with disabilities), societal strengthening.
-
-- Relationships and flow:
-  - Left wedges label domains (Trust → Growth → Community) with directional emphasis from top to bottom.
-  - Each left-domain wedge corresponds to a right-column explanatory block that elaborates on the domain’s core objective:
-    - Trust domain relates to reliability and safety of digital systems.
-    - Growth domain relates to empowerment and learning improvements.
-    - Community domain relates to social cohesion and inclusivity.
-
-- Semantic domain keywords for indexing:
-  - Smart Nation, digital trust, cybersecurity, online safety, reliability, confidence, digital systems integrity.
-  - Growth empowerment, digital literacy, learning acceleration, enterprise enablement, innovation.
-  - Community inclusion, social cohesion, accessibility, disability inclusion, societal strengthening, civic engagement.
-  - Visual motifs: segmented wedge diagram, upward growth arrow, heart/community icons, lock security, accessibility imagery.
-
-- Data extraction granularity:
-  - Exact text snippets (as seen):
-    - Heading 1: "A Smart Nation that we can trust,"
-      Paragraph 1: "because Singaporeans must be able to go online with confidence, knowing that our digital systems are reliable and that their safety is not compromised."
-    - Heading 2: "A Smart Nation that helps us grow,"
-      Paragraph 2: "because technology must be harnessed to empower our people and enterprises to learn and excel in better ways."
-    - Heading 3: "A Smart Nation that keeps us together,"
-      Paragraph 3: "because technology must be used to bring our communities together and strengthen our society."
-  - Left-sector labels: Trust, Growth, Community.
-  - Visual descriptors: icons (lock, upward arrow, people/heart/wheelchair), color cues (purple, gray, pink wedges).
-
-- Structural metadata for vector DB:
-  - Blocks: LeftSegment[Trust] -> RightBlock[TrustHeading, TrustParagraph]
-  - Blocks: LeftSegment[Growth] -> RightBlock[GrowthHeading, GrowthParagraph]
-  - Blocks: LeftSegment[Community] -> RightBlock[CommunityHeading, CommunityParagraph]
-  - Relationships: Trust ≈ online safety, Growth ≈ empowerment/learning, Community ≈ social cohesion/inclusivity
-  - Visual features: segmented wedge diagram with three sectors; corresponding right-aligned descriptive blocks and dividing lines.
-A Smart Nation that we can trust, becauseSingaporeans must be able to go online with confidence, knowing that our digital systems are reliable and that their safety is not compromised.A Smart Nation that helps us grow, because to empower our people and enterprises to learn andtechnology must be harnessed excel in better ways.A Smart Nation thatkeeps us together, because technology must be used to bring our communities together and strengthen our society.SN2.0 remains anchored on efforts to improve citizens' lives through technologyCommunityGrowthTrust
 
 
 
 Page 29 from document smartnation2-report
 
-Our Smart Nation 2.0 strategies are akin to a ' living document '  that will be continually iterated and adjusted as digital developments unfold.We will adapt our approaches over time in close consultation with citizens and businesses, responding to advancements in technology and emerging challenges. The goals of Trust, Growth, and Community will guide our responses to digital developments, even as our strategies evolve.
+
 
 
 
 Page 30 from document smartnation2-report
 
 
-IMAGE FOUND, DESCRIPTION : - Document title region:
-  - Chapter label: “CHAPTER 2”
-  - Chapter subtitle: “Trust”
-
-- Visual layout and decorative elements:
-  - Left-aligned black-to-dark-red rounded rectangle badge containing the chapter information
-  - Background shows a classroom or meeting room with several attendees seated at tables
-  - Foreground: a man in a white polo shirt holding a smartphone or small device, facing forward
-  - Background attendees: woman in red top, woman in light blue shirt, man in blue shirt and glasses, all seated with devices or looking toward the speaker
-  - Foreground speaker (right edge): partial view of a person in a purple top, facing the man with the device
-
-- Relative positions and flow:
-  - The chapter badge (CHAPTER 2 / Trust) is anchored at the top-left area of the image
-  - The central focal point is the man in the white polo shirt (middle-left), who is a participant or presenter
-  - The speaker on the right side creates a left-to-right interaction flow toward the central participant
-
-- Contextual interpretation for data indexing:
-  - Scene type: in-person discussion or training session
-  - Primary subject: a participant presenting or demonstrating a device to the group
-  - Thematic keywords: chapter, trust, technology, presentation, classroom, seminar
-
-- Data points and visible elements:
-  - Attendees: at least four visible people
-  - Devices: smartphone or small device in the foreground participant’s hands
-  - Attire: white polo shirt (foreground), casual clothing among attendees
-  - Environment: indoor classroom or conference room with wooden walls and seating
-  - Visual cues: circuit-like graphic overlay near the top right of the image (design element) implying tech/ digital trust theme
-
-- Semantic keywords for database indexing:
-  - Chapter 2: Trust
-  - Presentation scene
-  - In-person training
-  - Participant with device
-  - Classroom setting
-  - Attendee interaction
-  - Technology, digital trust concept
-  - Visual motif: circuit overlay, tech-themed design
-
-- Relationships and dependencies (flow graph style):
-  - CHAPTER 2 (Trust) connects to the central participant via the device demonstration
-  - Foreground speaker (partial) engages with the central participant
-  - Attendees in background form a peripheral audience, indicating a teaching or demonstration context
-  - The circuit motif overlays indicate a technology-centric narrative linking to “Trust”
-CHAPTER 2Trust
 
 
 
 Page 31 from document smartnation2-report
 
-## TrustSingapore takes a holistic approach to building a Smart Nation that is safe, reliable, and secure. Our citizens and enterprises must be able to depend on our digital infrastructure. Harmful online activities should be detected and disrupted quickly, with effective help and redress readily available to victims. Our citizens must be equipped with knowledge and skills to go online safely and confidently.While the government takes the lead in developing policies, providing support and resources, and rallying partners to achieve these objectives, a collective effort is still needed. This requires individuals, groups, and organisations to do their part.## To build a Smart Nation that we can trust, we will:A.Enhance the security and resilience of our digital infrastructureStrengthen our fight against harmful online activitiesB.Expand our trusted digital spaces togetherC.
+
 
 
 
 Page 32 from document smartnation2-report
 
-## Enhancing the Security and Resilience of Our Digital Infrastructure A.Digital  infrastructure  forms  the  foundation  of  our  Smart  Nation.  It  powers  our digital economy and the digital products and services that citizens rely on. As with physical  infrastructure  like  utilities  and  public  transport,  digital  infrastructure such as broadband and mobile networks, data centres, and cloud services need to have high availability. Unexpected disruptions can greatly impact individuals and businesses and erode trust and confidence in the use of digital technology.For example, in 2024, a flawed software update by cybersecurity firm CrowdStrike caused major disruptions at multiple locations around the world. In 2023, a fourhour data centre outage caused by the failure of a cooling system resulted in the widespread disruption of banking services in Singapore.Highly reliable digital infrastructure and services give people and businesses peace of  mind  and  allow  us  to  make  plans  with  certainty.  While  we  cannot  completely prevent disruptions or cyberattacks from occurring, our key systems must be wellprotected against them, with our people and organisations prepared to respond and recover.2018 Cybersecurity Act enacted2021 National Quantum Safe Network set up2023 National Quantum Safe Network Plus launched Digital Infrastructure Act to be2024 Cybersecurity Act enhanced2025 introduced
+
 
 
 
 Page 33 from document smartnation2-report
 
-## i.  Ensuring security and resilience of organisations and systemsOver the years, Singapore has put in place comprehensive  measures  to  uphold  the security and resilience of key organisations and their IT systems.- The  2018  Cybersecurity  Act  fortifies the security of computer systems that deliver essential services like banking, energy,  and  water  supply.  Owners  of critical information infrastructure must implement  cybersecurity  measures, conduct regular risk assessments and audits, report incidents, and participate in cybersecurity exercises.- Digitalisation has since become more pervasive.  Threats  have  increased both in scale and impact. In response, we enhanced the Cybersecurity Act in 2024 to further safeguard our critical information infrastructure and regulate a  broader  range  of  organisations  and systems. These include systems at high risk of cyberattacks for limited time periods and services foundational to our economy and way of life, such as cloud services and data centres.- We intend to  introduce  a new Digital Infrastructure Act in 2025 to improve the resilience  and  security  of key digital infrastructure and services that can cause significant impact to the economy and society if disrupted. The proposed law will address broader security and resilience concerns faced by digital infrastructure  and  service  providers, including  technical  misconfigurations and physical hazards such as fires and cooling system failures. This complements existing cybersecurity regulations, helping to reduce the likelihood and mitigate the impact of systemic disruptions.Amidst evolving technologies and threats, a trusted Smart Nation is one that anticipates future needs and proactively meets them.- Quantum computing will spur innovation and bring benefits. But there are also risks that the technology could be used to break the  encryption  methods  we  currently rely on for securing our communications and transactions. In 2023, we launched the  National  Quantum  Safe  Network Plus (NQSN+). Building on over a decade of  local  research  and  trials,  NQSN+ supports network operators in deploying nationwide  networks  that  are  secure against attacks from quantum computers, so that businesses and organisations can safeguard their critical data.
 
-
-
-Page 65 from document smartnation2-report
-
-## Making learning about AI fun for young studentsThe new AI for Fun modules, covering topics like natural language processing and generative AI, have been piloted at 82 primary and secondary schools.Northland Secondary School offered the modules under their Applied Learning Programme. Students used generative AI to develop ideas and learnt to programme microcontrollers with object and facial recognition capabilities. Teachers found that the modules helped to deepen students' AI literacy and adaptive thinking skills.Waterway Primary School offered the modules as part of their Makers Roadmap which teaches students computational thinking, design thinking, and digital making. Students programmed robots to respond to gestures and objects identified through computer vision while gaining a better understanding of the benefits and risks of AI.'I like how the lessons allow me to explore the different programmes and apps with AI capabilities. It was an eye-opening experience for me and I enjoyed the lessons very much!'- Eva Chee Waterway Primary School student'The AI function was impressive, allowing students to train the machine themselves. This hands-on experience helps them appreciate AI better by understanding how it works behind the scenes.'- Mohammad Hazmie Jaafar Waterway Primary School teacher
-
-
-
-Page 66 from document smartnation2-report
-
-## ii. Focusing on our educatorsAs we i n t r o d u ce more  learning opportunities for students, our educators play  a  critical  role  in  inspiring  our students  to  embrace  the  potential of  technology  and  navigating  the risks involved.As  technology  advances,  educators need up-to-date insights on technological developments,  their  implications  on society,  and  their  impact  on  teaching or  learning.  This  helps  them  to  better understand their students' needs in digital skills and cyber wellness development.Educators need up-to-date insights on technological developments, their implications on society, and their impact on teaching or learning. This helps them to better understand their students' needs in digital skills and cyber wellness development.To  support  our  educators,  we will  launch  a  new  Smart  Nation Educator Fellowship in 2025.The six-month long Fellowship will help Senior Specialists  and  Teacher  Leaders 31   better understand the latest digital issues, offering them  practical  insights  on  the  real-world applications of technology.- The Fellowship will also include opportunities for educators to learn from industry experts and participate in hands-on workshops by partners such as the Science Centre Singapore. Educators  can  then  translate  knowledge and skills acquired from the Fellowship into curriculum design or effective teaching and learning strategies which they can share with other educators.- This  Fellowship  complements  existing professional learning support offered by the National Institute of Education and the Academy of Singapore Teachers, such as out-of-classroom learning opportunities through the Teacher Work Attachment Plus programme and learning journeys.- We are  confident  that  this  initiative  will help passionate educators leverage digital technologies to bring the classroom alive and nurture a confident next generation that will take our Smart Nation forward.31 Senior Specialists help to shape the national curriculum. Teacher Leaders include Master Teachers, Senior Teachers, and Lead Teachers. They play an important role in championing professional development and pedagogical excellence among the teaching fraternity.
-
-
-
-Page 67 from document smartnation2-report
-
-NODE2VBLOCK\_041## Innovative approaches to teaching digital skillsMs Teo Ying Hui, who teaches Chinese language in Changkat Changi Secondary School, uses digital tools to enhance her students' learning and to encourage them to use technology in a responsible way. She guides her students to use generative AI tools to refine their Chinese essays and encourages her students to critique the AI-generated responses. This way, students improve their command of the language, while also understanding that they must critically assess AI-generated content.Similarly, Mrs Goh Xinyi from Fairfield Methodist School (Primary) uses the Short Answer Feedback Assistant, an AI-enabled feature in the Singapore Student Learning Space, to enhance teaching and learning in her classroom. This feature provides students with automatically generated feedback which teachers can build upon. While the feedback helps her students to improve, Mrs Goh also encourages her students to review the generated responses, emphasising that such AI-generated content may have limitations.Both educators are passionate about making the most of technological advances, while remaining firmly grounded in the principles of good teaching and learning.'We need to be well-informed about technology's uses to harness its benefits without getting lost in the whirlwind of rapid developments.'- Teo Ying Hui -
-
-
-
-Page 68 from document smartnation2-report
-
-
-IMAGE FOUND, DESCRIPTION : - Page header: Chapter 4
-  - Section title: Community
-- Visual layout elements:
-  - Top-left badge with gradient from red/purple to dark blue, containing "CHAPTER 4" and "Community" text
-  - Subtle circuit-pattern overlay in light gray/white across the upper right area, suggesting a tech/network motif
-- Primary scene:
-  - Indoor community or NGO/office setting with bright, natural lighting
-  - Group of five adults and one child engaged in a handshake/gift exchange
-- Key actions and objects:
-  - A woman in a blue jacket on the left extends both hands toward a cardboard box
-  - A woman in a green top on the right receives the cardboard box from the left-side woman
-  - Box contains assorted items (visible: a water bottle and other supplies)
-  - Onlookers in the background (two women and one man) smiling or watching the exchange
-  - Child in a purple shirt standing near the receiving woman, observing
-- People and roles (visually inferred):
-  - Lateral interaction: recipient (green top) accepts a package from donor (blue jacket)
-  - Observers present: supportive community members
-- Overall semantic interpretation:
-  - A collaborative community engagement moment, with a package handoff or donation being completed in a friendly, inclusive environment
-- Contextual metadata:
-  - Chapter 4: Community, indicating a thematic focus on communal sharing or support networks within a larger document or presentation
-- Visual style cues:
-  - Warm, candid photography with natural, soft lighting
-  - Casual attire suggesting a community outreach or volunteer activity
-- Data points (for indexing):
-  - Objects: cardboard box, water bottle, assorted supplies
-  - People: five adults and one child
-  - Colors: blue jacket, green blouse, purple shirt, neutral tones in background
-  - Setting: indoor open space, modern architectural elements (white walls, brick column)
-CHAPTER 4CommunityAlstri
 
 
 
@@ -553,6 +418,30 @@ Page 63 from document smartnation2-report
 
 
 Page 64 from document smartnation2-report
+
+
+
+
+
+Page 65 from document smartnation2-report
+
+
+
+
+
+Page 66 from document smartnation2-report
+
+
+
+
+
+Page 67 from document smartnation2-report
+
+
+
+
+
+Page 68 from document smartnation2-report
 
 
 

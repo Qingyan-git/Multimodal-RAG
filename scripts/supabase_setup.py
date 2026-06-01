@@ -108,7 +108,33 @@ async def insert_page(filename,markdown,page_no):
         raise
 
 
-async def retrieve_pdf_path(filename):
+async def retrieve_pdf_path_from_page_ids(page_id):
+    try:
+        client = await get_connection()
+
+        # Execute the inner join query
+        response = await (client
+            .table("pages")
+            .select("page_id, num, pdfs(path)")
+            .in_("page_id", page_id)
+            .limit(1)
+            .single()
+            .execute()
+        )
+
+        # Extract the data list
+        page_no = response.data['num']
+        filepath = response.data['pdfs']['path']
+
+        return page_no,filepath
+
+    except Exception as e:
+        print(f'Unable to retrieve answer pages for files {page_id in page_ids}, error \n{e}\n\n')
+        raise
+
+
+
+async def retrieve_pdf_path_from_filename(filename):
 
     try:
         client = await get_connection()
@@ -143,12 +169,13 @@ async def retrieve_markdowns(pages):
             .execute()
         )
 
+        markdowns = {}
         for row in response.data:
             page_id = row['page_id']
             markdown = row['markdown']
-            pages[page_id]['markdown'] = markdown
+            markdowns[page_id] = markdown
 
-        return pages
+        return markdowns
 
     except Exception as e:
         print(f'Unable to retrieve answer files for pages {page_id in page_ids}, error \n{e}\n\n')

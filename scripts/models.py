@@ -4,6 +4,7 @@ import io
 import base64
 import asyncio
 import torch
+import requests
 
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_core.messages import SystemMessage, HumanMessage
@@ -247,14 +248,15 @@ class Jina:
 
     def __init__(self):
         self.url = os.getenv('jina_url')
+        self.api_key = os.getenv('jina_api_key')
         self.headers = {
             "Content-Type": "application/json",
-            "Authorization": f"Bearer {JINA_API_KEY}"
+            "Authorization": f"Bearer {self.api_key}"
         }
 
     def text_rerank(self, query, sources):
         ordered_page_ids = list(sources.keys())
-        markdowns = [sources[page_id]['markdown'] for page_id in ordered_page_ids]
+        markdowns = [sources[page_id] for page_id in ordered_page_ids]
         
         data = {
             "model": "jina-reranker-v3",
@@ -265,13 +267,12 @@ class Jina:
 
         response = requests.post(self.url, headers=self.headers, json=data).json()
 
+        scores = {}
         for item in response.get("results", []):
             origin = item["index"]            
             score = item["relevance_score"]
-
             page_id = ordered_page_ids[origin]
+            scores[page_id] = score
 
-            sources[page_id]["text_score"] = score
-
-        return sources
+        return scores
 

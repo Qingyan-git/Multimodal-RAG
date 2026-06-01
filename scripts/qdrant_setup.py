@@ -147,7 +147,7 @@ async def similarity_search(splade_vector, coarse_vector, query_embeddings):
         client = await get_qdrant_client()
         name = os.getenv('qdrant_collection_name')
 
-        response = client.query_points(
+        response = await client.query_points(
             collection_name=name,
 
             prefetch=[
@@ -157,12 +157,12 @@ async def similarity_search(splade_vector, coarse_vector, query_embeddings):
                     limit=50
                 ),
                 models.Prefetch(
-                    query=qdrant_vector,
+                    query=splade_vector,
                     using="splade_vector",
                     limit=50
                 ),
             ],
-            query=page_embeddings,
+            query=query_embeddings,
             using="page_embeddings",
             limit=20
         )
