@@ -3,7 +3,7 @@ from qdrant_client.models import PointStruct, Distance, VectorParams, models
 import uuid
 import os
 import asyncio
-
+from scripts.config import settings
 
 
 _client = None
@@ -22,11 +22,11 @@ async def get_qdrant_client():
 
         async with _lock:
             if _client is None:
-                qdrant_cluster_endpoint = os.getenv('qdrant_cluster_endpoint')
-                qdrant_api_key = os.getenv('qdrant_api_key')
+                qdrant_cluster_endpoint = settings.qdrant_cluster_endpoint
+                qdrant_api_key = settings.qdrant_api_key
                 _client = AsyncQdrantClient(
                     url=qdrant_cluster_endpoint,
-                    api_key=qdrant_api_key,
+                    api_key=qdrant_api_key.get_secret_value(),
                     timeout=180
                 )
 
@@ -41,7 +41,7 @@ async def create_collection():
 
     try:
         client = await get_qdrant_client()
-        name = os.getenv('qdrant_collection_name')
+        name = settings.qdrant_collection_name
 
         if await client.collection_exists(name):
             print(f'Collection already exists, clearing points from it now\n\n')
@@ -127,7 +127,7 @@ def format_point(embedding):
 async def upload_points(points, batch_size=16):
 
     try:
-        name = os.getenv('qdrant_collection_name')
+        name = settings.qdrant_collection_name
         client = await get_qdrant_client()
         for i in range(0, len(points), batch_size):
             batch = points[i:i + batch_size]
@@ -145,7 +145,7 @@ async def similarity_search(splade_vector, coarse_vector, query_embeddings):
 
     try :
         client = await get_qdrant_client()
-        name = os.getenv('qdrant_collection_name')
+        name = settings.qdrant_collection_name
 
         response = await client.query_points(
             collection_name=name,

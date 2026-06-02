@@ -19,6 +19,8 @@ from docling.document_converter import DocumentConverter, PdfFormatOption
 
 from fastembed import SparseTextEmbedding
 
+from scripts.config import settings
+
 
 rate_limiter = InMemoryRateLimiter(
     requests_per_second=10,
@@ -30,8 +32,8 @@ class OpenAIModel:
 
     def __init__(self):
 
-        model = os.getenv('openai_model')
-        api_key = os.getenv('openai_api_key')
+        model = settings.openai_model
+        api_key = settings.openai_api_key.get_secret_value()
 
         self.model = ChatOpenAI(
             model=model,
@@ -147,7 +149,7 @@ class OpenAIModel:
 class ColQwenModel:
 
     def __init__(self):
-        name = os.getenv('colqwen_model')
+        name = settings.colqwen_model
 
         self.model = ColQwen2.from_pretrained(
             name,
@@ -218,7 +220,7 @@ class ColQwenModel:
 
 class SparseEmbedder:
 
-    def __init__(self, model_name=os.getenv('sparse_embedding_model'), use_threads=8):
+    def __init__(self, model_name=settings.sparse_embedding_model, use_threads=8):
 
         self.model = SparseTextEmbedding(model_name=model_name, parallel=use_threads)
 
@@ -247,8 +249,8 @@ class SparseEmbedder:
 class Jina:
 
     def __init__(self):
-        self.url = os.getenv('jina_url')
-        self.api_key = os.getenv('jina_api_key')
+        self.url = settings.jina_url
+        self.api_key = settings.jina_api_key.get_secret_value()
         self.headers = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {self.api_key}"

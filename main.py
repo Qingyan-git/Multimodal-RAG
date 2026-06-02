@@ -7,7 +7,10 @@ from ingestion import ingest_pdfs
 from pathlib import Path
 from dotenv import load_dotenv
 
-load_dotenv()
+BASE_DIR = Path(__file__).resolve().parent
+dotenv_path = BASE_DIR / ".env"
+load_dotenv(dotenv_path=dotenv_path, override=True)
+
 
 app = FastAPI(title="RAG Backend")
 STORAGE_DIR = r"C:\Users\UserAdmin\Documents\Multimodal-RAG\pdfs"
@@ -50,7 +53,7 @@ async def upload_pdf(background_tasks: BackgroundTasks, file: UploadFile = File(
         content = await file.read()
         f.write(content)
 
-    background_tasks.add_task(ingest_pdfs.ingest_all_pdfs, Path(target_path))
+    background_tasks.add_task(ingest_pdfs.ingest_pdf, Path(target_path))
 
     return {"status": "success", "message": "File received"}
 
