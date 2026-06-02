@@ -4,8 +4,10 @@ from PIL import Image
 import fitz
 import base64
 from io import BytesIO
+import requests
 
-FASTAPI_URL = "http://127.0.0"
+BASE_URL = "http://127.0.0.1:8000"
+QUERY_URL = f"{BASE_URL}/query"
 
 def render_pdf_page(pdf_path, page_num):
     try: 
@@ -56,4 +58,34 @@ with left:
         st.image(render_pdf_page("frontend\sample.pdf", 1), use_container_width=True)
 
 with right: 
-    query = st.text_input("Ask a question across all uploaded policies:", placeholder="Ask anything")
+    chat_container = st.container()
+
+    user_input = st.chat_input("Ask anything")
+
+    if user_input:
+        st.session_state.chat_history.append({"role": "user", "content": user_input})
+
+    with chat_container:
+        for msg in st.session_state.chat_history:
+            with st.chat_message(msg["role"]):
+                st.markdown(msg["content"])
+        if user_input:
+            with st.chat_message("assistant"):
+                with st.spinner("Thinking..."):
+                    try: 
+                        response = requests.post(QUERY_URL, json={"text": user_input}, timeout=30)
+                        if response.status_code == 200:
+                            data = response.json()
+                            answer = data["answer"]
+                            sources = data.get("sources", [])
+
+                            st.markdown(answer)
+
+                            st.session_state.chat_history.append({"role": "assistant", "content": answer})
+                            st.session_state.current_sources = sources
+
+                            st.rerun()
+                        else:
+                            st.error(f"Error {response.status_code}: {response.text}")
+                    except Exception as e:
+                        st.error(e)

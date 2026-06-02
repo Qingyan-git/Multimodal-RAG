@@ -3,7 +3,7 @@ from pathlib import Path
 import asyncio
 
 from supabase import acreate_client, AsyncClient
-
+from scripts.config import settings
 
 _client = None
 _lock = asyncio.Lock()
@@ -17,8 +17,8 @@ async def get_connection():
 
         async with _lock:
             if _client is None:
-                url = os.getenv('supabase_url')
-                key = os.getenv('supabase_api_key')
+                url = settings.supabase_url
+                key = settings.supabase_key.get_secret_value()
                 _client = await acreate_client(url, key)
 
         return _client

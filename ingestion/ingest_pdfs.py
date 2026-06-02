@@ -19,6 +19,7 @@ from scripts.supabase_setup import insert_pdf, insert_page, get_connection
 from scripts.qdrant_setup import format_point, upload_points, get_qdrant_client
 from scripts.models import OpenAIModel, ColQwenModel, SparseEmbedder
 
+from scripts.config import settings
 
 def clean_text(text: str) -> str:
     text = text.replace("\x00", "")
@@ -168,7 +169,7 @@ async def parse_pdf(filepath,converter,openai_model,colqwen_model,sparse_embedde
     results = await asyncio.gather(*tasks)
     document_markdown, document_vectors = zip(*results)
     save_name = filepath.stem + '.md'
-    save_to_file(save_name, list(document_markdown))
+    #save_to_file(save_name, list(document_markdown))
     await upload_points(list(document_vectors))
 
 
@@ -212,6 +213,47 @@ async def ingest_all_pdfs(folderpath):
         elif folderpath.is_file() and folderpath.suffix=='.pdf':
             print(f'\n Processing {file.name}\n')
             await parse_pdf(file,document_converter,openai_model,colqwen_model,sparse_embedder)
+            print(f'\nDone\n')
+
+    except Exception as e:
+        print(f'An error occured : \n{e}\n\n')
+        raise
+
+
+async def ingest_pdf(filepath):
+
+    try:
+
+        #folderpath = Path(os.getenv('pdfs_path'))
+
+        pipeline_options = PdfPipelineOptions()
+        pipeline_options.generate_picture_images = True
+        pipeline_options.generate_page_images = True
+        pipeline_options.images_scale = 2.0
+        # pipeline_options.do_ocr = True
+        # pipeline_options.do_table_structure = True
+        # pipeline_options.do_code_enrichment = True
+        # pipeline_options.do_formula_enrichment = True
+        # accelerator_options = AcceleratorOptions(
+        #     num_threads=8, 
+        #     device="cuda" if torch.cuda.is_available() else "cpu"
+        # )
+        # pipeline_options.accelerator_options = accelerator_options
+        document_converter = DocumentConverter(
+            format_options={
+                InputFormat.PDF: PdfFormatOption(pipeline_options=pipeline_options)
+            }
+        )
+
+        openai_model = OpenAIModel()
+        colqwen_model = ColQwenModel()
+        sparse_embedder = SparseEmbedder()
+
+        if filepath.suffix == '.pdf':
+
+            print(f'\n Processing {filepath.name}\n')
+            await parse_pdf_batched(filepath,document_converter,openai_model,colqwen_model,sparse_embedder)
+
             print(f'\nDone\n')
 
     except Exception as e:
