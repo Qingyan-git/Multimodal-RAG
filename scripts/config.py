@@ -18,3 +18,13 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
 settings = Settings()
+
+
+
+'''
+from scripts.config import Settings
+
+model = settings.openai_model
+# Use .get_secret_value() specifically for SecretStr variables
+api_key = settings.openai_api_key.get_secret_value() 
+'''
