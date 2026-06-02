@@ -1,9 +1,9 @@
-from qdrant_client import AsyncQdrantClient, models
-from qdrant_client.models import PointStruct, Distance, VectorParams, models
 import uuid
 import os
 import asyncio
 
+from qdrant_client import AsyncQdrantClient, models
+from qdrant_client.models import PointStruct, Distance, VectorParams, models, SparseVector
 
 
 _client = None
@@ -141,14 +141,19 @@ async def upload_points(points, batch_size=16):
         raise
 
 
-async def similarity_search(splade_vector, coarse_vector, query_embeddings):
+async def similarity_search(splade_vector, coarse_vector, page_embeddings):
 
     try :
         client = await get_qdrant_client()
         name = os.getenv('qdrant_collection_name')
 
+        qdrant_vector = SparseVector(
+            indices=splade_vector['indices'],
+            values=splade_vector['values']
+        )
+
         response = await client.query_points(
-            collection_name=name,
+            collection_name="multimodal-rag",
 
             prefetch=[
                 models.Prefetch(
@@ -157,23 +162,23 @@ async def similarity_search(splade_vector, coarse_vector, query_embeddings):
                     limit=50
                 ),
                 models.Prefetch(
-                    query=splade_vector,
+                    query=qdrant_vector,
                     using="splade_vector",
                     limit=50
                 ),
             ],
-            query=query_embeddings,
+            query=page_embeddings,
             using="page_embeddings",
             limit=20
         )
-
-        pages = {}
+        
+        retrieved = {}
         for point in response.points:
+            page_id = point.payload.get("page_id")
             score = point.score
-            page_id = point.payload.get('page_id')
-            pages[page_id] = score
+            retrieved[page_id] = score
 
-        return pages
+        return retrieved
 
     except Exception as e:
         print(f'Unable to perform similarity search on qdrant, error \n{e}\n\n')

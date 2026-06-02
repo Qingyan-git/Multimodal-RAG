@@ -254,9 +254,13 @@ class Jina:
             "Authorization": f"Bearer {self.api_key}"
         }
 
-    def text_rerank(self, query, sources):
-        ordered_page_ids = list(sources.keys())
-        markdowns = [sources[page_id] for page_id in ordered_page_ids]
+    def text_rerank(self, query, content):
+
+        '''
+        Content data structure is like : [{page_id:markdown},{page_id:markdown}...]
+        '''
+
+        markdowns = [item['markdown'] for item in content]
         
         data = {
             "model": "jina-reranker-v3",
@@ -267,12 +271,13 @@ class Jina:
 
         response = requests.post(self.url, headers=self.headers, json=data).json()
 
-        scores = {}
+        results = []
         for item in response.get("results", []):
-            origin = item["index"]            
+            idx = item["index"]
             score = item["relevance_score"]
-            page_id = ordered_page_ids[origin]
-            scores[page_id] = score
+            matched_dict = content[idx]
+            page_id = list(matched_dict.keys())[0]
+            results.append({page_id: score})
 
-        return scores
+        return results
 

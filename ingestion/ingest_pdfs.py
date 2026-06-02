@@ -15,35 +15,9 @@ from docling.document_converter import DocumentConverter, PdfFormatOption
 from docling_core.types.doc import PictureItem, DoclingDocument
 from docling_core.transforms.serializer.markdown import MarkdownDocSerializer
 
-"""
-Docling page.image.pil_image is faulty sometimes, so might have to fallback to pymupdf to extract page image
-Also docling has a known issue about memory overflow that is unsolved and in process of bugfixing since feb 2026, all versions are
-affected and this is an issue we can do nothing about 
-"""
-
 from scripts.supabase_setup import insert_pdf, insert_page, get_connection
 from scripts.qdrant_setup import format_point, upload_points, get_qdrant_client
 from scripts.models import OpenAIModel, ColQwenModel, SparseEmbedder
-
-
-
-
-# def purge_memory(*objects):
-#     """
-#     Explicitly deletes large objects, clears the CUDA VRAM cache,
-#     and forces the operating system to reclaim leaked CPU/GPU memory.
-#     """
-#     # 1. Delete the references passed to the function
-#     for obj in objects:
-#         if obj is not None:
-#             del obj
-            
-#     # 2. Force Python garbage collection across all generations
-#     gc.collect()
-    
-#     # 3. If you are using GPU/CUDA for Docling/ColQwen, clear the VRAM cache
-#     if torch.cuda.is_available():
-#         torch.cuda.empty_cache()
 
 
 def clean_text(text: str) -> str:
@@ -152,25 +126,7 @@ async def process_page_single(filepath,converter,page_no,openai_model,colqwen_mo
 
         markdown = await get_page_markdown(document,page_no,openai_model)
         sparse = await sparse_embedder.embed(markdown)
-
-        # page_info = [f"Key {k}: Original PDF Page {v.page_no}" for k, v in document.pages.items()]
-        # save_to_file('test.txt', page_info, method='a')
-
         page = document.pages[page_no]
-        # if page.image is not None:
-        #     if page.image.pil_image is not None:
-        #         page_image = page.image.pil_image
-        #     else:
-        #         page_image = page.image
-        # else:
-        #     print(f'\nPage .image attribute is None\n')
-        #     def extract():
-        #         with pymupdf.open(filepath) as doc:
-        #             pdf_page = doc[page_no - 1] 
-        #             pix = pdf_page.get_pixmap(dpi=144)
-        #             return Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
-            
-        #     page_image = await asyncio.to_thread(extract)
 
         page_image = page.image.pil_image
 
@@ -196,26 +152,7 @@ async def process_page_single(filepath,converter,page_no,openai_model,colqwen_mo
         return markdown, vector
 
 
-def test_batching(filepath,pipeline_options,openai_model,colqwen_model,sparse_embedder):
-
-    with pymupdf.open(filepath) as doc:
-        pages = len(doc)
-
-    batch_size=30
-    for start in range(1, pages + 1, batch_size):
-        end = min(start+batch_size-1, pages)
-        converter = DocumentConverter(
-            format_options={InputFormat.PDF: PdfFormatOption(pipeline_options=pipeline_options)}
-        )
-        result = converter.convert(filepath, page_range=(start, end))
-        document = result.document
-        page_info = [f"PDF : {filepath.name}, Batch : {start}, Key {k}: Original PDF Page {v.page_no}" for k, v in document.pages.items()]
-        save_to_file('test.txt', page_info, method='a')
-        
-        del converter
-
-
-async def parse_pdf_batched(filepath,converter,openai_model,colqwen_model,sparse_embedder):
+async def parse_pdf(filepath,converter,openai_model,colqwen_model,sparse_embedder):
 
     filename = filepath.name
     await insert_pdf(filename,filepath)
@@ -233,7 +170,6 @@ async def parse_pdf_batched(filepath,converter,openai_model,colqwen_model,sparse
     save_name = filepath.stem + '.md'
     save_to_file(save_name, list(document_markdown))
     await upload_points(list(document_vectors))
-
 
 
 async def ingest_all_pdfs(folderpath):
@@ -270,9 +206,13 @@ async def ingest_all_pdfs(folderpath):
                 if file.suffix == '.pdf':
 
                     print(f'\n Processing {file.name}\n')
-                    await parse_pdf_batched(file,document_converter,openai_model,colqwen_model,sparse_embedder)
-
+                    await parse_pdf(file,document_converter,openai_model,colqwen_model,sparse_embedder)
                     print(f'\nDone\n')
+
+        elif folderpath.is_file() and folderpath.suffix=='.pdf':
+            print(f'\n Processing {file.name}\n')
+            await parse_pdf(file,document_converter,openai_model,colqwen_model,sparse_embedder)
+            print(f'\nDone\n')
 
     except Exception as e:
         print(f'An error occured : \n{e}\n\n')

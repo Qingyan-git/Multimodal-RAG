@@ -13,7 +13,7 @@ from docling.document_converter import DocumentConverter, PdfFormatOption
 
 from ingestion.ingest_pdfs import save_to_file
 from scripts.supabase_setup import retrieve_pdf_path_from_page_id, retrieve_markdowns
-from scripts.qdrant_setup import similarity_search
+from scripts.qdrant_setup import similarity_search, format_point
 from scripts.models import OpenAIModel, ColQwenModel, SparseEmbedder, Jina
 
 
@@ -65,72 +65,114 @@ def apply_rrf(results, k=60):
         if page_id in rrf_scores:
             results[page_id]['rrf_score'] = rrf_scores[page_id]
 
-    filtered_items = [item for item in results.items() if 'rrf_score' in item[1]]
-    sorted_items = sorted(filtered_items, key=lambda item: item[1].get('rrf_score', 0), reverse=True)
+    rrf_results = {}
+    for page_id in results.keys():
+        if page_id in rrf_scores:
+            rrf_results[page_id] = rrf_scores[page_id]
+        
+    sorted_items = sorted(rrf_results.items(), key=lambda item: item[1], reverse=True)[:5]
     
-    return [page_id for page_id, scores in sorted_items][:5]
+    return dict(sorted_items)
 
 
-async def get_text_scores(question,pages):
-    page_ids = list(pages.keys())
-    text_markdowns = await retrieve_markdowns(page_ids)
-    text_scores = Jina().text_rerank(question,text_markdowns)
+async def get_sources(question,splade,coarse,query):
 
-    return text_scores
+    image_ranking = await similarity_search(splade,coarse,query)
+    '''
+    Structure : {page_id : image_score, page_id : image_score}
+    '''
+    print(f'\nimage_ranking : {image_ranking}\n')
 
+    target_page_ids = [key for key in image_ranking.keys()]
+    print(f'\ntarget_page_ids : {target_page_ids}\n')
 
-async def get_sources(question,splade,coarse,embeddings,pipeline_options):
+    target_page_markdowns = await retrieve_markdowns(target_page_ids)
+    '''
+    Structure : {page_id : markdown, page_id : markdown}
+    '''
+    print(f'target_page_markdowns : {target_page_markdowns}')
 
-    image_scores = await similarity_search(splade,coarse,embeddings)
-    text_scores = await get_text_scores(question,image_scores)
+    text_ranking = Jina().text_rerank(question,target_page_markdowns)
+    '''
+    Structure : {page_id : text_score, page_id : text_score}
+    '''
+    print(f'\ntext_ranking : {text_ranking}\n')
+
+    combined_ranking = {}
+    for page_id in target_page_ids:
+        combined_ranking[page_id] = {'image_score' : image_ranking[page_id], 'text_score' : text_ranking[page_id]}
+    '''
+    Structure : {page_id : {'text_score' : text_score, 'image_score' : image_score}}
+    '''
+    print(f'\ncombined_ranking : {combined_ranking}\n')
     
-    print(f'\nquestion : {question}\n')
-    print(f'\nimage_scores : {image_scores}\n')
-    print(f'\ntext_scores : {text_scores}\n')
 
-    combined_scores = {
-        page_id: {'image_score': image_scores[page_id], 'text_score': text_scores[page_id]}
-        for page_id in text_scores
-    }
 
-    print(f'combined_scores : {combined_scores}')
 
-    top_5_rrf = apply_rrf(combined_scores)
+
+
+
+# async def get_text_scores(question,pages):
+#     page_ids = list(pages.keys())
+#     text_markdowns = await retrieve_markdowns(page_ids)
+#     text_scores = Jina().text_rerank(question,text_markdowns)
+
+#     return text_scores
+
+
+# async def get_sources(question,splade,coarse,embeddings,pipeline_options):
+
+#     image_scores = await similarity_search(splade,coarse,embeddings)
+#     '''image_scores structure : {page_id: score}'''
+#     text_scores = await get_text_scores(question,image_scores)
     
-    print(f'top_5_rrf : {top_5_rrf}')
+#     print(f'\nquestion : {question}\n')
+#     print(f'\nimage_scores : {image_scores}\n')
+#     print(f'\ntext_scores : {text_scores}\n')
 
-    page_sources = []
+#     combined_scores = {
+#         page_id: {'image_score': image_scores[page_id], 'text_score': text_scores[page_id]}
+#         for page_id in text_scores
+#     }
 
-    for page_id in top_5_rrf:
+#     print(f'combined_scores : {combined_scores}')
 
-        converter = DocumentConverter(
-            format_options={
-                InputFormat.PDF: PdfFormatOption(pipeline_options=pipeline_options)
-            }
-        )
+#     top_5_rrf = apply_rrf(combined_scores)
+    
+#     print(f'top_5_rrf : {top_5_rrf}')
 
-        page_no, filepath = await retrieve_pdf_path_from_page_id(page_id)
+#     page_sources = []
 
-        conversion_result = await asyncio.to_thread(converter.convert, filepath, page_range=(page_no,page_no))
-        document = conversion_result.document
-        page = document.pages[page_no]
+#     for page_id in top_5_rrf.keys():
 
-        pil_image = page.image.pil_image
-        item = {
-            'image' : pil_image,
-            'source' : f'Document {Path(filepath).name}, page {page_no}'
-        }
-        page_sources.append(item)
+#         converter = DocumentConverter(
+#             format_options={
+#                 InputFormat.PDF: PdfFormatOption(pipeline_options=pipeline_options)
+#             }
+#         )
 
-        if hasattr(document, "unload"):
-            try:
-                document.unload()
-            except Exception:
-                pass
+#         page_no, filepath = await retrieve_pdf_path_from_page_id(page_id)
 
-    print(f'\npage_sources : {page_sources}\n')
+#         conversion_result = await asyncio.to_thread(converter.convert, filepath, page_range=(page_no,page_no))
+#         document = conversion_result.document
+#         page = document.pages[page_no]
 
-    return page_sources
+#         pil_image = page.image.pil_image
+#         item = {
+#             'image' : pil_image,
+#             'source' : f'Document {Path(filepath).name}, page {page_no}'
+#         }
+#         page_sources.append(item)
+
+#         if hasattr(document, "unload"):
+#             try:
+#                 document.unload()
+#             except Exception:
+#                 pass
+
+#     print(f'\npage_sources : {page_sources}\n')
+
+#     return page_sources
 
 
 async def answer_testset(filepath,pipeline_options,openai,colqwen,sparse):
@@ -147,12 +189,14 @@ async def answer_testset(filepath,pipeline_options,openai,colqwen,sparse):
             splade_vector = await sparse.embed(question)
             coarse_vector, embeddings = await colqwen.embed_query(question)
             
-            sources = await get_sources(question,splade_vector,coarse_vector,embeddings,pipeline_options)
-            page_sources = [item['source'] for item in sources]
-            
+            sources = await get_sources(question,splade_vector,coarse_vector,embeddings)
+            '''
+            here problem
+            '''
+
             answer = await openai.answer_question(question,sources)
 
-            return {'Question' : question ,'Answer': answer, 'Sources' : page_sources}
+            return {'Question' : question ,'Answer': answer, 'Sources' : sources}
 
     tasks = [answer_question(question) for question in questions]
     results = await asyncio.gather(*tasks)

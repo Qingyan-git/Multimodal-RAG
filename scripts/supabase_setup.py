@@ -133,30 +133,6 @@ async def retrieve_pdf_path_from_page_id(page_id):
         raise
 
 
-
-async def retrieve_pdf_path_from_filename(filename):
-
-    try:
-        client = await get_connection()
-
-        response = await (client
-            .table('pdfs')
-            .select('path')
-            .eq('name',filename)
-            .limit(1)
-            .single()
-            .execute()
-        )
-
-        path = response.data['path']
-
-        return path
-
-    except Exception as e:
-        print(f'Unable to retrieve answer pages for files {file in filenames}, error \n{e}\n\n')
-        raise
-
-
 async def retrieve_markdowns(page_ids):
 
     try:
