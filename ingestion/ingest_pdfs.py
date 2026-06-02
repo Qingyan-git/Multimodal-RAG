@@ -28,22 +28,22 @@ from scripts.models import OpenAIModel, ColQwenModel, SparseEmbedder
 
 
 
-def purge_memory(*objects):
-    """
-    Explicitly deletes large objects, clears the CUDA VRAM cache,
-    and forces the operating system to reclaim leaked CPU/GPU memory.
-    """
-    # 1. Delete the references passed to the function
-    for obj in objects:
-        if obj is not None:
-            del obj
+# def purge_memory(*objects):
+#     """
+#     Explicitly deletes large objects, clears the CUDA VRAM cache,
+#     and forces the operating system to reclaim leaked CPU/GPU memory.
+#     """
+#     # 1. Delete the references passed to the function
+#     for obj in objects:
+#         if obj is not None:
+#             del obj
             
-    # 2. Force Python garbage collection across all generations
-    gc.collect()
+#     # 2. Force Python garbage collection across all generations
+#     gc.collect()
     
-    # 3. If you are using GPU/CUDA for Docling/ColQwen, clear the VRAM cache
-    if torch.cuda.is_available():
-        torch.cuda.empty_cache()
+#     # 3. If you are using GPU/CUDA for Docling/ColQwen, clear the VRAM cache
+#     if torch.cuda.is_available():
+#         torch.cuda.empty_cache()
 
 
 def clean_text(text: str) -> str:
@@ -139,162 +139,122 @@ async def get_page_markdown(document,page_no,openai_model):
     return cleaned_text
 
 
-async def get_page_image_pymupdf(filepath,page_no):
+async def process_page_single(filepath,converter,page_no,openai_model,colqwen_model,sparse_embedder,semaphore):
 
-    def sync_extract():
-        with pymupdf.open(filepath) as doc:
-            page = doc[page_no - 1]
-            pix = page.get_pixmap(dpi=144)
-            return Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
+    async with semaphore:
 
-    pil_image = await asyncio.to_thread(sync_extract)
-    return pil_image
+        conversion_result = await asyncio.to_thread(
+            converter.convert, 
+            filepath, 
+            page_range=(page_no, page_no)
+        )
+        document = conversion_result.document
+
+        markdown = await get_page_markdown(document,page_no,openai_model)
+        sparse = await sparse_embedder.embed(markdown)
+
+        # page_info = [f"Key {k}: Original PDF Page {v.page_no}" for k, v in document.pages.items()]
+        # save_to_file('test.txt', page_info, method='a')
+
+        page = document.pages[page_no]
+        # if page.image is not None:
+        #     if page.image.pil_image is not None:
+        #         page_image = page.image.pil_image
+        #     else:
+        #         page_image = page.image
+        # else:
+        #     print(f'\nPage .image attribute is None\n')
+        #     def extract():
+        #         with pymupdf.open(filepath) as doc:
+        #             pdf_page = doc[page_no - 1] 
+        #             pix = pdf_page.get_pixmap(dpi=144)
+        #             return Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
+            
+        #     page_image = await asyncio.to_thread(extract)
+
+        page_image = page.image.pil_image
+
+        coarse, multi = await colqwen_model.get_image_embedding(page_image)
+        page_id = await insert_page(filepath.name,markdown,page_no)
+
+        embedding = {
+            'page_id' : page_id,
+            'sparse' : sparse,
+            'coarse' : coarse,
+            'multi' : multi
+        }
+
+        vector = format_point(embedding)
+
+        # Explicitly call unload() on the document backends if the method exists
+        if hasattr(document, "unload"):
+            try:
+                document.unload()
+            except Exception:
+                pass
+
+        return markdown, vector
 
 
-def get_page_image_docling(document,page_no):
+def test_batching(filepath,pipeline_options,openai_model,colqwen_model,sparse_embedder):
 
-    page = document.pages[page_no-1]
-    page_image = page.image.pil_image
+    with pymupdf.open(filepath) as doc:
+        pages = len(doc)
 
-    return page_image
+    batch_size=30
+    for start in range(1, pages + 1, batch_size):
+        end = min(start+batch_size-1, pages)
+        converter = DocumentConverter(
+            format_options={InputFormat.PDF: PdfFormatOption(pipeline_options=pipeline_options)}
+        )
+        result = converter.convert(filepath, page_range=(start, end))
+        document = result.document
+        page_info = [f"PDF : {filepath.name}, Batch : {start}, Key {k}: Original PDF Page {v.page_no}" for k, v in document.pages.items()]
+        save_to_file('test.txt', page_info, method='a')
+        
+        del converter
 
 
-async def parse_pdf(filepath,converter,openai_model,colqwen_model,sparse_embedder):
+async def parse_pdf_batched(filepath,converter,openai_model,colqwen_model,sparse_embedder):
 
     filename = filepath.name
     await insert_pdf(filename,filepath)
 
-    semaphore = asyncio.Semaphore(10)
+    semaphore = asyncio.Semaphore(1)
 
-    document = converter.convert(filepath).document
-
-    async def _process_page(page_no):
-        async with semaphore:
-
-            markdown = await get_page_markdown(document,page_no,openai_model)
-            sparse = await sparse_embedder.embed(markdown)
-
-            toggle = 0 #0 for pymupdf, 1 for docling
-            if toggle == 0:
-                page_image = await get_page_image_pymupdf(filepath,page_no)
-            elif toggle == 1:
-                page_image = get_page_image_docling(document,page_no)
-
-            coarse, multi = await colqwen_model.get_image_embedding(page_image)
-            page_id = await insert_page(filename,markdown,page_no)
-
-            embedding = {
-                'page_id' : page_id,
-                'sparse' : sparse,
-                'coarse' : coarse,
-                'multi' : multi
-            }
-
-            vector = format_point(embedding)
-
-            return markdown, vector
-
-    tasks = [_process_page(page_no) for page_no in document.pages]
+    document_markdown = []
+    document_vectors = []
+    with pymupdf.open(filepath) as doc:
+        pages = len(doc)
+    
+    tasks = [process_page_single(filepath,converter,page_no,openai_model,colqwen_model,sparse_embedder,semaphore) for page_no in range(1,pages+1)]
     results = await asyncio.gather(*tasks)
     document_markdown, document_vectors = zip(*results)
     save_name = filepath.stem + '.md'
     save_to_file(save_name, list(document_markdown))
     await upload_points(list(document_vectors))
-    
-    # Explicitly call unload() on the document backends if the method exists
-    if hasattr(document, "unload"):
-        try:
-            document.unload()
-        except Exception:
-            pass
-
-    # Clear out local large arrays and the primary document object
-    purge_memory(document, document_markdown, document_vectors, results)
 
 
-# async def parse_pdf(filepath,pipeline_options,openai_model,colqwen_model,sparse_embedder):
 
-#     with pymupdf.open(filepath) as doc:
-#         total_pages = len(doc)
-
-#     semaphore = asyncio.Semaphore(10)
-#     document_markdown = []
-#     document_vectors = []
-#     chunk_size = 30
-
-#     for start in range(1, total_pages+1, chunk_size):
-#         end = min(total_pages, start+chunk_size-1)
-
-#         document_converter = DocumentConverter(
-#             format_options={
-#                 InputFormat.PDF: PdfFormatOption(pipeline_options=pipeline_options)
-#             }
-#         )
-#         conversion_result = await asyncio.to_thread(
-#             document_converter.convert, 
-#             filepath,
-#             page_range=(start, end)
-#             )
-#         document = conversion_result.document
-
-#         # Nested worker to handle embedding, extraction, and DB operations concurrently
-#         async def _process_page(page_no):
-#             async with semaphore:
-#                 markdown = await get_page_markdown(document, page_no, openai_model)
-#                 sparse = await sparse_embedder.embed(markdown)    
-                
-#                 toggle = 1 # 0 for pymupdf, 1 for docling
-#                 if toggle == 0:
-#                     page_image = await get_page_image_pymupdf(filepath, page_no)
-#                 elif toggle == 1:
-#                     page_image = get_page_image_docling(document, page_no)
-                    
-#                 coarse, multi = await colqwen_model.get_image_embedding(page_image)
-#                 page_id = await insert_page(filepath.name, markdown, page_no)
-
-#                 embedding = {
-#                     'page_id': page_id,
-#                     'sparse': sparse,
-#                     'coarse': coarse,
-#                     'multi': multi
-#                 }
-
-#                 vector = format_point(embedding)
-#                 return markdown, vector
-
-#         tasks = [_process_page(page_no) for page_no in document.pages.keys()]
-        
-#         if tasks:
-#             chunk_results = await asyncio.gather(*tasks)
-#             chunk_markdown, chunk_vectors = zip(*chunk_results)
-#             document_markdown.extend(chunk_markdown)
-#             document_vectors.extend(chunk_vectors)
-
-#     save_name = filepath.stem + '.md'
-#     save_to_file(save_name, list(document_markdown))
-#     await upload_points(list(document_vectors))
-#     print(f"Successfully processed and uploaded all chunks for {filename}.\n")
-
-
-async def ingest_all_pdfs():
+async def ingest_all_pdfs(folderpath):
 
     try:
 
-        folderpath = Path(os.getenv('pdfs_path'))
+        #folderpath = Path(os.getenv('pdfs_path'))
 
         pipeline_options = PdfPipelineOptions()
         pipeline_options.generate_picture_images = True
         pipeline_options.generate_page_images = True
         pipeline_options.images_scale = 2.0
-        pipeline_options.do_ocr = True
-        pipeline_options.do_table_structure = True
-        pipeline_options.do_code_enrichment = True
-        pipeline_options.do_formula_enrichment = True
-        accelerator_options = AcceleratorOptions(
-            num_threads=8, 
-            device = "cuda" if torch.cuda.is_available() else "cpu"
-        )
-        pipeline_options.accelerator_options = accelerator_options
+        # pipeline_options.do_ocr = True
+        # pipeline_options.do_table_structure = True
+        # pipeline_options.do_code_enrichment = True
+        # pipeline_options.do_formula_enrichment = True
+        # accelerator_options = AcceleratorOptions(
+        #     num_threads=8, 
+        #     device="cuda" if torch.cuda.is_available() else "cpu"
+        # )
+        # pipeline_options.accelerator_options = accelerator_options
         document_converter = DocumentConverter(
             format_options={
                 InputFormat.PDF: PdfFormatOption(pipeline_options=pipeline_options)
@@ -309,11 +269,10 @@ async def ingest_all_pdfs():
             for file in folderpath.iterdir():
                 if file.suffix == '.pdf':
 
-                    print(f'Processing {file.name}\n\n')
-                    # await insert_pdf(str(file.name),str(file))
-                    await parse_pdf(file,document_converter,openai_model,colqwen_model,sparse_embedder)
+                    print(f'\n Processing {file.name}\n')
+                    await parse_pdf_batched(file,document_converter,openai_model,colqwen_model,sparse_embedder)
 
-                    print(f'Done\n\n')
+                    print(f'\nDone\n')
 
     except Exception as e:
         print(f'An error occured : \n{e}\n\n')

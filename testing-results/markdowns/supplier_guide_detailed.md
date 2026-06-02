@@ -107,55 +107,23 @@ Page 11 from document supplier_guide_detailed
 Page 12 from document supplier_guide_detailed
 
 Useful Tip: Tell us more about your company to help us notify you for related procurementWhen you sign up to become a GeBIZ Trading Partner, you have to select your areas of business ['Main Category (level 1)' and 'Sub-category (level 2)']. This categorisation helps agencies find relevant suppliers and notify them of related procurement opportunities.
-IMAGE FOUND, DESCRIPTION : - Layout: Registration status bar and breadcrumb-style navigation at top indicating progress steps: 
-  - Steps: Company Information → Account → Areas of Business → Company Profile → Verify and Submit
-  - Current step highlight: Areas of Business
+IMAGE FOUND, DESCRIPTION : - Document context: GeBIZ Trading Partner registration workflow
+- Page header: Areas of Business
 
-- Title section: "Areas of Business" as the main heading.
+- Top navigation breadcrumb (horizontal steps):
+  - Company Information → Account → Areas of Business (current) → Company Profile → Verify and Submit
+  - Exit option available on the right
 
-- Informational banner: Light blue notice block with two lines:
-  - Line 1: "These categories will be used by the government buyers in future business opportunities."
-  - Line 2: "Fields marked by + will be displayed in Supplier Directory."
+- Main section: Areas of Business
+  - Informational banner: 
+    - Text: “These categories will be used by the government buyers in future business opportunities.”
+    - Subtext: “Fields marked by + will be displayed in Supplier Directory.”
 
-- Main form block: Section header "PLEASE SELECT YOUR AREAS OF BUSINESS" with a horizontal divider line and a light yellow accent at the top.
+- Subsection header: PLEASE SELECT YOUR AREAS OF BUSINESS
 
-- Left pane (categories) with two primary items:
-  - "Administration & Training" (marked with a red plus symbol indicating a required field)
-  - "Construction" (also marked with a red plus symbol)
-
-- Right pane: A long vertical list of checkbox options under "Administration & Training" and "Construction" categories, including but not limited to:
-  - Art Supplies
-  - Courses
-  - Educational Supplies
-  - Gifts & Souvenirs
-  - Medals & Trophies
-  - Music & Video
-  - Office Supplies & Stationery
-  - Paper
-  - Photographic & Imaging Services
-  - Postage & Courier
-  - Printing Services
-  - Publications & Periodicals
-  - Sports & Recreational Equipment
-  - Survey Services
-  - Toners & Cartridges
-  - Asphalt Works & Road Marking
-  - Civil Engineering
-  - Concrete Products & Repairs
-
-- Visual cues: Each item has a preceding checkbox input; category headers appear as bold labels on the left with a vertical alignment, and the content is a multi-column-like list in the visible panel area.
-
-- Semantic data model for database indexing:
-  - UserState: Registered as GeBIZ Trading Partner
-  - StepProgress: Areas of Business (current)
-  - Section: Areas of Business
-  - Notice:
-    - Purpose: informs future government buyer use and supplier directory display
-    - DisplayRule: Fields marked with + will appear in Supplier Directory
-  - TopicGroups:
-    - Administration & Training
-    - Construction
-  - Items (checkbox list, each has value field for user selection):
+- Layout structure:
+  - Left column category label: Administration & Training + (required)
+  - Right column: A vertical list of checkboxes with category labels:
     - Art Supplies
     - Courses
     - Educational Supplies
@@ -171,13 +139,20 @@ IMAGE FOUND, DESCRIPTION : - Layout: Registration status bar and breadcrumb-styl
     - Sports & Recreational Equipment
     - Survey Services
     - Toners & Cartridges
+  - Second left column label: Construction + (required)
+  - Corresponding right column checkbox list (partial visible):
     - Asphalt Works & Road Marking
     - Civil Engineering
     - Concrete Products & Repairs
 
-- Interaction hints (implicit):
-  - Required fields indicated by a red plus (+) next to category labels Administration & Training and Construction
-  - User can select multiple checkboxes to indicate areas of business.
+- Interaction/validation notes:
+  - Categories marked with a plus sign (+) indicate required fields that will appear in the Supplier Directory.
+  - User must select at least one area per primary category (Administration & Training, Construction) to proceed.
+
+- Visual styling cues:
+  - Section header fonts: bold, large (Areas of Business)
+  - Light gray page background with blue information banner
+  - Checkbox controls aligned in two-column list under each category label.
 YouareregisteringasaGeBlzTradingPartnerCompany InformationAccountAreasofBusinessCompany ProfileVerify and SubmitExit## Areas ofBusinessThesecategorieswill beusedbythegovernmentbuyersinfuturebusinessopportunities.Fieldsmarkedby+willbedisplayed inSupplierDirectory.## PLEASESELECTYOURAREASOFBUSINESSAdministration&amp;Art SuppliesTraining+CoursesEducational SuppliesGifts&amp;SouvenirsMedals&amp;TrophiesMusic&amp;VideoOfficeSupplies&amp;StationeryPaperPhotographic&amp;ImagingServicesPostage &amp;CourierPrintingServicesPublications&amp;PeriodicalsSports&amp;Recreational EquipmentSurvey ServicesToners&amp;CartridgesConstruction+AsphaltWorks&amp;RoadMarkingCivil EngineeringConcreteProducts&amp;RepairsUseful Tip: Get alerts on new business opportunitiesYou can get alerts on new business opportunities even when on the move via RSS Feeds (please refer to GeBIZ FAQs - RSS Feed for Opportunities and Award) or email alerts from GoBusiness Gov Assist GeBIZ Alerts portal at https://govassist.gobusiness.gov.sg/gebiz-alerts . This service is free!
 
 

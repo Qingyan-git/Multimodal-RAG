@@ -171,7 +171,7 @@ async def similarity_search(splade_vector, coarse_vector, query_embeddings):
         for point in response.points:
             score = point.score
             page_id = point.payload.get('page_id')
-            pages[page_id] = {'image_score' : score}
+            pages[page_id] = score
 
         return pages
 

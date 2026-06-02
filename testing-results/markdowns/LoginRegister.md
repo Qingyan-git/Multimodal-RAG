@@ -16,40 +16,27 @@ Page 2 from document LoginRegister
 Page 3 from document LoginRegister
 
 ## 1. Login for UEN Registered Company/ OrganisationThis  login  method  is  applicable  to  UEN  registered  vendors  who  are  transacting  as  a Company/ Organisation, Sole Proprietors, or Societies.
-IMAGE FOUND, DESCRIPTION : - Page Title / Global heading: Get started by logging in.
-- Subheading line: Click here if you do not have an account
-- Authentication options (two prominent callouts with rounded rectangular cards):
-  - Card A (left): For Business Users
-    - Subtitle: Login with Singpass
-    - Secondary tag: For Local & Foreign Entities
-    - Small link: Click here if you are a foreign individual with an AGD Password
-  - Card B (right): For Individual Users
-    - Subtitle: Login with Singpass
-    - Secondary tag: For Individuals
-    - Small link: Click here if you are a foreign individual with an AGD Password
-- Visual document header: INVOICE (large, stylized document icon)
-- Interactive elements on the invoice image:
-  - Bubble 1: Submit Invoices
-  - Bubble 2: Monitor Payment Status
-  - Bubble 3: Update Vendor Details
-- Foreground human figures:
-  - Left figure: standing, blue shirt, dark pants facing the invoice
-  - Right figure: seated/kneeling, purple clothing, interacting with the document
-- Financial symbol: a circular blue coin/balloon with a dollar sign near the bottom center
-- Landscape/background elements:
-  - Stylized trees (yellow and orange/red) on the right
-  - Light gray gradient background with soft shadows and a curved ground plane
-- Layout relationships and flow:
-  - Authentication options arranged horizontally at top: [Business Users] connects to login path; [Individual Users] connects to login path.
-  - The central INVOICE panel is the primary visual focus; user actions (Submit Invoices, Monitor Payment Status, Update Vendor Details) are connected as callout bubbles overlaying the invoice.
-- Domain-specific semantics:
-  - User authentication gateway for business vs individual users
-  - Invoice processing workflow with submission, payment monitoring, and vendor data update steps
-  - Finance/elastically scaled illustration indicating invoice management system
-- Data points and UI cues to index:
-  - Text labels: "Get started by logging in.", "Click here if you do not have an account", "For Business Users", "Login with Singpass", "For Local & Foreign Entities", "For Individuals", "Submit Invoices", "Monitor Payment Status", "Update Vendor Details", "INVOICE"
-  - Visual callouts: three action bubbles on the invoice, dollar symbol icon, trees as decorative context
-- Context note: This image constitutes a login/invoice processing onboarding illustration with two user type options and an invoice workflow overlay.
+IMAGE FOUND, DESCRIPTION : - Title region: “Get started by logging in.”
+- Subtext: “Click here if you do not have an account”
+- User access options (two prominent callouts):
+  - Card 1: “For Business Users” with subtitle/action: “Login with Singpass” 
+    - Additional note: “For Local & Foreign Entities”
+    - Link cue: “Click here if you are a foreign individual with an AGD Password” (note phrasing suggests mis-typed AGD; retaining exact visible text)
+  - Card 2: “For Individual Users” with subtitle/action: “Login with Singpass”
+    - Additional note: “For Individuals”
+- Main document graphic: An oversized header labeled “INVOICE” with a folded corner at the top-right
+- Interactive/overlay elements on the invoice:
+  - Speech bubble: “Submit Invoices”
+  - Speech bubble: “Monitor Payment Status”
+  - Speech bubble: “Update Vendor Details”
+- Sub-scan visual: A large blue currency symbol (dollar sign) coin near the bottom center
+- Foreground characters:
+  - Left figure standing, facing the invoice
+  - Right figure sitting on the ground using a handheld device (likely a tablet/phone)
+- Background elements:
+  - Stylized trees in yellow and orange hues
+  - Soft gradient backdrop with mount-like shapes suggesting a landscape
+- Overall theme: Digital invoicing workflow portal with role-based login options and invoice management actions.
 Getstarted by loggingin.Clickhere ifyou donot have an accountFor BusinessForIndividualUsersUsersLoginwithSingpassLoginwithSingpassFor Local&amp;Foreign EntitiesFor IndividualsClickhereif you are a foreign individual with anAGDPasswordINVOICESubmitinvoicesMonitorUpdatePayment StatusVendorDetailsYour organisation will first need to register for Corppass to access Vendors@Gov.For more information on Corppass registration, please click here.Step 1 -Select 'For Business Users' option to login to Vendors@Gov.
 
 
@@ -81,67 +68,55 @@ Page 7 from document LoginRegister
 Page 8 from document LoginRegister
 
 ## Corppass Registration Guide for UEN Registered Entity## Step 2: Set up the Vendors@Gov e-serviceThe Corppass Admin will need to set up the Vendors@Gov e-service for the entity on Corppass. Corppass Users should approach their Corppass Admin to check that the setup was properly completed.
-IMAGE FOUND, DESCRIPTION : - Layout type: Web-based e-Service access management UI with tabbed navigation and a three-column tile grid.
-- Top navigation tabs (horizontal):
-  - Tab 1: User Accounts
-  - Tab 2: e-Service Access (highlighted with red outline)
-  - Tab 3: Third Party
-  - Tab 4: Third Party (Clients)
-- Main action area: Three horizontally arranged tiles beneath the tabs:
-  - Tile A (left, highlighted with red outline): "Select Entity's e-Services" with subtitle "Select e-Services that your entity will use." Icon shows a service/stack, turquoise background.
-  - Tile B (center): "Assign selected e-Services" with subtitle "Assign e-Services access to your entity's users and user groups." Icon shows a checkmark/flow.
-  - Tile C (right): "View Entity's e-Service Access" with subtitle "View and edit your entity's current e-Services access." Icon shows a document.
-- Section header: "Select Entity's e-Services" (bold) just above a multi-step progress indicator.
-- Stepper/pager: Horizontal progress indicator with steps:
-  - Step 1: "Select e-Services" (active, orange circle with number 1 and label)
-  - Step 2: "Enter Details" (secondary, grey circle with number 2)
-  - Step 3: "Review & Submit" (tertiary, grey circle with number 3)
-- Instructional text under steps: 
-  - "Click the relevant checkboxes to select which e-Service(s) you want to assign to your users. Additional checks may apply for access to agency e-Service."
-  - Small UI hint: "Click to find out more" followed by a search/filters area.
-- Filter bar: Contains a search input with placeholder "vendor" and a Filter control labeled "Filter".
-- Data table region (lower portion): 
-  - Header row with columns:
-    - Column 1: Checkbox selector
-    - Column 2: "Govt. Agency"
-    - Column 3: "e-Service"
-    - Column 4: "Description"
-    - Column 5: "Additional Check" (subheader)
-    - Column 6: "Additional Details Required" (subheader)
-  - Row example content (partial):
-    - Row 1: 
-      - Checkbox cell
-      - Agency: "ACCOUNTANT-GENERAL-DEPARTMENT (AGD)" with logo icon
-      - e-Service: "VENDORS GOV - VENDORS ELECTRONIC INVOICES TO GOVERNMENT"
-      - Description: "Submission of electronic invoices to the Government"
-      - Additional Check: (empty)
-      - Additional Details Required: (empty)
-- Visual styling notes:
-  - Color accents: teal/turquoise for the left tile; teal iconography; blue header bar in the table; orange/amber for step 1 active indicator.
-  - Interaction hints: Tabs navigate between entity scopes; left tile triggers selection of e-Services; center tile assigns; right tile views current access.
-- Semantic taxonomy for storage:
-  - Entities: Entity (organization) as the primary subject.
-  - e-Services: Catalog of services assignable to an entity.
-  - Actions: SELECT, ASSIGN, VIEW/EDIT.
-  - User assignment model: Users and user groups receive assigned e-Services.
-  - Governance data: Government agency, e-Service code, Description, Additional Checks, Required Details.
-- Relationships and flows:
-  - Tab navigation: User Accounts -> e-Service Access -> Third Party -> Third Party (Clients) (directional flow left-to-right).
-  - Tile interactions: 
-    - Select Entity's e-Services (initiates selection workflow).
-    - Assign selected e-Services (binds services to users/groups).
-    - View Entity's e-Service Access (reads current bindings).
-  - Stepper sequence: Step 1 (Select e-Services) -> Step 2 (Enter Details) -> Step 3 (Review & Submit).
-- Data fields captured for serialization:
-  - Entity identifier
-  - e-Service identifiers and names
-  - Descriptions
-  - Assignment status flags
-  - Additional Check flags
-  - Required detail flags
-  - Government agency mapping per e-Service
-  - Vendor/e-Service codes and descriptions
-- Overall: A UI for configuring and granting government e-Service access at the entity level, with a tile-driven shortcut, a stepwise assignment wizard, and a data-table for repository-backed selection and governance checks.
+IMAGE FOUND, DESCRIPTION : - Document area: Web-based entity e-Service assignment interface (e-Service Access tab active)
+- Primary UI sections and tabs:
+  - Top navigation tabs (highlighted): User Accounts | e-Service Access (active) | Third Party | Third Party (Clients)
+  - Action tiles row (three tiles):
+    - Tile 1: Select Entity’s e-Services (highlighted with teal background and red border)
+    - Tile 2: Assign selected e-Services (icon indicating user/group assignment; text “Assign selected e-Services”)
+    - Tile 3: View Entity’s e-Service Access (icon of document; text “View Entity’s e-Service Access”)
+- Breadcrumb/stepper: “Select Entity's e-Services” section header with a 3-step progress indicator
+  - Step 1: Select e-Services (active)
+  - Step 2: Enter Details (inactive)
+  - Step 3: Review & Submit (inactive)
+- Instructional text under stepper: 
+  - “Click the relevant checkboxes to select which e-Service(s) you want to assign to your users. Additional checks may apply for access to agency e-Service.”
+  - “Click to find out more” (help/link)
+- Filter and search bar:
+  - Filter control labeled “Filter” with a small funnel icon
+  - Search field with placeholder/typeahead icon and magnifying glass
+  - Right-aligned search input with placeholder word “vendor”
+- Data grid header (blue header bar) with column labels (from left to right):
+  - Checkbox column (selection)
+  - Gov. Agency (agency name or code)
+  - e-Service (service name)
+  - Description (brief description)
+  - Additional Check (checkbox or indicator)
+  - Additional Details Required (indicator)
+- Table body (rows shown; example row content):
+  - Row 1:
+    - Agency: ACCOUNTANT-GENERAL DEPARTMENT (AGD) or similar government agency
+    - e-Service: VENDORS GOV - VENDORS ELECTRONIC INVOICES TO GOVERNMENT
+    - Description: Submission of electronic invoices to the Government
+    - Additional Check: [checkbox placeholder]
+    - Additional Details Required: [indicator placeholder]
+- Visual cues:
+  - Color scheme: teal tile for primary action; blue header for data grid; red borders around selected/active tiles
+  - Icons: abstract icons indicating user assignment, document access, and service/e-service concepts
+- Interaction semantics:
+  - User selects one or more e-Services via checkboxes in the data grid
+  - Selected e-Services are to be assigned to users or user groups for the entity
+  - Filter and search to refine the list of e-Services
+  - Stepper guides flow from selection to detail entry to submission
+- Data model primitives:
+  - Entity: target organizational unit (entity) to configure e-Services for
+  - E-Service: discrete service offering (e-Service name)
+  - Assignment: mapping of selected e-Services to users/groups
+  - Access View: read/write access to the entity’s e-Service configuration
+- Relationships/flows:
+  - User navigates to e-Service Access tab -> selects tile “Select Entity’s e-Services” -> checks desired e-Services in grid -> proceeds to Step 2 (Enter Details) -> Step 3 (Review & Submit) to apply changes
+- Semantic domain keywords:
+  - Entity-level e-Service provisioning, access control, user-group assignment, government e-Invoice service, vendor electronic invoicing, audit/permissions, governance screen, data grid, column filters, batch selection, role-based access control (RBAC) for e-Services.
 User Accountse-ServiceAccessThird PartyThird Party (Clients)ChangeEntityProfileSelect Entity'se-ServicesAssignselectede-ServicesViewEntity'se-ServiceAccessSelect e-Services that yourentity will use.gne-Servicesaccess to yourentity's usersViewandedityourentity'scurrente-Servicesand user groups.accessSelectEntity'se-ServicesSelectEnterReviewe-ServicesDetails&amp; SubmitClick the relevant checkboxes to select whiche-Service(s)you want toassign to your users.Clickto find out moreFiltervendorAdditionalAdditionalGovt.AgencyDetailsAgencye-ServiceDescriptionCheck*Required*ACCOUNTANT-VENDORSGOV-SubmissionofelectronicinvoicestotheGENERALVENDORSELECTRONICGovernmentDEPARTMENTINVOICES TO(AGD)GOVERNMENT
 
 
@@ -149,35 +124,35 @@ User Accountse-ServiceAccessThird PartyThird Party (Clients)ChangeEntityProfileS
 Page 9 from document LoginRegister
 
 ## Corppass Registration Guide for UEN Registered Entity## Step 2: Set up the Vendors@Gov e-service## Important:- If your entity has only 1 Vendor ID, and the Vendor ID is UEN, please leave the Vendor ID field blank . This will likely be the case if your entity had never transacted with the Singapore Government.- If your entity has Vendor ID(s) that is not UEN, please indicate all the Vendor ID(s), including your UEN if it is also a Vendor ID (i.e.  you have  a  Vendors@Gov account under your UEN). This might be the case if your entity has preexisting transactions with government agencies.
-IMAGE FOUND, DESCRIPTION : - Screen: “Select Entity’s e-Services”
-- Progress steps (top-left): Step 1 of 3 – Select e-Services (highlighted with orange checkmark), Step 2 – Enter Details (active), Step 3 – Review & Submit (inactive)
-- Instruction note: “Some e-Services require additional information. Enter details to proceed.”
-- Legend: “* denotes mandatory fields”
-- Main layout: Dual-column panel
-  - Left column (table header with blue background):
-    - Columns: “Govt Agency” and “e-Service”
-    - Sub-columns/tool icons: “Additional Agency Check” and “Additional Details Required”
-  - Left table row item: 
-    - Entry text: “ACCOUNTANT-GENERAL’S DEPARTMENT (AGD)” under Govt Agency
-    - Entry text: “VENDORS GOV - VENDORS ELECTRONIC INVOICES TO GOVERNMENT” under e-Service
-  - Right column (red highlighted panel) titled: 
-    - “ACCOUNTANT-GENERAL’S DEPARTMENT (AGD) - VENDORS GOV - VENDORS ELECTRONIC INVOICES TO GOVERNMENT”
-  - Right column form fields (three text inputs with vertical stacking):
-    - Field 1 label: none visible; input value: “1234567”
-    - Field 2 input value: “1234568”
-    - Field 3 input value: “1234569”
-  - Field controls beside each input: delete/trash icons (red trash can) for removal
-  - Button under inputs: “+ Add New”
-- Bottom actions (centered): 
-  - Left: “Back” button
-  - Right: “Next” button (blue)
-- Status line under left table: “1 e-Service(s) Selected” (gray bar)
-- Visual cues: blue header row, left-side selection indicator, red-outlined right-hand form panel for additional details
-- Data points extracted:
-  - Selected e-Service: ACCOUNTANT-GENERAL’S DEPARTMENT (AGD) - VENDORS ELECTRONIC INVOICES TO GOVERNMENT
-  - Vendor ID entries: 1234567, 1234568, 1234569
-  - Mandatory-field indicator: asterisk denotes mandatory fields
-  - Actions: Add New, Delete (trash icons for each Vendor ID)
+IMAGE FOUND, DESCRIPTION : - Screen: "Select Entity's e-Services" wizard page (Step 2 of 3: Enter Details; Step 1 shows Select e-Services; Step 3: Review & Submit)
+- Instruction text: "Some e-Services require additional information. Enter details to proceed."
+- Legend: "*" denotes mandatory fields.
+
+Left panel (grid/table):
+- Column headers (blue bar):
+  - " Govt Agency" (left)
+  - "e-Service"
+  - "Additional Agency Check"
+  - "Additional Details Required"
+- Row description: Selected e-Service combination representing "ACCOUNTANT-GENERAL'S DEPARTMENT (AGD) - VENDORSGOV - VENDORS ELECTRONIC INVOICES TO GOVERNMENT"
+- Selected item line appears with the left icon indicating selection; status at bottom: "1 e-Service(s) Selected"
+
+Right panel (form, red outlined):
+- Title: "ACCOUNTANT-GENERAL'S DEPARTMENT (AGD) - VENDORS GOV - VENDORS ELECTRONIC INVOICES TO GOVERNMENT"
+- Input fields (three lines with sample numeric values prefilled):
+  - Field 1: "Vendor ID" value: 1234567
+  - Field 2: value: 1234568
+  - Field 3: value: 1234569
+- Each input line has a delete (trash can) icon on its right side
+- Button row beneath fields: "+ Add New" (to add another Vendor ID entry)
+- Layout note: The right panel is a data-entry subform for vendor identifiers associated with the selected e-service
+
+Bottom action bar:
+- Navigation controls: "Back" button (left) and "Next" button (blue, right)
+- Status strip text: "1 e-Service(s) Selected" is shown above the bottom controls
+
+Overall semantics:
+- User selects one e-service combination (AGD + VendorsGov - Vendors Electronic Invoices to Government) and provides one or more Vendor ID entries in the right-side subform. The workflow progresses from Step 2 to Step 3 (Review & Submit) via the Next button. Mandatory fields are indicated with a red asterisk in the underlying form (not visually shown beyond legend).
 ## SelectEntity'se-ServicesSelecte-ServicesDetailsEnterauuqns 8Some e-Services require additional information. Enter details to proceed.denotesmandatory fieldsAdditionalAdditionalACCOUNTANT-GENERAL'S DEPARTMENT (AGD) -GovtAgencyDetailsVENDORSGOV-VENDORSELECTRONICINVOICESTOAgencye-ServiceCheckRequiredGOVERNMENTACCOUNTANT-VENDORSGOV-VENDORS口GENERAL'SELECTRONIC INVOICES TOVendor IDDEPARTMENTGOVERNMENT(AGD)123456712345681234569+ Add New1 e-Service(s) SelectedBackNext
 
 
@@ -204,19 +179,27 @@ Page 13 from document LoginRegister
 
 ## 2. Login for Foreign Company/ Organisation without UENThis  login  method  is  applicable  to  non-UEN  registered  vendors  who  are  transacting  as  a Foreign Company/ Organisation.
 IMAGE FOUND, DESCRIPTION : - Page header: “Get started by logging in.”
-- Instructional line: “Click here if you do not have an account”
-- Service option tiles (primary navigation row):
-  - Tile 1: Title “For Business Users” in blue; subtitle “Login with Singpass”; outlined with red border in the image
-  - Tile 2: Title “For Individual Users” in red; subtitle “Login with Singpass”
-- Subtext line under tiles: “For Local & Foreign Entities” and “For Individuals” (appears as blue links)
-- Informational graphic area: Large illustrated document labeled “INVOICE”
-- Overlay action prompts on the invoice illustration:
-  - Speech bubble: “Submit Invoices”
-  - Speech bubble: “Monitor Payment Status”
-  - Speech bubble: “Update Vendor Details”
-- Large circular icon near lower left displaying a dollar sign
-- Ground/scene elements: stylized people interacting with the invoice, and abstract trees in yellow and orange on the right side
-- Visual style notes: light gray gradient background, soft shadows around tiles, rounded white tiles with subtle drop shadows, color accents (blue for business user, red for individuals)
+- Subtext: “Click here if you do not have an account”
+- Action area: Two prominent option tiles:
+  - Tile 1: “For Business Users” (blue text) with subtitle “Login with Singpass” and a red outline indicating selection/focus
+  - Tile 2: “For Individual Users” (red text) with subtitle “Login with Singpass”
+- Additional link line: “For Local & Foreign Entities” followed by “Click here if you are a foreign individual with an AGD Password”
+- Main graphic: Large document/worksheet labeled “INVOICE” at the top with a folded corner
+- Foreground actions on the invoice image (dialog bubbles):
+  - Bubble: “Submit Invoices”
+  - Bubble: “Monitor Payment Status”
+  - Bubble: “Update Vendor Details”
+- Visual elements: A large currency symbol coin near the bottom center; abstract people interacting with the document
+- Environmental art: Trees in yellow, orange, and red on the right side
+- Color/typography cues: 
+  - Primary callout tiles use blue text for business and red text for individual
+  - Subheaders and descriptive text use smaller black/blue fonts
+- Layout relationships:
+  - The two login option tiles sit side-by-side near the top of the interface
+  - The invoice graphic occupies the left-to-center portion below the login options
+  - Speech bubbles are anchored to the invoice graphic, indicating actions related to invoicing processes
+  - Decorative trees provide a right-side visual balance
+- Semantic domain: User authentication gateway for two user roles (Business Users, Individual Users) via Singpass; invoice submission and vendor management workflow in an invoicing/accounting portal.
 Getstarted by loggingin.Clickhere if you do not have an accountForBusinessForIndividualUsersUsersLoginwithSingpassLoginwithSingpassPEntitiesFor IndividualsClickhere ifyouarea foreign individual with anAGDPasswordINVOICESubmitinvoicesMonitorUpdatePayment StatusVendorDetailsYour organisation will first need to register for Corppass to access Vendors@Gov.For more information on Corppass registration, please click here for Guide.Step 1 -Select 'For Business Users' option to login to Vendors@Gov.
 
 
@@ -243,52 +226,48 @@ Page 17 from document LoginRegister
 
 ## Corppass Registration Guide for Non-UEN Registered Entity## Step 1: Nominate a Corppass Admin who will register for Corppass on behalf of the entityYour entity will need to appoint an administrator for the Corppass account. The appointed person will register for Corppass on behalf of the entity. The appointed person's Corppass Administrator (Admin) account will be registered together with the entity's Corppass account.The registration is done on Corppass (www.corppass.gov.sg). If the appointed administrator has Singpass, proceed to register for Corppass via Singpass. Otherwise, register via foreign ID.When registering via foreign ID, Singpass Foreign user Account (SFA) will also be automatically created for the appointed administrator.
 IMAGE FOUND, DESCRIPTION : - Layout overview:
-  - Top navigation bar: dark background with menu items: Home, About Us, Services, Help; right-aligned orange “Log in with Singpass” action and a search icon.
-  - Hero/content area: large “Welcome” heading with body text describing Corrpass (typo in image: “Corppass” or “Corppass” context) as an authority for authentication-based services enabling secure access to transactions and digital services.
-  - Primary call-to-action: large blue button labeled: “Register as a Corppass Admin”.
-  - Secondary login/registration submenu: multi-level dropdowns under the Services menu:
-    - First-level menu item: “Register for Corppass”
-      - Submenu item examples: “Check Registration Status”, “Activate Corppass Account”, “Manage Admin”, “Find Your Corppass Admin”
-    - Second-level menu item: “UEN Registered Entity”
-    - Third-level submenu under “UEN Registered Entity” includes: “Foreign Entity” and “Register via Singpass”
-    - Deepest action in the flow: “Register via Foreign ID” (highlighted with blue background and red border)
-  - Visual cues:
-    - Red borders around active/hovered dropdown panels.
-    - White card-style dropdowns with light shadows.
-    - Overlay alignment showing horizontal flow from Services to submenus toward actions like registration via Foreign ID.
+  - Top navigation bar (header) with four primary items aligned horizontally: Home, About Us, Services, Help.
+  - Right-aligned call-to-action area in the header: an orange button labeled “Log in with Singpass” and a small search icon placeholder.
+  - Main hero/content region with a prominent “Welcome” headline on the left and a descriptive paragraph about Corppass/services to sign up for admin/registration on the left column.
+  - A large blue action button beneath the intro: “Register as a Corppass Admin”.
 
-- Data points and relationships:
-  - Navigation flow: Services menu expands to sub-options; “Register for Corppass” leads to further actions; “UEN Registered Entity” branches to “Foreign Entity” and “Register via Singpass”; “Register via Foreign ID” is the action highlighted.
-  - Primary action emphasis: “Register as a Corppass Admin” button in the hero area as the principal conversion CTA.
-  - Contextual descriptors: Corppass authentication service enabling access to electronic transactions; sign-up prompt to become a Corppass Admin.
+- Dropdown/Menu architecture (navigation behavior and structure):
+  - Primary menu item: Services (active/hover state reveals a multi-level dropdown).
+  - First-level dropdown items under Services:
+    - “Register for Corppass” (highlighted with a red outline in the screenshot) and an adjacent secondary item “UEN Registered Entity” to the right.
+  - Second-level dropdown surface (submenus) revealed from first-level items:
+    - Under “Register for Corppass”: 
+      - “Check Registration Status”
+      - “Activate Corppass Account”
+      - “Manage Admin”
+      - “Find Your Corppass Admin”
+    - Under “UEN Registered Entity” (to its right): 
+      - “Foreign Entity” (with a right-pointing chevron)
+        - Sub-item visible: “Register via Singpass”
+        - Sub-item highlighted/selected: “Register via Foreign ID” (blue button style with red outline)
+  - Interaction flow:
+    - Hover/activate “Register for Corppass” to reveal the first submenu.
+    - Hover/activate “Foreign Entity” to reveal its sub-options, culminating in “Register via Foreign ID”.
 
-- Semantic keywords (domain-specific, ready for indexing):
-  - Navigation: top_nav, menu_services, dropdown, multi_level_menu, hover_state, red_borders, white_card, shadow
-  - Actions: register_corrpass_admin, register_for_corrpass, check_registration_status, activate_corrpass_account, manage_admin, find_corrpass_admin, uen_registered_entity, foreign_entity, register_via_singpass, register_via_foreign_id
-  - Entities: Corppass, Corppass_Admin, UEN_Registered_Entity, Foreign_Entity, Singpass, Foreign_ID
-  - CTAs: Register_as_a_Corppass_Admin, Log_in_with_Singpass
-  - UI/UX cues: hero_header_welcome, body_text_about_corrpass, service_submenu, highlighted_action, blue_cta, orange_top_bar, search_icon
+- Visual and label details:
+  - The dropdown panels use white background with light drop shadows and subtle borders.
+  - Active/selected/highlighted items are padded and outlined with a red border for emphasis (e.g., “Register for Corppass” and the nested “Register via Foreign ID”).
+  - The “Register via Foreign ID” item is visually emphasized with a blue fill and red border outline.
+  - Overall color cues: dark header/navigation bar, white dropdowns, blue primary call-to-action, orange Singpass login button in the header.
 
-- Observed textual content (exact strings):
-  - Menu: Home, About Us, Services, Help
-  - Right-side action: Log in with Singpass
-  - Hero heading: Welcome
-  - CTA: Register as a Corppass Admin
-  - Dropdown items (approximate):
-    - Register for Corppass
-    - UEN Registered Entity
-    - Check Registration Status
-    - Foreign Entity
-    - Register via Singpass
-    - Activate Corppass Account
-    - Manage Admin
-    - Find Your Corppass Admin
-    - Register via Foreign ID
+- Content semantics for database indexing:
+  - Page roles: Home page with Services navigation and authentication action.
+  - Key actions and entities:
+    - Entities: Corppass, UEN Registered Entity, Foreign Entity
+    - Actions: Register, Check Registration Status, Activate Account, Manage Admin, Find Admin, Register via Singpass, Register via Foreign ID
+  - Hierarchical relationships:
+    - Services > Register for Corppass
+    - Services > UEN Registered Entity > Foreign Entity > Register via Foreign ID
+    - Corppass Admin management functions: Activate, Manage Admin, Find Admin
+  - Primary call-to-action: “Register as a Corppass Admin”
+  - Auth flow element: “Log in with Singpass” in header
 
-- Spatial relationships:
-  - Services dropdown panel sits beneath the Services tab in the header.
-  - The “Register for Corppass” panel is left-aligned under Services; subsequent panels extend rightward to “UEN Registered Entity” and its submenus.
-  - The “Register via Foreign ID” item is visually highlighted as an emphasized action within the submenu path.
+- Data points and axis/legend (for charts/graphs) none present; this image is a UI navigation layout with dropdowns and a hero section.
 HomeAboutUsServicesHelpLogin withSingpassRegister forCorppassUENRegisteredEntityWelcomeCheckRegistrationStatusForeign EntityRegisterviaSingpassCorppassis theauthcActivate CorppassAccountlanage digitalRegister via Foreign IDservice access ofermcorporatetransactions.There aigital servicesavailable today.Manage AdminSign upnowtopreverFindYour CorppassAdmintransactions.Find ouRegisteras a CorppassAdminNote: Once the registration is submitted, Corppass will take 5 to 10 working days to process your registration.
 
 
@@ -296,29 +275,33 @@ HomeAboutUsServicesHelpLogin withSingpassRegister forCorppassUENRegisteredEntity
 Page 18 from document LoginRegister
 
 ## Corppass Registration Guide for Non-UEN Registered Entity## Step 2: Activate Singpass account for Corppass Admin (only for foreign ID users)For Corppass Admin with Singpass , this step is not applicable. Proceed to login to Corppass via Singpass to set up the Vendors@Gov e-service.For Corppass Admin with foreign ID , your Singpass Foreign user Account (SFA) will be created once your Corppass Admin account is approved. An email will be sent to you to inform you to activate your SFA. Once you have activated your SFA, you may proceed to login to Corppass via Singpass to set up the Vendors@Gov e-service.
-IMAGE FOUND, DESCRIPTION : - Page header/navigation bar:
-  - Left-aligned menu items: Home, About Us, Services, Help
-  - Right-aligned call-to-action button: “Log in with Singpass” (red/orange button with user icon)
-  - Small search icon at far right of the header
-
-- Hero/landing section image:
-  - Visual: large banner with a hand holding a smartphone on the right; soft, light background with faint green/yellow gradient
-
-- Main title:
-  - Text: “Welcome to Corppass”
-  - Styling cues: “Corppass” emphasized in blue; overall typography large and prominent
-
-- Descriptive paragraph block (two-sentence description):
-  - Sentence 1: “Corppass is the authorisation system for entities to manage digital service access of employees who need to perform corporate transactions.”
-  - Sentence 2: “There are more than 200 government digital services available today.”
-
-- Supporting call-to-action line:
-  - Text: “Sign up now to prevent any disruption to your business transactions. Find out more.”
-  - “Find out more” styled as a hyperlink (blue)
-
-- Visual/branding cues:
-  - Overall color scheme: dark header, red/orange login button, blue highlight on the brand name
-  - Image composition suggests a corporate/digital services portal focused on government e-services and employee access management
+IMAGE FOUND, DESCRIPTION : - Layout region: Website header/navigation bar and hero banner
+- Navigation bar elements (left to right): 
+  - Link: Home
+  - Link: About Us
+  - Link: Services
+  - Link: Help
+  - Right-aligned action button: Log in with Singpass (orange button with user icon)
+  - Rightmost search icon (magnifying glass)
+- Hero/banner content:
+  - Title text: "Welcome to Corppass"  
+  - Brand emphasis: the word "Corppass" styled in blue
+  - Description paragraph: 
+    - "Corppass is the authorisation system for entities to manage digital service access of employees who need to perform corporate transactions. There are more than 200 government digital services available today."
+  - Call-to-action line: 
+    - "Sign up now to prevent any disruption to your business transactions. Find out more."
+    - Inline link text: "Find out more." (blue, underlined style)
+- Visual composition notes:
+  - Wide hero image with a hand holding a smartphone on the right
+  - Background gradient/soft blur behind title
+- Data points/features to index:
+  - System: Corppass authorization system
+  - Purpose: manage digital service access for employees performing corporate transactions
+  - Coverage: ~200 government digital services available today
+  - Action prompts: Sign up now; Find out more
+- Interaction affordances:
+  - Primary action: Log in with Singpass (red/orange button)
+  - Secondary action: Find out more (link)
 HomeAboutUsServicesHelpLogin with Singpass## WelcometoCorppassCorppassistheauthorisationsystemforentitiestomanagedigital service access of employees who need to perform corporate transactions.Therearemorethan2o0governmentdigitalservices availabletoday.Sign upnow topreventanydisruption toyourbusiness transactions.Findoutmore.
 
 
@@ -326,47 +309,54 @@ HomeAboutUsServicesHelpLogin with Singpass## WelcometoCorppassCorppassistheautho
 Page 19 from document LoginRegister
 
 ## Corppass Registration Guide for Non-UEN Registered Entity## Step 3: Set up the Vendors@Gov e-service
-IMAGE FOUND, DESCRIPTION : - Subject: Implementation task for Corppass Admin to configure Vendors@Gov e-service for the entity on Corppass.
-- Top navigation tabs: User Accounts, e-Service Access (selected), Third Party, Third Party (Clients).
-- Primary action tile (highlighted): “Select Entity’s e-Services” — action to choose which e-Service(s) the entity will use.
-- Secondary tiles (unselected): 
-  - “Assign selected e-Services” — assign e-Services access to the entity’s users and user groups.
-  - “View Entity’s e-Service Access” — view and edit the entity’s current e-Services access.
-- Stepper/flow: Step 1 — Select e-Services (active). Step 2 — Enter Details (inactive). Step 3 — Review & Submit (inactive).
-- Page instructions: 
-  - Instruction line: “Click the relevant checkboxes to select which e-Service(s) you want to assign to your users. Additional checks may apply for access to agency e-Service.”
-  - Optional controls: Filter field (labeled Filter) with a search input (placeholder “vendor”); additional UI controls (dropdowns, magnifier icon) for refinement.
-- Data table section: 
-  - Banner: “Select Entity’s e-Services”
-  - Table columns (visible): 
-    - Government Agency (Govt. Agency)
+IMAGE FOUND, DESCRIPTION : - Title: The Corppass Admin will need to set up the Vendors@Gov e-service for the entity on Corppass.
+
+- UI upper navigation (tabs):
+  - User Accounts
+  - e-Service Access (selected)
+  - Third Party
+  - Third Party (Clients)
+
+- Main action tiles (three tiles aligned horizontally under the selected tab):
+  1) Tile: "Select Entity's e-Services"
+     - Visual: teal tile with icon
+     - Subtitle: "Select e-Services that your entity will use."
+     - Status: currently highlighted (selected)
+  2) Tile: "Assign selected e-Services"
+     - Visual: light tile
+     - Subtitle: "Assign e-Services access to your entity's users and user groups."
+  3) Tile: "View Entity's e-Service Access"
+     - Visual: light tile
+     - Subtitle: "View and edit your entity's current e-Services access."
+
+- Section: "Select Entity's e-Services" (Step indicator at top)
+  - Step 1: Select e-Services (active)
+  - Steps 2-3: Enter Details, Review & Submit (inactive)
+
+- Instruction text under Step 1:
+  - "Click the relevant checkboxes to select which e-Service(s) you want to assign to your users."
+  - "Additional checks may apply for access to agency e-Service."
+  - "Click to find out more" (link or help)
+
+- Data grid/header (lower portion):
+  - Column headers (visible in blue header): 
+    - Govt. Agency
     - e-Service
     - Description
     - Additional Agency Check
     - Additional Details Required
-  - Row example (partial): 
-    - ACCOUNTANT-GENERAL DEPARTMENT (AGD)
-    - VENDORS GOV - VENDORS ELECTRONIC INVOICES TO GOVERNMENT
-    - Description: “Submission of electronic invoices to the Government”
-    - Status indicators: checkbox for selection; flags for agency checks and required details
-- Visual style notes: 
-  - Header area uses a light-blue background.
-  - Selected tile outlined in red in the screenshot, with turquoise tile color for the active “Select Entity’s e-Services.”
-- Process relationship: The admin selects e-Services (Step 1) to assign; the system then uses this selection to populate the subsequent steps for detail entry and submission. The overall flow is from left to right: choose e-Services -> assign to users -> review/submit.
-- Key entities and attributes to serialize for a vector database:
-  - Entity: Corppass Admin
-  - Task: Configure Vendors@Gov e-service for an entity
-  - Tabs: User Accounts; e-Service Access (active); Third Party; Third Party (Clients)
-  - Action Tiles: Select Entity’s e-Services; Assign selected e-Services; View Entity’s e-Service Access
-  - Stepper: Step 1 (Select e-Services) active; Step 2 (Enter Details); Step 3 (Review & Submit)
-  - Table Columns: Govt. Agency; e-Service; Description; Additional Agency Check; Additional Details Required
-  - Example Row: 
-    - Govt. Agency: ACCOUNTANT-GENERAL DEPARTMENT (AGD)
+  - Rows show entries such as:
+    - Government/Agency: ACCOUNTANT-GENERAL DEPARTMENT (AGD)
     - e-Service: VENDORS.GOV - VENDORS ELECTRONIC INVOICES TO GOVERNMENT
-    - Description: Submission of electronic invoices to the Government
-    - Additional Agency Check: [checkbox or indicator]
-    - Additional Details Required: [indicator]
-- Semantic keywords for indexing: Corppass, Vendors@Gov, e-service configuration, entity assignment, e-Service access, workflow steps, government invoicing, electronic invoices, agency checks, user-group access, governance portal.
+    - Description: "Submission of electronic invoices to the Government"
+    - Various check indicators for required/optional additional checks
+
+- Filtering and search:
+  - Filter input with placeholder value "vendor" (search term)
+  - Additional filter controls (icons) for refining the dataset
+
+- Summary:
+  - The screenshot depicts the process to grant e-Service access for a government entity via Corppass Admin, focusing on selecting e-Services to assign to users, with a multi-step workflow and a data table listing available e-Services and their descriptions, approvals, and required checks.
 The Corppass Admin will need to set up the Vendors@Gov e-service for the entity on Corppass.User Accountse-ServiceAccessThird PartyThird Party (Clients)Change Entity ProfileSelectEntity'se-ServicesAssignselectede-ServicesViewEntity'se-ServiceAccessSelect e-Services that your entity will use.n e-Services access to your entity's usersView and edityourentity'scurrente-Servicesand user groups.accessSelectEntity'se-ServicesSelectEnterReviewe-ServicesDetails&amp; SubmitClicktherelevant checkboxes toselect whiche-Service(s)you want toassigntoyourusers.Additionalchecksmay applyfor accesstoagencye-Service.Clickto find out moreY FiltervendorAdditionalAdditionalGovt.AgencyDetailsAgencye-ServiceDescriptionCheck*Required*ACCOUNTANT-VENDORSGOV-Submissionofelectronicinvoicestothe?GENERALVENDORSELECTRONICGovernmentDEPARTMENTINVOICES TO(AGD)GOVERNMENT
 
 
@@ -374,46 +364,41 @@ The Corppass Admin will need to set up the Vendors@Gov e-service for the entity 
 Page 20 from document LoginRegister
 
 ## Corppass Registration Guide for Non-UEN Registered Entity## Step 3: Set up the Vendors@Gov e-service## Important:- If  your  entity  has  an existing Vendor ID on Vendors@Gov or has been awarded Invoicing Instructions through your GeBIZ ID e.g. Y12345, please indicate the Vendor ID or GeBIZ ID in the vendor ID field. Otherwise, leave the field blank.- If  you had indicated a value in the Vendor ID field, please submit a ticket and provide the following details at AGD Helpdesk,  so that AGD can do the vendor mapping at Vendors@Gov:- Entity ID (provided by Corppass upon registration, e.g. C12345678X)- Existing Vendor ID (e.g. Y123456)
-IMAGE FOUND, DESCRIPTION : - Overall UI category: Web-based form wizard for selecting an entity’s e-Services with a 3-step progress indicator (Step 1: Select e-Services, Step 2: Enter Details, Step 3: Review & Submit). Step 2 is active.
-
-- Left pane (main selection grid):
-  - Column headers (blue strip): 
-    - Govt Agency
-    - e-Service
-    - Additional Agency Check
-    - Additional Details Required
-  - Row entry (single visible row):
-    - Govt Agency: ACCOUNTANT-GENERAL'S DEPARTMENT (AGD)
-    - e-Service: VENDORSGOV - VENDORS ELECTRONIC INVOICES TO GOVERNMENT
-  - Visual cue: a checkbox or selection control on the left side of the row (selected state visible).
-  - Summary footer: “1 e-Service(s) Selected.”
-
-- Right pane (red-outlined panel: details input):
-  - Panel title: ACCOUNTANT-GENERAL'S DEPARTMENT (AGD) - VENDORS GOV - VENDORS ELECTRONIC INVOICES TO GOVERNMENT
-  - Fieldset: Vendor Information (Vendor ID)
-  - Three input fields (pre-populated or placeholder values shown as examples):
-    1) Vendor ID: 1234567
-    2) Vendor ID: 1234568
-    3) Vendor ID: 1234569
-  - Each input field has a trash/delete icon on its right side (suggesting removable entries).
-  - Action button: “+ Add New” to append additional vendor IDs.
-  - Decorative/functional elements: 
-    - Red border indicating a required data-entry region.
-    - Icons indicating deletions and an inline add operation.
-
-- Bottom navigation:
-  - Left button: Back
-  - Right button: Next (active)
-- Instructional text near top of panel:
-  - “Some e-Services require additional information. Enter details to proceed.”
-  - Note: Asterisk (*) marks mandatory fields.
-
+IMAGE FOUND, DESCRIPTION : - Page/section: "Select Entity's e-Services"
+- Process steps indicator (visual workflow):
+  - Step 1: Select e-Services (completed; orange checkmark)
+  - Step 2: Enter Details (current; orange highlight)
+  - Step 3: Review & Submit (future; gray)
+- Informational note: "Some e-Services require additional information. Enter details to proceed." (mandatory fields marked with asterisk)
+- Layout region: Two-column interface
+  - Left column: Entity selection tree/table
+    - Table header: "Govt Agency" and "e-Service" with sub-columns for "Additional Agency Check" and "Additional Details Required" (blue header)
+    - Row entry: 
+      - Govt Agency: "ACCOUNTANT-GENERAL'S DEPARTMENT (AGD)"
+      - e-Service: "VENDORSGOV - VENDORS ELECTRONIC INVOICES TO GOVERNMENT"
+      - Status/interaction indicators: blank row entry with icon placeholder
+    - Bottom status bar: "1 e-Service(s) Selected"
+  - Right column (outlined in red as a separate panel): "ACCOUNTANT-GENERAL'S DEPARTMENT (AGD) - VENDORS GOV - VENDORS ELECTRONIC INVOICES TO GOVERNMENT" (panel header)
+    - Field group: "Vendor ID" (three input fields)
+      - Field 1: value "1234567" (text input)
+      - Field 2: value "1234568" (text input)
+      - Field 3: value "1234569" (text input)
+    - Delete controls: red trash can icon adjacent to each input row
+    - Action button area: "+ Add New" button at panel bottom
+- Navigation controls:
+  - Bottom-left: "Back" button
+  - Bottom-right: "Next" button (blue)
 - Interaction semantics:
-  - User selects one e-Service from the left grid.
-  - User proceeds to Step 2 to enter one or more Vendor IDs in the right panel.
-  - User can add multiple Vendor IDs via the “+ Add New” control.
-  - Users may remove Vendor IDs using the trash icons.
-  - Progress can move to Step 3 after completing required details and clicking Next.
+  - User selects an e-Service from the left grid
+  - User enters or edits Vendor IDs in the right panel
+  - User can add additional Vendor ID rows with "Add New"
+  - User can remove rows with the trash icon
+  - Progress indicators confirm Step 2 is in progress; Step 3 will be available after submission
+- Data model implications:
+  - Entity: Government agency name (string)
+  - E-Service: code/description string
+  - Vendor IDs: list of strings (3 currently populated)
+  - Validation: mandatory fields indicated by asterisk in the helper text (enforce before proceeding)
 ## SelectEntity'se-ServicesSelecte-ServicesEnterDetailsSome e-Services require additional information. Enter details to proceed.denotesmandatory fieldsAdditionalAdditionalGovtAgencyDetailsACCOUNTANT-GENERAL'S DEPARTMENT (AGD) -VENDORSGOV-VENDORSELECTRONICINVOICESTOAgencye-ServiceCheckRequiredGOVERNMENTACCOUNTANT-VENDORSGOV-VENDORSGENERAL'SELECTRONIC INVOICES TOVendor IDDEPARTMENTGOVERNMENT(AGD)123456712345681234569+ Add New1e-Service(s) SelectedBackNext
 
 
@@ -440,19 +425,37 @@ Page 24 from document LoginRegister
 
 ## 3. Login for Individuals with SingpassThis  login  method  is  applicable  to  vendors  who  are  transacting  as  an  individual  for  your personal payment matters (e.g. freelancers).
 IMAGE FOUND, DESCRIPTION : - Page header: "Get started by logging in."
-- Subheader line: "Click here if you do not have an account"
-- Two prominent login option cards:
-  - Card 1: Title "For Business Users" (blue text), subtitle "Login with Singpass" (smaller black text)
-  - Card 2: Title "For Individual Users" (red text), subtitle "Login with Singpass" (smaller black text)
-  - The "For Individual Users" card is outlined with a red border in the image
-- Secondary line: "For Local & Foreign Entities" with small blue link text "Click here if you are a foreign individual with an AGD Password" (likely a miswording; exact text: "Click here if you are a foreign individual with an AGD Password")
-- Visual content: Large illustration of an invoice document labeled "INVOICE" at the top left
-- Foreground actions on the invoice illustration:
-  - A speech bubble/button labeled "Submit Invoices"
-  - A speech bubble/button labeled "Monitor Payment Status"
-  - A speech bubble/button labeled "Update Vendor Details"
-- Decorative elements: A coin/dollar symbol graphic near the bottom center; two abstract trees (yellow and orange) on the right side; soft gradient background with a light diagonal highlight
-- Layout semantics: Top-aligned login options, followed by a contextual help/links row, then a large illustrative invoice scene conveying invoice submission and vendor management actions.
+- Subtext with links: "Click here if you do not have an account" (with 'here' as a hyperlink)
+- Section toggle buttons (two options) for login targets:
+  - Button 1: Label "For Business Users" with sublabel "Login with Singpass" (left-aligned, blue text; white rounded rectangle with blue border)
+  - Button 2: Label "For Individual Users" with sublabel "Login with Singpass" (right-aligned, red border emphasis; white rounded rectangle)
+  - Visual emphasis: The "For Individual Users" button is highlighted with a red outline
+- Informational text line: "For Local & Foreign Entities" followed by "Click here if you are a foreign individual with an AGD Password" (blue links)
+- Main content image: Large illustrated document icon labeled "INVOICE" at top-left
+- Invoice UI elements within illustration:
+  - A large sheet labeled "INVOICE" with a folded corner on the top-right
+  - A primary callout bubble near the sheet labeled "Submit Invoices"
+  - A secondary callout bubble labeled "Monitor Payment Status"
+  - A third callout bubble labeled "Update Vendor Details"
+- Decorative/functional graphics: Three stylized trees in yellow and orange hues to the right of the invoice
+- Ground plane: Light gray gradient background suggesting a user interface onboarding screen
+
+Semantic data points for indexing:
+- Authentication: two user-type options (Business Users, Individual Users) for Singpass login
+- Context: invoicing workflow interface
+- Actions depicted: Submit Invoices, Monitor Payment Status, Update Vendor Details
+- Navigation/textual cues: "Get started by logging in", "Click here if you do not have an account", "For Local & Foreign Entities", "Click here if you are a foreign individual with an AGD Password"
+- Visual emphasis: Red-outline highlight on "For Individual Users" button
+- Visual elements: INVOICE document graphic, callout bubbles, decorative trees, currency icon
+
+Relationships and flows:
+- User chooses between Business Users or Individual Users to login with Singpass
+- After login, user interacts with the invoice workflow (Submit Invoices, Monitor Payment Status, Update Vendor Details)
+- Support text links provide help for account creation and AGD Password access
+- Spatial layout: header at top, option buttons beneath header, descriptive subtext, then large invoice illustration aligned left with callouts, decorative trees to the right
+
+Notes:
+- No actual numeric data or axis values present; data points are qualitative UI elements and labels only.
 Getstarted by loggingin.Clickhere ifyou donot have an accountFor BusinessForIndividualUsersUsersLoginwithSingpassLoginwithSingpassFor Local&amp;Foreign EntitiesForIndividualsClickhereif you are a foreign individual with anAGDPasswordINVOICESubmitinvoicesMonitorUpdatePayment StatusVendorDetails
 
 
@@ -472,37 +475,25 @@ Page 26 from document LoginRegister
 Page 27 from document LoginRegister
 
 ## 4. Login for Individuals with AGD PasswordThis  login  method  is  applicable  to  vendors  who  are  transacting  as  an  individual  for  your personal payment matters (e.g. freelancers) but are not eligible for Singpass.
-IMAGE FOUND, DESCRIPTION : - Title/header: Get started by logging in.
-
-- Subheader line: Click here if you do not have an account
-
-- Primary action blocks (two options):
-  - Block 1: For Business Users
-    - Tagline: Login with Singpass
-    - Sub-tag: For Local & Foreign Entities
-  - Block 2: For Individual Users
-    - Tagline: Login with Singpass
-    - Sub-tag: For Individuals
-
-- Secondary action line (under the two blocks): Click here if you are a foreign individual with an AGD Password
-
-- Visual content description:
-  - Large document graphic labeled "INVOICE" with a folded corner motif
-  - Three floating callouts:
-    - Callout 1 (left): Monitor Payment Status
-    - Callout 2 (center): Submit Invoices
-    - Callout 3 (bottom-center): Update Vendor Details
-  - Decorative elements: two humanoid figures (one standing near the left, one seated on the ground with a tablet), a dollar sign graphic, and stylized trees/plants in yellow and red hues
-  - Color palette cues: soft blue/gray background, white block buttons with rounded corners, red/blue text accents
-
-- Layout relationships and flow:
-  - Top row contains two side-by-side login option blocks (For Business Users on the left, For Individual Users on the right)
-  - Under the two blocks, a horizontal informational line prompting users to click “here” for foreign individuals with an AGD Password
-  - Central visual area depicts an INVOICE document with three interactive callouts arranged around the document
-  - Action-oriented elements suggest user tasks: Monitor Payment Status, Submit Invoices, Update Vendor Details
-
-- Semantic domain keywords:
-  - User authentication UI, Singpass login, business vs individual user paths, account creation prompt, AGD password, invoice processing, vendor management, payment status monitoring, enterprise vs personal entity access, KPI: invoice submission and vendor data update.
+IMAGE FOUND, DESCRIPTION : - Page title: Get started by logging in.
+- Subtext/links:
+  - Click here if you do not have an account
+- Two primary user type panels:
+  - Panel 1: For Business Users
+    - Subtext: Login with Singpass
+    - Tagline: For Local & Foreign Entities
+  - Panel 2: For Individual Users
+    - Subtext: Login with Singpass
+    - Tagline: For Individuals
+- Secondary action line (highlighted in red): Click here if you are a foreign individual with an AGD Password
+- Visual motif: Large document graphic labeled INVOICE
+  - Floating callouts within document:
+    - "Submit Invoices" (speech bubble)
+    - "Monitor Payment Status" (speech bubble)
+    - "Update Vendor Details" (speech bubble)
+- Decorative/scene elements: Two human figures interacting with the invoice; currency symbol coin; trees in yellow, orange, and red hues; light blue background gradient
+- Implicit navigation/flow: User selects login path (Business vs Individual) then potential “foreign individual with AGD Password” assistance link
+- Overall context: Illustration for invoicing workflow and user login options.
 Getstarted by loggingin.Clickhere ifyou donot have an accountFor BusinessForIndividualUsersUsersLoginwithSingpassLoginwithSingpassFor Local&amp;Foreign EntitiesFor IndividualsClickhere ifyou areaforeign individualwithanAGDPasswordINVOICESubmitinvoicesMonitorUpdatePayment StatusVendorDetailsStep 1 -Click on 'here' under 'Login here if you are a foreign individual with an AGD password' to login Vendors@Gov.If you are a foreign individual who is not eligible for Singpass, please fill in the AGD password application form here and submit it through AGD Helpdesk.
 
 
@@ -510,27 +501,34 @@ Getstarted by loggingin.Clickhere ifyou donot have an accountFor BusinessForIndi
 Page 28 from document LoginRegister
 
 ## 4. Login for Individuals with AGD PasswordThis  login  method  is  applicable  to  vendors  who  are  transacting  as  an  individual  for  your personal payment matters (e.g. freelancers) but are not eligible for Singpass.
-IMAGE FOUND, DESCRIPTION : - Document type: Login interface screen for foreign individuals (Web/portal login page)
-- Section: Step 2 – Enter login details and CAPTCHA, then click Login
-- Visual regions:
-  - Large left panel highlighted with red border: Login form
-    - Field 1: User ID labeled “User ID *” (text input)
-    - Field 2: Password labeled “Password *” (password input)
-    - CAPTCHA block: label “Please enter the CAPTCHA Code (case sensitive):” with a distorted CAPTCHA image showing text “8j8q” and a refresh icon button to regenerate
-    - Field 3: Additional input field (likely for CAPTCHA entry) beneath the CAPTCHA image
-  - Bottom buttons area (circled in red): Two action buttons
-    - Left button: “Cancel” (gray)
-    - Right button: “Login” (blue)
-- Right-side text (instructional): Step 2 – Enter your login details (User ID and Password) and CAPTCHA code, then click ‘Login’
-- Additional notes (small text under form in orange/gray):
-  - Note: This is a security feature to prevent spam.
-  - Links: Register for Two-Factor Authentication (2FA); Forgot Password
-- Layout cues: Blue header text “Log in for Foreign Individuals”; round blue close icon at top-right of header area
-- Data points to extract for vector indexing:
-  - Field labels: "User ID", "Password", "Please enter the CAPTCHA Code (case sensitive):"
-  - CAPTCHA value shown: "8j8q" (as shown)
-  - Action labels: "Cancel", "Login"
-  - Help/notes: “Note: This is a security feature to prevent spam.”; “Register for Two-Factor Authentication (2FA)”; “Forgot Password”
+IMAGE FOUND, DESCRIPTION : - Document type: User login screen for "Foreign Individuals" (AGD/2FA style).
+- Primary sections:
+  - Title: "Log in for Foreign Individuals"
+  - Subtext: "This AGD Password option is only applicable for foreign individuals without Singpass."
+  - Form panel (contained within a red-outlined block):
+    - Field 1: User ID * (text input)
+    - Field 2: Password * (password input)
+    - Field 3: CAPTCHA instruction line: "Please enter the CAPTCHA Code (case sensitive):"
+    - CAPTCHA display: code sample "8j8q" with a refresh icon/button (CAPTCHA image and refresh control)
+  - Form continuation: (likely a trailing input for CAPTCHA response) (text input)
+  - Note line: "Note: This is a security feature to prevent spam."
+  - Additional links (under the note): 
+    - "Register for Two-Factor Authentication (2FA)"
+    - "Forgot Password"
+  - Action buttons (bottom bar, within a highlighted block):
+    - Left button: "Cancel" (gray/disabled appearance)
+    - Right button: "Login" (blue)
+- Step guidance text (to the right of the form in the image):
+  - Step 2 – Enter your login details (User ID and Password) and CAPTCHA code, then click 'Login'.
+- Visual layout notes:
+  - The login form is contained in a red-bordered rectangle.
+  - The "Login" action is emphasized with a blue button.
+  - The page includes a small circular close control (top-right) represented by an “X” in a blue circle.
+- Data fields and dependencies:
+  - User ID and Password are required fields (denoted by an asterisk).
+  - CAPTCHA must be entered exactly as shown (case sensitive) to proceed.
+  - CAPTCHA value can be refreshed via the provided refresh icon.
+  - Navigation links for account recovery and enrollment are available below the form.
 Step 2 - Enter your login details (User ID and Password) and CAPTCHA code, then click 'Login'.## Log in for Foreign IndividualsThisAGDPassword optionis only applicableforforeign individuals without Singpass.UserID*Password*Please enter the CAPTCHA Code(case sensitive):8j8qNote: This is a secunity feature to prevent spam.Register for Two-Factor Authentication(2FA)Forgot PasswordCancelLogin
 
 
@@ -538,24 +536,25 @@ Step 2 - Enter your login details (User ID and Password) and CAPTCHA code, then 
 Page 29 from document LoginRegister
 
 ## 4. Login for Individuals with AGD PasswordThis  login  method  is  applicable  to  vendors  who  are  transacting  as  an  individual  for  your personal payment matters (e.g. freelancers) but are not eligible for Singpass.
-IMAGE FOUND, DESCRIPTION : - Page title: “Log in for Foreign Individuals”
-- Subheading: “This AGD Password option is only applicable for foreign individuals without Singpass.”
-- Form fields:
-  - User ID * (input text field)
-  - Password * (input text field)
-  - CAPTCHA instruction: “Please enter the CAPTCHA Code (case sensitive):”
-  - CAPTCHA display: image showing code “8j8q” with a refresh icon button beside it
-  - CAPTCHA input field (input text field)
-- Note line: “Note: This is a security feature to prevent spam.”
-- Additional options/links (red-highlighted at bottom left):
-  - “Register for Two-Factor Authentication (2FA)”
-  - “Forgot Password” (highlighted/outlined)
+IMAGE FOUND, DESCRIPTION : - Page title: "Log in for Foreign Individuals"
+- Subtext: "This AGD Password option is only applicable for foreign individuals without Singpass."
+- Form fields (vertical stack):
+  - User ID * (text input)
+  - Password * (password input)
+  - CAPTCHA prompt label: "Please enter the CAPTCHA Code (case sensitive):"
+  - CAPTCHA input field (text) + CAPTCHA image showing "8j8q" and a refresh button (circular arrow)
+  - Additional input field (likely for CAPTCHA continuation) (text input)
+- Note/MM: "Note: This is a security feature to prevent spam."
+- Accessibility/inline link section (in red outline in screenshot):
+  - Link text: "Forgot Password" (underlined when active)
+  - Small line: "Register for Two-Factor Authentication (2FA)" (in yellow/orange emphasis)
 - Action buttons at bottom:
-  - Left button: “Cancel” (gray)
-  - Right button: “Login” (blue)
-- Right-side panel content:
-  - Icon and heading: “NOTE”
-  - Text: “If you have forgotten your password, you may click on ‘Forgot password’.”
+  - Cancel (gray button)
+  - Login (blue button)
+- Right panel content (NOTE section):
+  - Icon: document with pencil
+  - Heading: "NOTE"
+  - Paragraph: "If you have forgotten your password, you may click on 'Forgot password'."
 If you have forgotten your password, you may click on 'Forgot password'.## Log infor Foreign IndividualsThis AGD Password option is only applicable for foreignindividuals without Singpass.UserID*Password*Please enter the CAPTCHA Code(case sensitive):8j8qNote: This is a secunty feature to prevent spam.Register for Two-Factor Authentication (2FA)Forgot PasswordCancelLogin
 
 
@@ -575,23 +574,23 @@ Page 31 from document LoginRegister
 Page 32 from document LoginRegister
 
 ## Set Up Two-Factor Authentication (2FA) with Google Authenticator for Foreign Individuals## Step 3: Click to Register for 2FA
-IMAGE FOUND, DESCRIPTION : - Screen context: Authentication portal for foreign individuals with a two-factor authentication flow option (2FA) indicated.
-- Page title: "Log in for Foreign Individuals" (large header, blue text).
-- Informational note: "This AGD Password option is only applicable for foreign individuals without Singpass." (subtext under title).
-- Input fields (vertical stack):
-  - User ID * (text input, label left)
-  - Password * (text input, label left) with instruction line: "Please enter the CAPTCHA Code (case sensitive):" preceding CAPTCHA
-  - CAPTCHA area:
-    - CAPTCHA image displaying code (example shown: "dExw")
-    - Refresh icon button to reload CAPTCHA (blue circular arrow icon) adjacent to CAPTCHA image
-  - CAPTCHA answer input field (text input, label implied by preceding prompt)
-- Supporting note: "Note: This is a security feature to prevent spam" (small text under CAPTCHA area).
-- Link/option row (highlighted/selectable):
-  - "Register for Two-Factor Authentication (2FA)" (orange border highlight)
-  - "Forgot Password" (below, orange text)
-- Action bar (bottom):
-  - Left button: "Cancel" (gray)
-  - Right button: "Login" (blue)
+IMAGE FOUND, DESCRIPTION : - Screen context: Login interface for Foreign Individuals with 2FA registration option.
+- Title: Log in for Foreign Individuals
+- Subtext: This AGD Password option is only applicable for foreign individuals without Singpass.
+- Form fields (vertical order):
+  - User ID * (text input)
+  - Password * (password input)
+  - CAPTCHA instruction: Please enter the CAPTCHA Code (case sensitive):
+  - CAPTCHA image: shows text “dExw” with a circular refresh icon to its right
+  - CAPTCHA input field (text input)
+- Note line: Note: This is a security feature to prevent spam. (approximate phrasing from screenshot)
+- Link row (below note, highlighted area): 
+  - Register for Two-Factor Authentication (2FA) (highlighted with an orange/red border)
+  - Forgot Password (link, below the 2FA link)
+- Action buttons (bottom of form):
+  - Cancel (gray button)
+  - Login (blue button) 
+- Background/layout: Page area with light blue background; login form panel centered inside a white card with standard input fields and labels.
 - Click on 'Register for Two - Factor Authentication (2FA)'.## Log in for Foreign IndividualsThis AGD Password option is only applicable for foreign individuals without Singpass.User ID *Password *Please enter the CAPTCHA Code(case sensitive):dExwNote: This is a security feature to prevent spam.Register for Two-Factor Authentication (2FA)Forgot PasswordCancelLogin
 
 
@@ -599,24 +598,55 @@ IMAGE FOUND, DESCRIPTION : - Screen context: Authentication portal for foreign i
 Page 33 from document LoginRegister
 
 ## Set Up Two-Factor Authentication (2FA) with Google Authenticator for Foreign Individuals## Step 4: Enter Your Login Details
-IMAGE FOUND, DESCRIPTION : - Login panel title: "Log in to setup 2FA"
-- Form field: User ID (label: "User ID *")
-  - Input type: text
-  - Placeholder: empty
-- Form field: Password (label: "Password *")
-  - Input type: password
-  - Placeholder: empty
-- CAPTCHA section:
-  - CAPTCHA image showing captcha code "7DKE" (obfuscated with a blue refresh icon to its right)
-  - Captcha input field below labeled: "Enter CAPTCHA Code"
-- Note: Subtext under CAPTCHA field: "Note: This is a security feature to prevent spam."
-- Action buttons (bottom row):
-  - Left: "Cancel" button (grey)
-  - Right: "Validate" button (blue outline with red border on the screenshot)
-- Additional UI elements:
-  - Blue background page area surrounding the form
-  - Red border around the login form container, highlighting the input fields
-  - Small refresh icon next to the CAPTCHA image indicating captcha renewal option
+IMAGE FOUND, DESCRIPTION : - User instruction bullets:
+  - Enter your login details and click “Validate”.
+  - “User ID” refers to your AGD Password login User ID and “Password” refers to the Password you have set for your AGD Password.
+
+- UI block: Login form titled "Log in to setup 2FA"
+  - Field: User ID * (text input, white background, bordered)
+  - Field: Password * (text input, white background, bordered)
+  - CAPTCHA section:
+    - Displayed CAPTCHA image with value "7DKE" (largely stylized)
+    - Adjacent to CAPTCHA: refresh icon (circular arrows) button
+    - Field: Enter CAPTCHA Code (text input)
+  - Note text: "Note: This is a security feature to prevent spam."
+  - Action buttons (bottom row):
+    - Cancel button (gray)
+    - Validate button (blue, outlined within a red border in the screenshot)
+
+- Visual indicators and layout:
+  - Form enclosed within a light border (red outline in screenshot)
+  - Instructional text above form aligned left
+  - Background page color: light blue
+  - Overall card size: medium, with white input fields and gray/blue buttons
+
+- Data fields to serialize:
+  - User_ID: [text input value placeholder]
+  - Password: [password input value placeholder]
+  - CAPTCHA_Code: [captcha input value placeholder]
+
+- Interaction flows:
+  - User enters User ID
+  - User enters Password
+  - User (optionally) uses refresh to regenerate CAPTCHA
+  - User enters CAPTCHA Code
+  - User clicks Validate to submit
+  - User can click Cancel to abort
+
+- Semantic entities and relationships:
+  - Form: "Log in to setup 2FA" (container)
+  - Field: "User ID" (required)
+  - Field: "Password" (required)
+  - CAPTCHA: value display "7DKE"; refresh control available
+  - Field: "Enter CAPTCHA Code" (required)
+  - Action: "Validate" (primary)
+  - Action: "Cancel" (secondary)
+
+- Constraints:
+  - Required fields: User ID, Password, CAPTCHA Code
+  - CAPTCHA must be solved before submission
+  - Submit action triggers 2FA setup validation process
+
 - Enter your login details and click 'Validate'.- 'User ID' refers to your AGD Password login User ID and 'Password' refers to the Password you have set for your AGD Password## Log in to setup 2FAUser ID *Password *## 7DKEEnter CAPTCHA CodeNote: This is a securityfeature toprevent spam.CancelValidate
 
 
@@ -624,33 +654,51 @@ IMAGE FOUND, DESCRIPTION : - Login panel title: "Log in to setup 2FA"
 Page 34 from document LoginRegister
 
 ## Set Up Two-Factor Authentication (2FA) with Google Authenticator for Foreign Individuals## Step 5: Scan the QR code and input OTP- Upon clicking 'Validate', you will be navigated to the following page.
-IMAGE FOUND, DESCRIPTION : - Document type: Web page screenshot titled “Google Authenticator” within a government vendor portal (vendors@gov) UI.
-- Layout overview:
-  - Header bar: Government branding left (AGD) with “vendors@gov” text; top-right utility links: FAQs, User Manuals, Useful Resources, Helpdesk.
-  - Main content container: Light grey background panel with centered title “Google Authenticator” in blue.
-- Step-by-step instructional content:
-  - Step 1: Install Google Authenticator
-    - Instruction: Please download and install Google Authenticator on your iPhone/iPad/Android device, if not already installed.
-  - Step 2: Link your device to your account
-    - Instruction: Once the app is installed, open Google Authenticator, and Select “Scan a barcode” then point your camera at the QR code on your computer screen.
-  - Visual element: A QR code image displayed on the left side beneath the Step 2 text.
-  - Step 3: Enter Your OTP
-    - Input field: A text box for one-time password (OTP) entry.
-    - Action button: A blue button labeled “Validate” adjacent to the OTP input.
-- Auxiliary UI elements:
-  - Bottom-right: A chat/help widget featuring a small portrait and text entry area with placeholder “Type your question…”.
-- Data points and relationships:
-  - Relationship: Step 2 indicates a user action flow from app installation to scanning a barcode via QR code.
-  - Data points: QR code image (for barcode scanning); OTP input field; “Validate” button for OTP verification.
-- Semantic domain keywords:
-  - Authentication setup, Google Authenticator integration, two-factor authentication (2FA), QR barcode, OTP verification, device linking, account security, onboarding workflow, user help/chat support.
-- Observed UI states:
-  - Page header and title: “Google Authenticator”
-  - Step sections: “Step 1: Install Google Authenticator” followed by instruction text; “Step 2: Link your device to your account” with QR code; “Step 3: Enter Your OTP” with input and validate button.
-- Data serialization cues:
-  - Entities: PortalPage (name: Google Authenticator), Step (number, title, instruction text), BarcodeImage (QR code), OTPInput (field), ActionButton (Validate), HelpWidget (Chat).
-- Accessibility notes:
-  - QR code present for scanning; input control and button labeled; support widget present for assistance.
+IMAGE FOUND, DESCRIPTION : - System context: Web page titled “A Singapore Government Agency Website” with header branding “AGD vendors@gov”.
+
+- Page purpose: Google Authenticator integration guide for a government vendor portal.
+
+- Page header: Centered section title “Google Authenticator”.
+
+- Step 1: Install Google Authenticator
+  - Instruction: Please download and install Google Authenticator on your iPhone/iPad/Android device, if already not installed.
+
+- Step 2: Link your device to your account
+  - Instruction: Once the app is installed, open Google Authenticator, and Select “Scan a barcode” then point your camera at the QR code on your computer screen.
+  - Visual: A QR code image displayed on the left side.
+
+- Step 3: Enter Your OTP
+  - Interface element: A text input field (for the one-time password) located beneath the QR section.
+  - Action: A button labeled “Validate” adjacent to or near the input field.
+
+- Additional UI elements:
+  - Right-aligned top navigation with links: FAQs, User Manuals, Useful Resources, Helpdesk.
+  - Bottom-right live chat widget: a customer support image with a speech bubble and placeholder text “Ask Jamie on Vendors@gov” or similar, including a chat prompt area (“Type your question…”).
+
+- Visual layout details:
+  - Main content area uses a light gray page background with a white content panel.
+  - QR code is sized and placed to the left of the Step 3 section.
+  - Step headings are in blue, with step descriptions in regular dark text.
+  - Step 2 description includes inline instruction emphasis on “Scan a barcode”.
+
+- Data points for indexing:
+  - Document type: Instructional guide
+  - Platform: Google Authenticator setup for vendors@gov portal
+  - Steps: 
+    1) Install
+    2) Link via QR code
+    3) Enter OTP and Validate
+  - UI controls: QR code image, OTP input field, Validate button
+  - Support: FAQs, User Manuals, Useful Resources, Helpdesk links; live chat widget with “Ask Jamie on Vendors@gov”
+  - Visuals: QR code graphic; assistant/chat widget at bottom-right
+
+- Relationships and flow:
+  - Step 1 leads to Step 2 (installation enables QR linking)
+  - Step 2 leads to Step 3 (scanned barcode provides credentials to generate OTP)
+  - Step 3 uses the OTP entered by the user to be validated via the “Validate” action
+
+- Semantic keywords:
+  - Google Authenticator, two-factor authentication (2FA), QR code enrollment, one-time password (OTP), barcode scanning, mobile authenticator, government vendor portal, user onboarding, validation workflow.
 A Singapore Government Agency WebsiteAGD°vendors@govFAQsUser ManualsUseful ResourcesHelpdeskGoogle AuthenticatorStep1:InstallGoogleAuthenticatorPleasedownload and installGoogleAuthenticatoronyourIPhone/IPad/Android device,if alreadynot installed.Step2: Linkyourdevicetoyour account:Once the app is installed, open Google Authenticator, and Select "scan a barcode"then point your camera at the QR code on your computer screen.Step 3: Enter Your OTP:AskJamieonVendors@GovValidateType your question..
 
 
@@ -658,19 +706,36 @@ A Singapore Government Agency WebsiteAGD°vendors@govFAQsUser ManualsUseful Reso
 Page 35 from document LoginRegister
 
 ## Set Up Two-Factor Authentication (2FA) with Google Authenticator for Foreign Individuals## Step 5: Scan the QR code and input OTP (continued)
-IMAGE FOUND, DESCRIPTION : Layout type: onboarding/tutorial screen (mobile app UI).
+IMAGE FOUND, DESCRIPTION : - Layout: Single-column onboarding screen panel placed on a light blue background. Left-aligned content area with white card containing illustration and text; right and top margins show blue canvas.
 
-Factual content:
-- Instruction line: "Open the Google Authenticator App on your mobile device and select 'Get started'."
-- Visual block: tall smartphone mockup with a page showing a unique code (asterisk placeholders) and a small Google Authenticator-style icon at top.
-- Headline text inside card: "A unique code used to sign in"
-- Subtext: "When using 2-Step Verification, you’ll enter your password and a code from this app"
-- Primary action: a bordered button labeled "Get started"
-- Pagination indicators: three small dots (with the first one filled/active)
+- Elements and text hierarchy:
+  - Title/heading area (bold, large font): “A unique code used to sign in”
+  - Supporting paragraph (smaller font): “When using 2-Step Verification, you’ll enter your password and a code from this app”
+  - Illustration: A top graphic of a device-like card with a stylized circular icon and a row of asterisks representing a 2FA code
+  - Call-to-action button: “Get started” with a light border and blue text; button is outlined with a red border indicating emphasis around the element
 
-Layout relations and flow:
-- Page consists of a vertical stack: introductory instruction at top, illustrative image, bold headline, descriptive subtext, and primary action button at bottom.
-- Button action flow: user taps "Get started" to proceed to the next onboarding step (represented by subsequent dots).
+- Navigation indicators: Three small dots near the bottom of the card, with the first dot filled to indicate the current step
+
+- Instructional text above card (system context): “Open the Google Authenticator App on your mobile device and select ‘Get started’.”
+
+- Visual styling cues:
+  - Card background: white with ample vertical spacing
+  - Background page: solid pale blue
+  - Font: sans-serif, varying sizes for title, subtitle, and caption
+  - Button state: active-looking, outlined with blue text and border
+
+- Semantics for database indexing:
+  - Screen type: Onboarding flow step
+  - Feature: Google Authenticator integration, 2-Step Verification
+  - Interaction: Button action (Get started) to advance step
+  - Instructional flow: External app instruction to open authenticator and begin setup
+  - Data points: Step indicator (dots) with current step highlighted
+  - Accessibility hints: Button labeled with visible text “Get started” and descriptive instructional line above
+
+- Relationships and flow:
+  - Instructional text links to the action: Open app and select Get started
+  - User action (Get started) advances to the next onboarding panel (represented by the pager dots)
+  - Visual cue (asterisk row) communicates code-based sign-in mechanism and 2FA concept
 - Open the Google Authenticator App on your mobile device and select 'Get started'.## A unique code used to sign inWhenusing2-StepVerification, you'llenteryourpassword andacodefrom this appGetstarted
 
 
@@ -678,13 +743,25 @@ Layout relations and flow:
 Page 36 from document LoginRegister
 
 ## Set Up Two-Factor Authentication (2FA) with Google Authenticator for Foreign Individuals## Step 5: Scan the QR code and input OTP (continued)
-IMAGE FOUND, DESCRIPTION : - Screen heading: “Setup your first account”
-- Instruction block: “Use the QR code or setup key in your 2FA settings (by Google or third-party service). If you're having trouble, go to g.co/2sv”
-- Interactive options list (primary actions):
-  1) “Scan a QR code” with an associated small camera/QR icon; highlighted/selectable row
-  2) “Enter a setup key” with a small keyboard/key icon
-- Auxiliary control: small text link at the bottom: “Import existing accounts?”
-- Layout summary: Left-aligned vertical menu with two selectable options under the main instruction, within a mobile/2FA setup flow UI. The active option is outlined in red in the screenshot indicating focus or selection state.
+IMAGE FOUND, DESCRIPTION : - Instruction: "Select 'Scan a QR code'."
+- Visual element: Screenshot of a mobile app screen titled "Setup your first account".
+- Screen content details:
+  - Header text: "Setup your first account"
+  - Subtext: "Use the QR code or setup key in your 2FA settings (by Google or third-party service). If you're having trouble, go to g.co/2sv"
+  - Primary option (highlighted with a red border): 
+    - Icon: small QR code/avatar icon
+    - Label: "Scan a QR code"
+  - Secondary option (below primary): 
+    - Icon: small keyboard icon
+    - Label: "Enter a setup key"
+  - Bottom left link: "Import existing accounts?"
+- Layout relationships:
+  - Vertical list with two selectable options:
+    - Option A: "Scan a QR code" (active/highlight)
+    - Option B: "Enter a setup key"
+  - The highlighted region indicates the user action to select the QR code scanning workflow.
+- Semantic keywords for indexing:
+  - 2FA setup screen, Google Authenticator, QR code scanning, setup key entry, deep link to 2SV, two-factor authentication configuration, account import prompt.
 - Select 'Scan a QR code'.## Setup your first accountUsetheQRcodeorsetupkeyinyour2FA settings(byGoogleorthird-party service).If you'rehavingtrouble,gotog.co/2svScanaQRcodeEnterasetupkeyImportexisting accounts?
 
 
@@ -692,27 +769,39 @@ IMAGE FOUND, DESCRIPTION : - Screen heading: “Setup your first account”
 Page 37 from document LoginRegister
 
 ## Set Up Two-Factor Authentication (2FA) with Google Authenticator for Foreign Individuals## Step 5: Scan the QR code and input OTP (continued)- Scan the QR code using your mobile device.
-IMAGE FOUND, DESCRIPTION : - Document header: A Singapore Government Agency Website, with branding “AGD” and “vendors@gov” in the top bar. Primary navigation includes links: FAQs, User Manuals, Useful Resources, Helpdesk.
-
-- Main page title: Google Authenticator (centered, blue text).
-
-- Section: Step 1 – Install Google Authenticator
-  - Instruction: Please download and install Google Authenticator on your iPhone/iPad/Android device, if already not installed.
-
-- Section: Step 2 – Link your device to your account:
-  - Instruction: Once the app is installed, open Google Authenticator, and Select “Scan a barcode” then point your camera at the QR code on your computer screen.
-
-- Visual element: A large QR code inside a red rectangular outline, positioned under Step 2 instructions.
-
-- Step 3 – Enter Your OTP:
-  - UI element: A text input field (likely for the one-time password) and a “Validate” button adjacent to or below the input.
-
-- Assistive/aid widget: A chat/help widget in the bottom-right corner displaying a person’s image with a label “Ask Jamie on Vendors@Gov” and a text input box “Type your question…”.
-
-- Layout notes:
-  - Left-aligned content card with light gray background.
-  - Content uses two-column feel: left content text steps, central QR image, and a right-aligned helper widget.
-  - Visual emphasis on the QR code through red border, indicating primary action for linking device.
+IMAGE FOUND, DESCRIPTION : - Document: Web-page screen titled “Google Authenticator” within Vendors@gov (Singapore Government AGD) layout.
+- Top navigation/header:
+  - Left: AGD logo and “A Singapore Government Agency Website” tagline.
+  - Center-left: “vendors@gov” branding.
+  - Right: Quick links: FAQs, User Manuals, Useful Resources, Helpdesk.
+- Main content area:
+  - Section heading: “Google Authenticator” centered, light blue text on gray background.
+  - Step 1: Install Google Authenticator
+    - Instruction: “Please download and install Google Authenticator on your iPhone/iPad/Android device, if already not installed.”
+  - Step 2: Link your device to your account:
+    - Instruction: “Once the app is installed, open Google Authenticator, and Select ‘Scan a barcode’ then point your camera at the QR code on your computer screen.”
+    - Visual element: A framed QR code (square, black and white, 2D barcode) with a red bounding box around it.
+  - Step 3: Enter Your OTP:
+    - Visual: An input field (text box) with an adjacent button labeled “Validate” (blue button).
+- Visual cues:
+  - Large QR code image positioned to the left of the Step 3 area, inside a prominent red-bordered box.
+  - Small chat/help widget in the bottom-right corner showing a person image and a text input field labeled “Type your question…”.
+- Spatial relationships and flows:
+  - Step 1 precedes Step 2; Step 2 precedes Step 3.
+  - Step 2 contains user action “Scan a barcode” to capture the on-screen QR code.
+  - Step 3 requires user to enter OTP into the input field and press Validate to proceed.
+- Semantic keywords:
+  - Authentication: Two-factor authentication setup using Google Authenticator.
+  - Device linkage: Linking mobile device to account via QR code.
+  - User actions: Install app, scan barcode, enter OTP, click Validate.
+  - UI elements: QR code image, red border emphasis, input field, Validate button, help/chat widget.
+- Data points to index:
+  - Page title: Google Authenticator
+  - Step labels: Step 1, Step 2, Step 3
+  - Instructions text for Step 1 and Step 2
+  - Media: QR code image with red border
+  - Interaction controls: OTP input field, Validate button
+  - Support widget: Chat assistant capsule with “Ask Jamie on Vendors@gov” and input prompt.
 ASingaporeGovernmentAgencyWebsiteAGD°vendors@govFAQsUser ManualsUseful ResourcesHelpdeskGoogle AuthenticatorStep 1: Install Google AuthenticatorPlease download and install Google Authenticator on your IPhone/IPad/Android device, if already not installed.Step2: Linkyourdevicetoyour account:Once the app is installed, open Google Authenticator, and Select"scan a barcode"then point your camera at the QR code on your computer screen.Step 3: Enter Your OTP:AskJamieonVendors@GovValidateType your question..
 
 
@@ -720,34 +809,43 @@ ASingaporeGovernmentAgencyWebsiteAGD°vendors@govFAQsUser ManualsUseful Resource
 Page 38 from document LoginRegister
 
 ## Set Up Two-Factor Authentication (2FA) with Google Authenticator for Foreign Individuals## Step 5: Scan the QR code and input OTP (continued)
-IMAGE FOUND, DESCRIPTION : - Image shows a mobile screenshot with a header "Authenticator" on a blue app bar (likely Google Authenticator or similar). 
-- A highlighted (red-bordered) card within the screen labeled "Application" contains the large numeric value "953 920" in blue, positioned as a prominent OTP code.
-- The OTP code is surrounded by white background within the card, and there is a small crescent moon icon on the lower-right corner of the card.
-- Under the OTP code, smaller text reads "Vendors@Gov".
-- The status bar at the top shows carrier/time indicators (2:25) and typical mobile UI elements (signal bars, Wi-Fi, battery) within a blue app header.
-- Layout details:
-  - Card dimension: short horizontal rectangle near the top-left region of the screen, with a red border indicating selection.
-  - Card title/label: "Application".
-  - OTP value: "953 920" (six digits separated in groups of three by a space for readability).
-  - Subtext line: "Vendors@Gov" (likely the account/application identity).
-  - Additional UI element: small crescent/moon icon at bottom-right of the card (possibly a status/icon).
-- Context: The caption text above the image states: "A 6 Digit OTP should appear on your mobile device." 
-- Semantics suitable for database serialization:
-  - Device UI: Mobile OTP authenticator screen mock.
-  - Component: OTPCard
+IMAGE FOUND, DESCRIPTION : - Visual context: Mobile screen screenshot of a 6-digit OTP display within an authentication app.
+
+- Primary UI element:
+  - Title bar: "Authenticator" at top (likely app header) with a menu icon on the left and a plus/add icon on the right.
+
+- Main content block (OTP card):
+  - Card area outlined in red.
+  - Label: "Application" in small text at top-left of the card.
+  - Large OTP digits: "953 920" (six digits separated by a space as displayed; appears as two groups of three digits).
+  - Service/issuer line under OTP: "Vendors@Gov" (likely the issuer or account name).
+  - Small circular/arc indicator at bottom-right of the card (could be a status or copy/shadow icon).
+
+- Surrounding context:
+  - Device status bar shows time "2:25" and typical Android-style indicators (cell signal, battery).
+  - The card is placed near the top-left portion of the screen; rest of the screen is light blue background, indicating a presentation or template layout.
+
+- Data extraction specifics:
+  - OTP value: 953 920 (six-digit code; two groups of three digits with a space, as shown).
+  - Issuer/Account name: Vendors@Gov
+  - Category/label: Application
+  - App name: Authenticator (header)
+  - UI controls: Menu icon (hamburger) on left, add or pencil icon on right.
+  - Visual cue: Red bounding box around the OTP card.
+
+- Semantic interpretation for database indexing:
+  - Type: Time-based one-time password (TOTP) entry from an authenticator app.
   - Fields:
-    - OTPValue: 953920
-    - OTPDisplay: "953 920" (formatted)
-    - ApplicationLabel: "Application"
-    - AccountLabel: "Vendors@Gov"
-    - Icon: "crescent/moon" (status icon)
-    - AppName/TitleBar: "Authenticator"
-    - Time/StatusBar: “2:25” (could be captured if needed)
-    - Border: Red (highlighted selection)
-- Relationships:
-  - OTPValue is the content of OTPCard with label Application.
-  - AccountLabel is associated with the OTPValue as the account or issuer.
-  - Icon is associated with OTPCard as a status indicator.
+    - app_name: "Authenticator"
+    - card_label: "Application"
+    - otp_code: "953 920" (store as "953920" if stripes removed; preserve original formatting if needed)
+    - issuer: "Vendors@Gov"
+    - status_icon: "circular/arc indicator" (UI hint)
+    - location_in_view: "top-left quadrant of mobile screen"
+    - time_display: "2:25" (device time)
+  - Relationships:
+    - otp_code is associated with issuer "Vendors@Gov" and label "Application".
+    - This entry is a child view of the Authenticator app header.
 - A 6 Digit OTP should appear on your mobile device.2:254GAuthenticatorApplication953920Vendors@Gov
 
 
@@ -755,33 +853,23 @@ IMAGE FOUND, DESCRIPTION : - Image shows a mobile screenshot with a header "Auth
 Page 39 from document LoginRegister
 
 ## Set Up Two-Factor Authentication (2FA) with Google Authenticator for Foreign Individuals## Step 5: Scan the QR code and input OTP (continued)- Enter the OTP and click 'Validate'.
-IMAGE FOUND, DESCRIPTION : - Document: Singapore Government Agency Website – Google Authenticator setup page (Google Authenticator integration via Vendors@Gov portal)
-- Layout blocks:
-  - Header bar: Branding area with “AGD” logo on left and “vendors@gov” branding; top-right utility links: FAQs, User Manuals, Useful Resources, Helpdesk.
-  - Page title area: Centered heading text “Google Authenticator” with light gray background strip.
-  - Step 1 block: 
-    - Step label: “Step 1: Install Google Authenticator”
-    - Instruction: “Please download and install Google Authenticator on your iPhone/iPad/Android device, if already not installed.”
-  - Step 2 block:
-    - Step label: “Step 2: Link your device to your account:”
-    - Instruction: “Once the app is installed, open Google Authenticator, and Select ‘Scan a barcode’ then point your camera at the QR code on your computer screen.”
-    - Visual: A large QR code image displayed to be scanned by the authenticator app.
-  - Step 3 block:
-    - Step label: “Step 3: Enter Your OTP:”
-    - Input field: A text input box for one-time password (OTP) entry, currently containing a sample/placeholder value “953920”.
-    - Adjacent action: A small blue button labeled “Validate” to submit the entered OTP.
-- Additional UI details:
-  - Right side: Small assistant widget featuring a female avatar with a speech input area labeled “Ask Jamie on Vendors@Gov” and a placeholder text “Type your question …”
-- Data elements and workflow:
-  - Data source: QR code (for linking device) and OTP entered by user.
-  - User actions sequence:
-    1) Install Google Authenticator on device.
-    2) Use the app to scan the provided QR code.
-    3) Enter the OTP displayed in the authenticator into the input field.
-    4) Click “Validate” to complete binding/verification.
-- Visual cues:
-  - Step blocks appear in vertical stack with headings in blue font on a light gray background.
-  - QR code is left-aligned within Step 2 area; input area and Validate button are grouped on Step 3 line with a red outline around the input region in the screenshot (indicating focus area).
+IMAGE FOUND, DESCRIPTION : - Document Title/Section: Google Authenticator setup page within vendor.gov portal (A Singapore Government Agency Website).
+- Layout header: Top navigation bar with AGD logo on left and “vendors@gov” branding; right-aligned utility links: FAQs, User Manuals, Useful Resources, Helpdesk.
+- Main content region: Center-aligned card area with light gray background and a blue title “Google Authenticator”.
+- Step 1: Install Google Authenticator
+  - Description: Instruction to download and install Google Authenticator on iPhone/iPad/Android device if not already installed.
+- Step 2: Link your device to your account
+  - Description: After app installation, open Google Authenticator, and select “Scan a barcode”; then point your camera at the QR code displayed on screen.
+- Barcode/QR code: A large QR code image displayed prominently to be scanned by the Google Authenticator app.
+- Step 3: Enter Your OTP
+  - Visible input field: Text box for one-time password (OTP) entry, with sample digits shown (e.g., 953920).
+  - Action button: “Validate” button adjacent to the OTP input field, styled with a blue button.
+- Help/assist widget: Small customer support widget in bottom-right corner showing a user image and a chat prompt “Ask Jamie on Vendors@Gov” with a text input placeholder “Type your question...”.
+- Visual cues: Light-gray background panels, blue headings, QR code as the main actionable element, red-bordered OTP input area indicating focus, and a chat support overlay.
+- Data flow/logic: 
+  - Step 1 → Step 2: User installs app on device.
+  - Step 2 → Step 3: User uses app to generate OTP after linking the device via QR code.
+  - Step 3: User enters OTP into the input field and clicks Validate to complete authentication setup.
 ASingaporeGovernmentAgencyWebsiteAGD°vendors@govFAQsUser ManualsUseful ResourcesHelpdeskGoogle AuthenticatorStep1: InstallGoogleAuthenticatorPlease download and install GoogleAuthenticator on your IPhone/IPad/Android device,if already not installed.Step2:Linkyourdevicetoyour account:Once the app is installed,open Google Authenticator, and Select"scan a barcode"then point yourcamera at the QR code on your computer screen.Step 3: Enter Your OTP:953920ValidateAskJamie on Vendors@GovType your question
 
 
@@ -789,29 +877,30 @@ ASingaporeGovernmentAgencyWebsiteAGD°vendors@govFAQsUser ManualsUseful Resource
 Page 40 from document LoginRegister
 
 ## Set Up Two-Factor Authentication (2FA) with Google Authenticator for Foreign Individuals## Step 5: Scan the QR code and input OTP (continued)- Setup is complete if OTP is successfully verified.- Return to the Vendors@Gov homepage to log into your account.- To reset your 2FA, simply download the Google Administrator App on your new mobile device and follow steps 2 to 5.
-IMAGE FOUND, DESCRIPTION : Analysis of the image:
-
-- Platform header: A Singapore Government Agency Website branded page. Top left shows AGD logo and “vendors@gov” branding. Right-side top navigation includes links: FAQs, User Manuals, Useful Resources, Helpdesk.
-- Main content area: Large light-gray content panel with a left-aligned QR code image (black-and-white matrix 2D barcode) inside a white bordered square.
-- Step indicator: Text “Step 3: Enter Your OTP:” appears below the QR code.
-- OTP input row: A small rectangular input field prefilled with the value “953920” and a blue rectangular button labeled “Validate” to the right of the input.
-- Confirmation message: A wide, pale-green notification band spanning the content width with the text “Code Successfully Verified.”; the message area is outlined with a red rectangle in the image (indicating a success state).
-- Footer area: Light blue footer with links (Report Vulnerability, Privacy, Terms of Use, Rate Service, Sitemap) and a copyright note.
-- Live help widget: A small chat/help widget at the bottom-right corner showing a female avatar and a text input field placeholder “Type your question …” and “Ask Jamie on Vendors@gov”.
-
-Semantic data points for database serialization:
-- Page: Government Vendor Verification Portal - OTP Entry
-- Branding: AGD/vendors@gov header with category labels (FAQs, User Manuals, Useful Resources, Helpdesk)
-- QR Code: Type = Authentication/OTP provisioning; Location = left content panel; Dimensions inferred from image
-- Step: Step 3
-- Instruction: Enter Your OTP
-- OTP Input: Value = 953920; Field type = numeric input
-- Action: Validate button; label = Validate
-- Status: Code Successfully Verified (success toast/notification) with visual highlight: pale-green bar
-- Layout blocks: Left column (QR), Right/center content (OTP entry), Pillar header areas (top navigation)
-- Footer links: Report Vulnerability, Privacy, Terms of Use, Rate Service, Sitemap
-- Copy: “This site is best viewed using latest version of Chrome, Safari and Internet Explorer” (in footer)
-- Help widget: Name/Agent = Jamie; Trigger area = chat widget; Placeholder = “Type your question …”
+IMAGE FOUND, DESCRIPTION : - System: Web page screenshot of a Singapore Government vendor portal (vendors@gov) with a QR code section and OTP entry.
+- Header region: 
+  - Branding: AGD logo (left) and "vendors@gov" text (blue/orange) at the top left.
+  - Navigation: Right-aligned links labeled FAQs, User Manuals, Useful Resources, Helpdesk.
+- Main content container: Light gray background card with a wide central panel.
+- Left column block:
+  - Large QR code image (square, black-and-white matrix).
+  - Label: “Step 3: Enter Your OTP:”
+- OTP input group:
+  - Text input field populated with a numeric/OTP value (example shown: 953920).
+  - Adjacent button labeled “Validate” (blue button).
+- Validation status bar:
+  - Prominent light green notification bar spanning the content width.
+  - Text inside: “Code Successfully Verified.” with a red outline highlight around the entire status message region.
+- Footer region:
+  - Small footer links: Report Vulnerability, Privacy, Terms of Use, Rate Service, Sitemap.
+  - Copyright line at bottom.
+- Additional UI: A live chat/help widget appears bottom-right with a photo of a user and placeholder text “Type your question …” and a label “Ask Jamie on Vendors@Gov”.
+- Visual theme: light gray page background, pale green success banner, blue action button, and left-aligned QR code visual. 
+- Semantics: This is a three-step verification interface for OTP entry, showing a successful OTP verification with a confirmation banner, within a government vendors portal UI. 
+- Data points to index:
+  - OTP value (example: 953920) captured in input field.
+  - Message: “Code Successfully Verified.”
+  - UI components: QR code image, OTP input, Validate button, green success banner, footer links, live chat widget.
 A Singapore Government Agency WebsiteAGD°vendors@govFAQsUser ManualsUseful ResourcesHelpdeskStep 3: Enter Your OTP:953920ValidateCodeSuccessfullyVerified.Report VulnerabilityPrivacyTerms of UseRate ServiceSitemap2020,AskJamieonVendors@GovThissiteisbestviewed using latestversionof ChromeSafariand InternetExplorerType your question ..
 
 

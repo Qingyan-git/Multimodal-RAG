@@ -16,30 +16,29 @@ Page 2 from document key-policies-third-party-framework
 Page 3 from document key-policies-third-party-framework
 
 04## Lifecycle of the Third-Party1 Management Framework- 01    Evaluation and Selection
-IMAGE FOUND, DESCRIPTION : - Diagram type: Circular flow diagram illustrating a Third-Party Management Framework with three core stages/nodes connected in a closed loop.
+IMAGE FOUND, DESCRIPTION : - Diagram type: Circular flowDiagram illustrating the Third-Party Management Framework.
+- Central label: “Third-Party Management Framework”.
 
-- Central node: "Third-Party Management Framework" (text centered inside circle).
+Nodes (in circular sequence, with directional flow arrows):
+1) Node at top: icon of three people with a checkmark above (verify/approval). 
+   - Relationship: connects to the right-hand node via a curved blue arc (flow clockwise).
+2) Right-hand node (checklist icon and pencil): labeled area shows “02 Contracting and On-boarding”.
+   - Relationship: connects to the bottom node via curved blue arc.
+3) Bottom node (hand holding a gear): icon indicating service/growth operations.
+   - Relationship: connects to the left-hand node via curved blue arc.
+4) Left-hand node (two people with exchange arrows): icon representing transition/relationships.
+   - Relationship: connects back to the top node via curved blue arc, completing the cycle.
 
-- Node A (top): Icon of a group of people with a checkmark above, representing verification/approval. Positioned at 12 o’clock along the circle, connected bi-directionally to adjacent nodes.
+Associated section titles and numbering:
+- 02 Contracting and On-boarding (situated to the right of the circle).
+- 03 Service Management (partially visible at bottom; label indicates the next step in the sequence).
 
-- Node B (right): Icon of a checklist/clipboard and a pen, representing Contracting and On-boarding. Labeled externally as step "02 Contracting and On-boarding" with a light gray circular node at the circle’s 3 o’clock position.
-
-- Node C (bottom): Icon of a gear and a hand, representing Service Management. Labeled externally as step "03 Service Management" with a light gray circular node at the circle’s 6 o’clock position.
-
-- Node D (left): Icon of two people with arrows between them, representing Transition Out. Labeled externally as step "Transition Out" with a light gray circular node at the circle’s 9 o’clock position.
-
-- Arrows/flow: A continuous ring connects Node A -> Node B -> Node C -> Node D -> Node A, forming a closed-loop process. The connecting ring uses a two-tone blue gradient (light blue on the left arc transitioning to dark blue on the right arc) indicating cyclic progression.
-
-- Relationships and sequencing:
-  - Step 01 roughly corresponds to the top verification/approval stage (Node A) feeding into Step 02 Contracting and On-boarding (Node B).
-  - Step 02 leads into Step 03 Service Management (Node C).
-  - Step 03 leads into Step 04 Transition Out (Node D).
-  - Step 04 loops back to Step 01, completing the cycle of the Third-Party Management Framework.
-
-- Visual styling notes:
-  - Central title typography: “Third-Party Management Framework” in blue.
-  - Each node uses a light gray circular badge with a dark blue/blue-toned icon.
-  - Step labels "02" and "03" are placed outside the right and bottom areas respectively, matching the diagram’s expected numbering sequence.
+Layout and visual cues:
+- The four icons sit at the four quadrants around the central text.
+- A blue circular ring connects the icons, indicating the cyclical process.
+- Grey circular badges behind each icon to emphasize nodes.
+- Textual label on the left side: “Transition Out” (phase/transition-out arrow pointing to the left circle).
+- Central domain keywords: “Third-Party Management Framework” (blue typography).
 Third-PartyManagementFramework02Contractingand On-boardingTransition03    Service ManagementOut## DEFINITION- 1 Third Party is defined as a party (other than a data subject a or an Agency b ) which:- (i) delivers, develops, implements, operates, provides or otherwise supplies ICT systems or services to an Agency, or- (ii) collects, stores or otherwise processes data for an Agency.- a Data subject refers to the individual or entity to which the data relates.- b Agency refers to Organs of State, Ministries, Departments and Statutory Boards.
 
 
