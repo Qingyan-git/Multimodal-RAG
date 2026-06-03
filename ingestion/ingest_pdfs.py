@@ -9,10 +9,7 @@ import torch
 import pymupdf
 from dotenv import load_dotenv
 
-from docling.datamodel.base_models import InputFormat
-from docling.datamodel.pipeline_options import PdfPipelineOptions, AcceleratorOptions
-from docling.document_converter import DocumentConverter, PdfFormatOption
-from docling_core.types.doc import PictureItem, DoclingDocument
+from docling_core.types.doc import PictureItem
 from docling_core.transforms.serializer.markdown import MarkdownDocSerializer
 
 from scripts.supabase_setup import insert_pdf, insert_page, get_connection
@@ -113,12 +110,12 @@ async def get_page_markdown(document,page_no,openai_model):
     return cleaned_text
 
 
-async def process_page_single(filepath,converter,page_no,openai_model,colqwen_model,sparse_embedder,semaphore):
+async def process_page_single(filepath,page_no,semaphore):
 
     async with semaphore:
 
         conversion_result = await asyncio.to_thread(
-            converter.convert, 
+            document_converter.convert, 
             filepath, 
             page_range=(page_no, page_no)
         )
@@ -151,7 +148,7 @@ async def process_page_single(filepath,converter,page_no,openai_model,colqwen_mo
         return markdown, vector
 
 
-async def parse_pdf(filepath,converter,openai_model,colqwen_model,sparse_embedder):
+async def parse_pdf(filepath):
 
     filename = filepath.name
     await insert_pdf(filename,filepath)
@@ -163,7 +160,7 @@ async def parse_pdf(filepath,converter,openai_model,colqwen_model,sparse_embedde
     with pymupdf.open(filepath) as doc:
         pages = len(doc)
     
-    tasks = [process_page_single(filepath,converter,page_no,openai_model,colqwen_model,sparse_embedder,semaphore) for page_no in range(1,pages+1)]
+    tasks = [process_page_single(filepath,semaphore) for page_no in range(1,pages+1)]
     results = await asyncio.gather(*tasks)
     document_markdown, document_vectors = zip(*results)
     await upload_points(list(document_vectors))
@@ -174,7 +171,7 @@ async def ingest_pdf(path):
     Function to be called by frontend to ingest a pdf
     Input : a pathlib Path() object where the path points to either a file or a directory
     Output : No return, just print statements stating the completion of the ingestion
-    Exceptions : 
+    Exceptions : None but consider : 
         1. When input is not a Path object 
         2. The input does not point to a valid 
         3. Ingestion Failure
@@ -184,31 +181,17 @@ async def ingest_pdf(path):
 
         #folderpath = Path(os.getenv('pdfs_path'))
 
-        pipeline_options = PdfPipelineOptions()
-        pipeline_options.generate_picture_images = True
-        pipeline_options.generate_page_images = True
-        pipeline_options.images_scale = 2.0
-        document_converter = DocumentConverter(
-            format_options={
-                InputFormat.PDF: PdfFormatOption(pipeline_options=pipeline_options)
-            }
-        )
-
-        openai_model = OpenAIModel()
-        colqwen_model = ColQwenModel()
-        sparse_embedder = SparseEmbedder()
-
         if path.is_dir():
             for file in path.iterdir():
                 if file.suffix == '.pdf':
 
                     print(f'\n Processing {file.name}\n')
-                    await parse_pdf(path,document_converter,openai_model,colqwen_model,sparse_embedder)
+                    await parse_pdf(path)
                     print(f'\nDone\n')
 
         elif path.is_file() and path.suffix=='.pdf':
             print(f'\n Processing {path.name}\n')
-            await parse_pdf(path,document_converter,openai_model,colqwen_model,sparse_embedder)
+            await parse_pdf(path)
             print(f'\nDone\n')
 
     except Exception as e:

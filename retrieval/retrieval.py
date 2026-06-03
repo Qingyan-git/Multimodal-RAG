@@ -9,13 +9,9 @@ import re
 import pandas as pd
 from dotenv import load_dotenv
 
-from docling.datamodel.base_models import InputFormat
-from docling.datamodel.pipeline_options import PdfPipelineOptions
-from docling.document_converter import DocumentConverter, PdfFormatOption
-
 # from ingestion.ingest_pdfs import save_to_file
-from scripts.supabase_setup import retrieve_pdf_info, retrieve_markdowns
-from scripts.qdrant_setup import similarity_search, format_point
+from scripts.supabase_setup import retrieve_pdf_info, retrieve_markdowns, get_path_from_pdf_name
+from scripts.qdrant_setup import similarity_search
 from scripts.models import OpenAIModel, ColQwenModel, SparseEmbedder, Jina, QueryRequest, QueryResponse, DocumentSource
 from scripts.models import (
     openai_model,
@@ -88,7 +84,7 @@ def encode_pil_to_base64(pil_image):
     return base64.b64encode(buffered.getvalue()).decode('utf-8')
 
 
-async def get_sources(page_ids,converter):
+async def get_sources(page_ids):
 
     sources = []
 
@@ -96,7 +92,7 @@ async def get_sources(page_ids,converter):
 
         page_no, pdf_name, pdf_path = await retrieve_pdf_info(page_id)
         conversion_result = await asyncio.to_thread(
-            converter.convert, 
+            document_converter.convert, 
             pdf_path, 
             page_range=(page_no, page_no)
         )
@@ -110,6 +106,62 @@ async def get_sources(page_ids,converter):
         sources.append(source)
 
     return sources
+
+
+async def get_image(pdf_name,page_no):
+
+    pdf_path = await get_path_from_pdf_name(pdf_name)
+
+    conversion_result = await asyncio.to_thread(
+        document_converter.convert, 
+        pdf_path, 
+        page_range=(page_no, page_no)
+    )
+    document = conversion_result.document
+
+    page = document.pages[page_no]
+    page_image = page.image.pil_image
+    image_base64 = encode_pil_to_base64(page_image)
+
+    return image_base64
+
+
+async def extract_and_truncate_sources(llm_output):
+    """
+    Splits the conversational answer from the metadata manifest block,
+    then parses every <used_source> line using structured regex boundaries.
+    
+    Returns:
+        tuple: (clean_conversational_answer_str, list_of_parsed_source_dicts)
+    """
+    # 1. Split the string exactly at the '--- SOURCES ---' boundary marker
+    # Using re.split ensures that if the LLM output doesn't contain the header, 
+    # it safely falls back gracefully.
+    parts = re.split(r"\n*---\s*SOURCES\s*---\n*", llm_output, maxsplit=1)
+    
+    clean_answer = parts[0].strip()
+    source_block = parts[1] if len(parts) > 1 else ""
+    
+    # 2. Extract pairs matching your specific tag structure:
+    # Captures everything after 'PDF NAME: ' up to the ' |' barrier, 
+    # and all sequential digits inside 'PAGE NUMBER: '
+    source_pattern = r"<used_source>PDF NAME:\s*(.*?)\s*\|\s*PAGE NUMBER:\s*(\d+)\s*</used_source>"
+    matches = re.findall(source_pattern, source_block)
+    
+    print(f'matches : {matches}')
+
+    used_sources = []
+    for pdf_name, page_no in matches:
+        image_base64 = await get_image(pdf_name, int(page_no))
+        source = DocumentSource(pdf_name=pdf_name,page_num=int(page_no),image_base64=image_base64)
+        used_sources.append(source)
+
+    # Create a readable list of strings first
+    sources_debug = [f"{s.pdf_name} page {s.page_num}" for s in used_sources]
+    # Then print them cleanly joined together
+    print(f"\nused_sources : {', '.join(sources_debug)}\n")
+        
+    return used_sources
 
 
 async def answer_user_question(question):
@@ -128,7 +180,7 @@ async def answer_user_question(question):
     print(f'\npage_ids : {page_ids}\n')
 
     markdowns = await retrieve_markdowns(page_ids)
-    print(f'\nmarkdowns : {markdowns}\n')
+    # print(f'\nmarkdowns : {markdowns}\n')
 
     text_scores = jina.text_rerank(question,markdowns)
     print(f'\ntext_scores : {text_scores}\n')
@@ -144,12 +196,14 @@ async def answer_user_question(question):
     answer_page_ids = [key for key in rrf_results.keys()]
     print(f'\nanswer_page_ids : {answer_page_ids}\n')
 
-    sources = await get_sources(answer_page_ids,document_converter)
+    sources = await get_sources(answer_page_ids)
 
     answer = await openai_model.answer_question(question,sources)
-    print(f'answer : {answer}')
+    print(f'\nanswer : {answer}\n')
 
-    query_response = QueryResponse(answer=answer,sources=sources)
+    used_sources = await extract_and_truncate_sources(answer)
+
+    query_response = QueryResponse(answer=answer,sources=used_sources)
 
     return query_response
 
@@ -186,4 +240,4 @@ async def answer_testset():
 
 if __name__ == "__main__":
 
-    asyncio.run(answer_user_question("What design principles govern the issuance and operation of tokenised bank liabilities?"))
+    asyncio.run(answer_user_question("What support does Singapore offer small businesses that want to go digital?"))
