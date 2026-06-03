@@ -2,8 +2,11 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import SecretStr
 
 class Settings(BaseSettings):
-    openai_model: str = "gpt-4o-mini"
+    openai_model: str = "gpt-5-nano"
     openai_api_key: SecretStr
+
+    colqwen_model: str = 'vidore/colqwen2-v1.0'
+    sparse_embedding_model: str = 'prithvida/Splade_PP_en_v1'
 
     hf_token: SecretStr
 
@@ -17,10 +20,6 @@ class Settings(BaseSettings):
 
     supabase_url: str
     supabase_key: SecretStr
-
-    colqwen_model: str
-
-    sparse_embedding_model: str 
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 

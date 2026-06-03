@@ -11,10 +11,11 @@ from docling.datamodel.base_models import InputFormat
 from docling.datamodel.pipeline_options import PdfPipelineOptions
 from docling.document_converter import DocumentConverter, PdfFormatOption
 
-from ingestion.ingest_pdfs import save_to_file
-from scripts.supabase_setup import retrieve_pdf_path_from_page_id, retrieve_markdowns
+# from ingestion.ingest_pdfs import save_to_file
+from scripts.supabase_setup import retrieve_pdf_info, retrieve_markdowns
 from scripts.qdrant_setup import similarity_search, format_point
 from scripts.models import OpenAIModel, ColQwenModel, SparseEmbedder, Jina
+from main import DocumentSource, QueryResponse
 
 
 
@@ -75,170 +76,91 @@ def apply_rrf(results, k=60):
     return dict(sorted_items)
 
 
-async def get_sources(question,splade,coarse,query):
-
-    image_ranking = await similarity_search(splade,coarse,query)
-    '''
-    Structure : {page_id : image_score, page_id : image_score}
-    '''
-    print(f'\nimage_ranking : {image_ranking}\n')
-
-    target_page_ids = [key for key in image_ranking.keys()]
-    print(f'\ntarget_page_ids : {target_page_ids}\n')
-
-    target_page_markdowns = await retrieve_markdowns(target_page_ids)
-    '''
-    Structure : {page_id : markdown, page_id : markdown}
-    '''
-    print(f'target_page_markdowns : {target_page_markdowns}')
-
-    text_ranking = Jina().text_rerank(question,target_page_markdowns)
-    '''
-    Structure : {page_id : text_score, page_id : text_score}
-    '''
-    print(f'\ntext_ranking : {text_ranking}\n')
-
-    combined_ranking = {}
-    for page_id in target_page_ids:
-        combined_ranking[page_id] = {'image_score' : image_ranking[page_id], 'text_score' : text_ranking[page_id]}
-    '''
-    Structure : {page_id : {'text_score' : text_score, 'image_score' : image_score}}
-    '''
-    print(f'\ncombined_ranking : {combined_ranking}\n')
-    
+def encode_pil_to_base64(pil_image):
+    buffered = io.BytesIO()
+    pil_image.save(buffered, format='jpeg',quality=95)
+    return base64.b64encode(buffered.getvalue()).decode('utf-8')
 
 
+async def get_sources(page_ids,converter):
+
+    sources = []
+
+    for page_id in page_ids:
+
+        page_no, pdf_name, pdf_path = retrieve_pdf_info(page_id)
+        conversion_result = await asyncio.to_thread(
+            converter.convert, 
+            pdf_path, 
+            page_range=(page_no, page_no)
+        )
+        document = conversion_result.document
+
+        page = document.pages[page_no]
+        page_image = page.image.pil_image
+        image_base64 = encode_pil_to_base64(page_image)
+
+        source = DocumentSource(pdf_name=pdf_name,page_num=page_no,image_base64=image_base64)
+        sources.append(source)
+
+    return sources
 
 
+async def answer_user_question():
 
+    pipeline_options = PdfPipelineOptions()
+    pipeline_options.generate_picture_images = True
+    pipeline_options.generate_page_images = True
+    pipeline_options.images_scale = 2.0
+    document_converter = DocumentConverter(
+        format_options={
+            InputFormat.PDF: PdfFormatOption(pipeline_options=pipeline_options)
+        }
+    )
+    openai_model = OpenAIModel()
+    colqwen_model = ColQwenModel()
+    sparse_embedder = SparseEmbedder()
+    jina = Jina()
 
-# async def get_text_scores(question,pages):
-#     page_ids = list(pages.keys())
-#     text_markdowns = await retrieve_markdowns(page_ids)
-#     text_scores = Jina().text_rerank(question,text_markdowns)
+    question = input('Enter the question : ')
 
-#     return text_scores
+    splade = await sparse_embedder.embed(question)
+    coarse, multi = await colqwen_model.embed_query(question)
 
+    image_scores = await similarity_search(splade,coarse,multi)
+    print(f'\nimage_scores : {image_scores}\n')
 
-# async def get_sources(question,splade,coarse,embeddings,pipeline_options):
+    page_ids = [key for key in image_scores.keys()]
+    print(f'\npage_ids : {page_ids}\n')
 
-#     image_scores = await similarity_search(splade,coarse,embeddings)
-#     '''image_scores structure : {page_id: score}'''
-#     text_scores = await get_text_scores(question,image_scores)
-    
-#     print(f'\nquestion : {question}\n')
-#     print(f'\nimage_scores : {image_scores}\n')
-#     print(f'\ntext_scores : {text_scores}\n')
+    markdowns = await retrieve_markdowns(page_ids)
+    print(f'\nmarkdowns : {markdowns}\n')
 
-#     combined_scores = {
-#         page_id: {'image_score': image_scores[page_id], 'text_score': text_scores[page_id]}
-#         for page_id in text_scores
-#     }
+    text_scores = jina.text_rerank(question,markdowns)
+    print(f'\ntext_scores : {text_scores}\n')
 
-#     print(f'combined_scores : {combined_scores}')
+    combined_scores = {}
+    for page_id in page_ids:
+        combined_scores[page_id] = {'image_score' : image_scores[page_id], 'text_score' : text_scores[page_id]}
+    print(f'\ncombined_scores : {combined_scores}\n')
 
-#     top_5_rrf = apply_rrf(combined_scores)
-    
-#     print(f'top_5_rrf : {top_5_rrf}')
+    rrf_results = apply_rrf(combined_scores)
+    print(f'\nrrf_results : {rrf_results}\n')
 
-#     page_sources = []
+    answer_page_ids = [key for key in rrf_results.keys()]
+    print(f'\nanswer_page_ids : {answer_page_ids}\n')
 
-#     for page_id in top_5_rrf.keys():
+    sources = await get_sources(answer_page_ids,document_converter)
 
-#         converter = DocumentConverter(
-#             format_options={
-#                 InputFormat.PDF: PdfFormatOption(pipeline_options=pipeline_options)
-#             }
-#         )
+    answer = await openai_model.answer_question(question,sources)
+    print(f'answer : {answer}')
 
-#         page_no, filepath = await retrieve_pdf_path_from_page_id(page_id)
+    query_response = QueryResponse(answer=answer,sources=sources)
 
-#         conversion_result = await asyncio.to_thread(converter.convert, filepath, page_range=(page_no,page_no))
-#         document = conversion_result.document
-#         page = document.pages[page_no]
-
-#         pil_image = page.image.pil_image
-#         item = {
-#             'image' : pil_image,
-#             'source' : f'Document {Path(filepath).name}, page {page_no}'
-#         }
-#         page_sources.append(item)
-
-#         if hasattr(document, "unload"):
-#             try:
-#                 document.unload()
-#             except Exception:
-#                 pass
-
-#     print(f'\npage_sources : {page_sources}\n')
-
-#     return page_sources
-
-
-async def answer_testset(filepath,pipeline_options,openai,colqwen,sparse):
-
-    df = pd.read_csv(filepath)
-    questions = df.iloc[:, 0]
-    results = []
-
-    semaphore = asyncio.Semaphore(1)
-
-    async def answer_question(question):
-        async with semaphore:
-
-            splade_vector = await sparse.embed(question)
-            coarse_vector, embeddings = await colqwen.embed_query(question)
-            
-            sources = await get_sources(question,splade_vector,coarse_vector,embeddings)
-            '''
-            here problem
-            '''
-
-            answer = await openai.answer_question(question,sources)
-
-            return {'Question' : question ,'Answer': answer, 'Sources' : sources}
-
-    tasks = [answer_question(question) for question in questions]
-    results = await asyncio.gather(*tasks)
-    results_df = pd.DataFrame(results)
-
-    answer_path = Path(os.getenv('answer_path'))
-    filename = filepath.stem + '_answers.csv'
-    save_name = answer_path / filename
-    print(f'save_name : {save_name}')
-    results_df.to_csv(save_name,index=False,encoding='utf-8-sig')
-
-
-async def run_testset():
-
-    try:
-
-        testset_path = Path(os.getenv('testset_path'))
-
-        pipeline_options = PdfPipelineOptions()
-        pipeline_options.generate_page_images = True
-
-        openai_model = OpenAIModel()
-        colqwen_model = ColQwenModel()
-        sparse_embedder = SparseEmbedder()
-
-        if testset_path.is_dir():
-            for file in testset_path.iterdir():
-                if file.suffix == '.csv':
-
-                    print(f'Processing {file.name}\n\n')
-
-                    await answer_testset(file,pipeline_options,openai_model,colqwen_model,sparse_embedder)
-
-                    print(f'Done\n\n')
-
-
-    except Exception as e:
-        print(f'Unable to answer testsets, error \n{e}\n\n')
-        raise
+    return query_response
 
 
 
 if __name__ == "__main__":
 
-    asyncio.run(run_testset())
+    asyncio.run(answer_user_question())

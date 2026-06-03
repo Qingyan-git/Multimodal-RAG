@@ -27,11 +27,10 @@ def clean_text(text: str) -> str:
     return text
 
 
-def save_to_file(filename,content,filepath=os.getenv('markdown_path'),method='w'):
+def save_to_file(filepath,content,method='w'):
 
-    save_path = Path(filepath) / filename
-    save_path.parent.mkdir(parents=True, exist_ok=True)
-    with save_path.open(method, encoding='utf-8') as f:
+    filepath.parent.mkdir(parents=True, exist_ok=True)
+    with filepath.open(method, encoding='utf-8') as f:
         f.write('\n')
         if isinstance(content, list):
             for item in content:
@@ -127,10 +126,9 @@ async def process_page_single(filepath,converter,page_no,openai_model,colqwen_mo
 
         markdown = await get_page_markdown(document,page_no,openai_model)
         sparse = await sparse_embedder.embed(markdown)
+
         page = document.pages[page_no]
-
         page_image = page.image.pil_image
-
         coarse, multi = await colqwen_model.get_image_embedding(page_image)
         page_id = await insert_page(filepath.name,markdown,page_no)
 
@@ -168,12 +166,19 @@ async def parse_pdf(filepath,converter,openai_model,colqwen_model,sparse_embedde
     tasks = [process_page_single(filepath,converter,page_no,openai_model,colqwen_model,sparse_embedder,semaphore) for page_no in range(1,pages+1)]
     results = await asyncio.gather(*tasks)
     document_markdown, document_vectors = zip(*results)
-    save_name = filepath.stem + '.md'
-    #save_to_file(save_name, list(document_markdown))
     await upload_points(list(document_vectors))
 
 
 async def ingest_pdf(path):
+    '''
+    Function to be called by frontend to ingest a pdf
+    Input : a pathlib Path() object where the path points to either a file or a directory
+    Output : No return, just print statements stating the completion of the ingestion
+    Exceptions : 
+        1. When input is not a Path object 
+        2. The input does not point to a valid 
+        3. Ingestion Failure
+    '''
 
     try:
 
@@ -183,15 +188,6 @@ async def ingest_pdf(path):
         pipeline_options.generate_picture_images = True
         pipeline_options.generate_page_images = True
         pipeline_options.images_scale = 2.0
-        # pipeline_options.do_ocr = True
-        # pipeline_options.do_table_structure = True
-        # pipeline_options.do_code_enrichment = True
-        # pipeline_options.do_formula_enrichment = True
-        # accelerator_options = AcceleratorOptions(
-        #     num_threads=8, 
-        #     device="cuda" if torch.cuda.is_available() else "cpu"
-        # )
-        # pipeline_options.accelerator_options = accelerator_options
         document_converter = DocumentConverter(
             format_options={
                 InputFormat.PDF: PdfFormatOption(pipeline_options=pipeline_options)

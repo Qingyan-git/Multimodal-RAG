@@ -154,7 +154,7 @@ async def similarity_search(splade_vector, coarse_vector, page_embeddings):
         )
 
         response = await client.query_points(
-            collection_name="multimodal-rag",
+            collection_name=settings.qdrant_collection_name,
 
             prefetch=[
                 models.Prefetch(

@@ -85,41 +85,38 @@ class OpenAIModel:
         return content
 
 
-    async def answer_question(self,user_query,sources):
+    async def answer_question(self,question,sources):
 
         # 1. Construct the Image blocks for the Human Message
-        image_content = []
+        message = []
         
         for source in sources:
 
-            image = source['image']
-            document = source['source']
+            pdf_name = source.pdf_name
+            page_no = source.page_num
+            image_base64 = source.image_base64
 
-            # Format the image
-            buffer = io.BytesIO()
-            rgb_image = image.convert("RGB")
-            rgb_image.save(buffer, format="JPEG", quality=95)
-            img_str = base64.b64encode(buffer.getvalue()).decode("utf-8")
+            document = f'PDF name : {pdf_name}, page number {page_no}'
 
             # TEXT ANCHOR: Tells the vision model exactly what page follows this boundary
-            image_content.append({
+            message.append({
                 "type": "text",
                 "text": f"\n--- Start of image from {document} ---\n"
             })
 
             # Add the actual image
-            image_content.append({
+            message.append({
                 "type": "image_url",
                 "image_url": {
-                    "url": f"data:image/jpeg;base64,{img_str}",
+                    "url": f"data:image/jpeg;base64,{image_base64}",
                     "detail": "high" # Ensures the LLM looks at the high-res version for small text
                 }
             })
 
         # 2. Add the final user question
-        image_content.append({
+        message.append({
             "type": "text",
-            "text": f"\nUser Query: {user_query}"
+            "text": f"\nUser Query: {question}"
         })
 
         messages = [
@@ -134,9 +131,9 @@ class OpenAIModel:
 
             FORMATTING:
             - Use clear, professional language.
-            - Always use the strict citation format matching the text anchor: [Source: <extracted_source_text>].
+            - Always use the strict citation format matching the text anchor: [Source: pdf name and page number].
             """),
-            HumanMessage(content=image_content)
+            HumanMessage(content=message)
         ]
 
         response = await self.model.ainvoke(messages)
@@ -155,7 +152,8 @@ class ColQwenModel:
             name,
             torch_dtype=torch.bfloat16,
             device_map='auto',
-            attn_implementation="flash_attention_2" if is_flash_attn_2_available() else None,
+            attn_implementation="flash_attention_2" if is_flash_attn_2_available() else "sdpa",
+            trust_remote_code=True
         ).eval()
         self.processor = ColQwen2Processor.from_pretrained(name,trust_remote_code=True)
 
@@ -198,10 +196,10 @@ class ColQwenModel:
 
         with torch.no_grad():
             embeddings = self.model(**inputs)
-            embeddings = embeddings / embeddings.norm(dim=-1, keepdim=True)
-            coarse_vector = self. _get_coarse_embedding(embeddings).flatten().tolist()
-            embeddings = embeddings.squeeze(0).to(torch.float32).cpu().tolist()
+            embeddings = embeddings / embeddings.norm(dim=-1, keepdim=True) # L2 normalization
 
+            coarse_vector = self._get_coarse_embedding(embeddings).flatten().tolist()
+            embeddings = embeddings.squeeze(0).to(torch.float32).cpu().tolist()
         return coarse_vector, embeddings
 
     
@@ -225,8 +223,8 @@ class SparseEmbedder:
         self.model = SparseTextEmbedding(model_name=model_name, parallel=use_threads)
 
     
-    def _calculate_embedding(self, page_markdown):
-        embedding = list(self.model.embed(page_markdown))[0]
+    def _calculate_embedding(self, item):
+        embedding = list(self.model.embed(item))[0]
         return {
             "indices": embedding.indices.tolist(),
             "values": embedding.values.tolist()
@@ -259,10 +257,11 @@ class Jina:
     def text_rerank(self, query, content):
 
         '''
-        Content data structure is like : [{page_id:markdown},{page_id:markdown}...]
+        Content data structure is like : {page_id:markdown,page_id:markdown}
         '''
 
-        markdowns = [item['markdown'] for item in content]
+        page_ids = list(content.keys())
+        markdowns = list(content.values())
         
         data = {
             "model": "jina-reranker-v3",
@@ -273,13 +272,12 @@ class Jina:
 
         response = requests.post(self.url, headers=self.headers, json=data).json()
 
-        results = []
+        results = {}
         for item in response.get("results", []):
             idx = item["index"]
             score = item["relevance_score"]
-            matched_dict = content[idx]
-            page_id = list(matched_dict.keys())[0]
-            results.append({page_id: score})
+            page_id = page_ids[idx]
+            results[page_id] = score
 
         return results
 
