@@ -157,7 +157,6 @@ def text_rerank(query, content):
 
     markdowns = [item["markdown"] for item in content]
 
-    print(markdowns)
 
     data = {
         "model": "jina-reranker-v3",
@@ -241,6 +240,7 @@ def apply_rrf(results, k=60):
 def retrieve_and_generate(query):
     coarse_vector, splade_vector, page_embeddings = get_query_embeddings(query)
     initial_search = search(coarse_vector, splade_vector, page_embeddings) 
+    print(initial_search.keys())
     image_ranking = retrieve_content(initial_search)
     text_ranking = text_rerank(query, image_ranking)
     results = apply_rrf(text_ranking)
