@@ -135,7 +135,9 @@ async def answer_user_question(question):
 
     combined_scores = {}
     for page_id in page_ids:
-        combined_scores[page_id] = {'image_score' : image_scores[page_id], 'text_score' : text_scores[page_id]}
+        combined_scores[page_id] = {
+            'image_score' : image_scores.get(page_id, 0),
+            'text_score' : text_scores.get(page_id, 0)}
     print(f'\ncombined_scores : {combined_scores}\n')
 
     rrf_results = apply_rrf(combined_scores)
@@ -166,24 +168,21 @@ async def answer_testset():
             return {
                 'Question': question,
                 'Answer': answer,
-                'Sources': f'{sources.pdf_name}+{sources.page_num}'
+                'Sources': [f"{x.pdf_name} + {x.page_num}" for x in sources]
             }
+    file = r"C:\Users\UserAdmin\Documents\Multimodal-RAG\testset\test_set - WHO World health statistics 2025 .csv"
+    df = pd.read_csv(file)
+    questions = df.iloc[:, 0]
 
-    testset_path = Path(r'C:\Users\UserAdmin\Documents\Multimodal-RAG\testset')
-    for file in testset_path.iterdir():
-        if file.suffix == '.csv':
-            df = pd.read_csv(file)
-            questions = df.iloc[:, 0]
+    tasks = [_answer_test(question) for question in questions]
+    results = await asyncio.gather(*tasks)
+    results_df = pd.DataFrame(results)
 
-            tasks = [_answer_test(question) for question in questions]
-            results = await asyncio.gather(*tasks)
-            results_df = pd.DataFrame(results)
-
-            output_path = Path(r'C:\Users\UserAdmin\Documents\Multimodal-RAG\testing-results\answers') / f"{file.stem}_results.csv"
-            results_df.to_csv(output_path, index=False)
+    output_path = Path(r'C:\Users\UserAdmin\Documents\Multimodal-RAG\testing-results\answers') / f"{Path(file).stem}_results.csv"
+    results_df.to_csv(output_path, index=False)
 
 
 
 if __name__ == "__main__":
 
-    asyncio.run(answer_user_question("What design principles govern the issuance and operation of tokenised bank liabilities?"))
+    asyncio.run(answer_testset())
