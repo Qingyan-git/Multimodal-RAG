@@ -148,7 +148,7 @@ class OpenAIModel:
 
             [Your detailed conversational and analysis response goes here, utilizing regular inline citations.]
 
-            ---
+            --- SOURCES ---
             <used_source>PDF NAME: [Exact PDF Name] | PAGE NUMBER: [Exact Page Number]</used_source>
 
             CRITICAL INSTRUCTIONS FOR THE SOURCE MANIFEST:

@@ -156,6 +156,25 @@ async def retrieve_markdowns(page_ids):
         raise
 
 
+async def get_path_from_pdf_name(pdf_name):
+    try:
+        client = await get_connection()
+        response = await (client
+            .table('pdfs')
+            .select('path')
+            .eq('name',pdf_name)
+            .limit(1)
+            .single()
+            .execute()
+        )
+
+        path = response.data['path']
+
+        return path
+
+    except Exception as e:
+        print(f'Unable to retrieve path from pdf {pdf_name}, error : \n{e}\n\n')
+
 
 
 if __name__ == "__main__":
