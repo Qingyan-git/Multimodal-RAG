@@ -86,11 +86,9 @@ def encode_pil_to_base64(pil_image):
 
 async def get_sources(page_ids,converter):
 
-    sources = []
-
-    for page_id in page_ids:
-
+    async def _process_source(page_id):
         page_no, pdf_name, pdf_path = await retrieve_pdf_info(page_id)
+        
         conversion_result = await asyncio.to_thread(
             converter.convert, 
             pdf_path, 
@@ -102,13 +100,22 @@ async def get_sources(page_ids,converter):
         page_image = page.image.pil_image
         image_base64 = encode_pil_to_base64(page_image)
 
-        source = DocumentSource(pdf_name=pdf_name,page_num=page_no,image_base64=image_base64)
-        sources.append(source)
+        return DocumentSource(pdf_name=pdf_name, page_num=page_no, image_base64=image_base64)
+
+    tasks = [_process_source(page_id) for page_id in page_ids]
+    sources = await asyncio.gather(*tasks)
 
     return sources
 
 
-async def answer_user_question():
+async def answer_user_question(question):
+
+    '''
+    Function to be called by frontend to answer a user's question
+    Input : a string called question
+    Output : a QueryResponse object which is a Pydantic model instance.
+    Exceptions : None
+    '''
 
     pipeline_options = PdfPipelineOptions()
     pipeline_options.generate_picture_images = True
@@ -124,7 +131,7 @@ async def answer_user_question():
     sparse_embedder = SparseEmbedder()
     jina = Jina()
 
-    question = input('Enter the question : ')
+    # question = input('Enter the question : ')
 
     splade = await sparse_embedder.embed(question)
     coarse, multi = await colqwen_model.embed_query(question)
@@ -162,7 +169,36 @@ async def answer_user_question():
     return query_response
 
 
+async def answer_testset():
+
+    semaphore = asyncio.Semaphore(3)
+
+    async def _answer_test(question):
+        async with semaphore:
+            response = await answer_user_question(question)
+            answer = response.answer
+            sources = response.sources
+            return {
+                'Question': question,
+                'Answer': answer,
+                'Sources': sources
+            }
+
+    testset_path = Path(r'C:\Users\UserAdmin\Documents\Multimodal-RAG\testset')
+    for file in testset_path.iterdir():
+        if file.suffix == '.csv':
+            df = pd.read_csv(file)
+            questions = df.iloc[:, 0]
+
+            tasks = [_answer_test(question) for question in questions]
+            results = await asyncio.gather(*tasks)
+            results_df = pd.DataFrame(results)
+
+            output_path = Path(r'C:\Users\UserAdmin\Documents\Multimodal-RAG\testing-results\answers') / f"{file.stem}_results.csv"
+            results_df.to_csv(output_path, index=False)
+
+
 
 if __name__ == "__main__":
 
-    asyncio.run(answer_user_question())
+    asyncio.run(answer_testset())

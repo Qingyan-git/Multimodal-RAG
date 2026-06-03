@@ -112,7 +112,6 @@ async def retrieve_pdf_info(page_id):
     try:
         client = await get_connection()
 
-        # Execute the inner join query
         response = await (client
             .table("pages")
             .select("page_id, num, pdfs(name, path)")
@@ -122,7 +121,6 @@ async def retrieve_pdf_info(page_id):
             .execute()
         )
 
-        # Extract the data list
         page_no = response.data['num']
         pdf_name = response.data['pdfs']['name']
         pdf_path = response.data['pdfs']['path']
@@ -154,7 +152,7 @@ async def retrieve_markdowns(page_ids):
         return markdowns
 
     except Exception as e:
-        print(f'Unable to retrieve answer files for pages {page_id in page_ids}, error \n{e}\n\n')
+        print(f'Unable to retrieve answer files for pages {page_ids}, error \n{e}\n\n')
         raise
 
 

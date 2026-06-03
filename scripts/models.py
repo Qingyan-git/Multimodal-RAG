@@ -87,7 +87,6 @@ class OpenAIModel:
 
     async def answer_question(self,question,sources):
 
-        # 1. Construct the Image blocks for the Human Message
         message = []
         
         for source in sources:
@@ -96,12 +95,9 @@ class OpenAIModel:
             page_no = source.page_num
             image_base64 = source.image_base64
 
-            document = f'PDF name : {pdf_name}, page number {page_no}'
-
-            # TEXT ANCHOR: Tells the vision model exactly what page follows this boundary
             message.append({
                 "type": "text",
-                "text": f"\n--- Start of image from {document} ---\n"
+                "text": f"\n<DocumentSource file='{pdf_name}' page='{page_no}'>\n"
             })
 
             # Add the actual image
@@ -109,8 +105,13 @@ class OpenAIModel:
                 "type": "image_url",
                 "image_url": {
                     "url": f"data:image/jpeg;base64,{image_base64}",
-                    "detail": "high" # Ensures the LLM looks at the high-res version for small text
+                    "detail": "high"
                 }
+            })
+            
+            message.append({
+                "type": "text",
+                "text": f"\n</DocumentSource>\n"
             })
 
         # 2. Add the final user question
@@ -120,18 +121,28 @@ class OpenAIModel:
         })
 
         messages = [
-            SystemMessage(content="""
-            You are a specialized Document Analysis Assistant. You will be provided with images of document chunks paired with source text boundaries.
+            SystemMessage(content="""You are a specialized Document Analysis Assistant. You are provided with document images wrapped inside `<DocumentSource file="..." page="...">` XML boundaries.
 
-            YOUR TASKS:
-            1. Analyze the provided images (including text, tables, and charts) to answer the user's query.
-            2. For every fact you state, you MUST explicitly cite the original source using the tag provided directly above that image (e.g., [Source: filename.pdf, Page X]).
-            3. If the answer is found in a chart or table, describe the visual evidence.
-            4. If the images do not contain enough information, state that you cannot find the answer.
+            YOUR CORE TASKS:
+            1. Formulate a comprehensive answer based solely on the text, charts, or visual evidence in the provided images.
+            2. Provide explicit inline citations using the file and page properties whenever you state a fact extracted from an image (e.g., [filename.pdf, Page 1]).
+            3. Underneath your complete answer, output a machine-readable list capturing ONLY the source documents you actively cited.
 
-            FORMATTING:
-            - Use clear, professional language.
-            - Always use the strict citation format matching the text anchor: [Source: pdf name and page number].
+            STRICT OUTPUT FORMAT MATCHING:
+            Your output must strictly separate the prose response from the source metadata using the exact tag block shown below:
+
+            [Your detailed conversational and analysis response goes here, utilizing regular inline citations.]
+
+            ---
+            <used_source>PDF NAME: [Exact PDF Name] | PAGE NUMBER: [Exact Page Number]</used_source>
+
+            CRITICAL INSTRUCTIONS FOR THE SOURCE MANIFEST:
+            - DIRECT CORRELATION REQUIREMENT: A `<used_source>` line must ONLY be generated for a document if you explicitly cited that exact file and page number inline within your response text. If a source was provided but you did not use its facts to formulate the answer, DO NOT include it in the manifest.
+            - ABSOLUTE ZERO RULE: If you determine that the images do not contain enough information to answer the query, state: "I cannot find the answer based on the provided document sources." When this happens, you MUST NOT output any `<used_source>` tags or the `---` markdown line. The manifest must be completely empty.
+            - The `<used_source>` tags must sit at the absolute end of your output, with one tag per line for each document used.
+            - You must use the exact format: <used_source>PDF NAME: filename.pdf | PAGE NUMBER: X</used_source>
+            - Notice the pipe character `|` separating the name and the page number. This is mandatory.
+            - Do not add any conversational transitions, markdown bullet points, or extra spaces outside or inside the `<used_source>` tags.
             """),
             HumanMessage(content=message)
         ]
