@@ -16,9 +16,13 @@ from docling.document_converter import DocumentConverter, PdfFormatOption
 # from ingestion.ingest_pdfs import save_to_file
 from scripts.supabase_setup import retrieve_pdf_info, retrieve_markdowns
 from scripts.qdrant_setup import similarity_search, format_point
-from scripts.models import OpenAIModel, ColQwenModel, SparseEmbedder, Jina
-from main import DocumentSource, QueryResponse
-
+from scripts.models import OpenAIModel, ColQwenModel, SparseEmbedder, Jina, QueryRequest, QueryResponse, DocumentSource
+from scripts.models import (
+    openai_model,
+    colqwen_model,
+    document_converter,
+    sparse_embedder
+)
 
 
 def apply_rrf(results, k=60):
@@ -86,9 +90,11 @@ def encode_pil_to_base64(pil_image):
 
 async def get_sources(page_ids,converter):
 
-    async def _process_source(page_id):
+    sources = []
+
+    for page_id in page_ids:
+
         page_no, pdf_name, pdf_path = await retrieve_pdf_info(page_id)
-        
         conversion_result = await asyncio.to_thread(
             converter.convert, 
             pdf_path, 
@@ -100,38 +106,17 @@ async def get_sources(page_ids,converter):
         page_image = page.image.pil_image
         image_base64 = encode_pil_to_base64(page_image)
 
-        return DocumentSource(pdf_name=pdf_name, page_num=page_no, image_base64=image_base64)
-
-    tasks = [_process_source(page_id) for page_id in page_ids]
-    sources = await asyncio.gather(*tasks)
+        source = DocumentSource(pdf_name=pdf_name,page_num=page_no,image_base64=image_base64)
+        sources.append(source)
 
     return sources
 
 
 async def answer_user_question(question):
 
-    '''
-    Function to be called by frontend to answer a user's question
-    Input : a string called question
-    Output : a QueryResponse object which is a Pydantic model instance.
-    Exceptions : None
-    '''
-
-    pipeline_options = PdfPipelineOptions()
-    pipeline_options.generate_picture_images = True
-    pipeline_options.generate_page_images = True
-    pipeline_options.images_scale = 2.0
-    document_converter = DocumentConverter(
-        format_options={
-            InputFormat.PDF: PdfFormatOption(pipeline_options=pipeline_options)
-        }
-    )
-    openai_model = OpenAIModel()
-    colqwen_model = ColQwenModel()
-    sparse_embedder = SparseEmbedder()
     jina = Jina()
 
-    # question = input('Enter the question : ')
+    #question = input('Enter the question : ')
 
     splade = await sparse_embedder.embed(question)
     coarse, multi = await colqwen_model.embed_query(question)
@@ -181,7 +166,7 @@ async def answer_testset():
             return {
                 'Question': question,
                 'Answer': answer,
-                'Sources': sources
+                'Sources': f'{sources.pdf_name}+{sources.page_num}'
             }
 
     testset_path = Path(r'C:\Users\UserAdmin\Documents\Multimodal-RAG\testset')
@@ -201,4 +186,4 @@ async def answer_testset():
 
 if __name__ == "__main__":
 
-    asyncio.run(answer_testset())
+    asyncio.run(answer_user_question("What design principles govern the issuance and operation of tokenised bank liabilities?"))

@@ -21,6 +21,21 @@ from fastembed import SparseTextEmbedding
 
 from scripts.config import settings
 
+from pydantic import BaseModel
+from typing import List
+
+class DocumentSource(BaseModel):
+    pdf_name: str
+    page_num: int
+    image_base64: str 
+
+class QueryRequest(BaseModel):
+    text: str
+
+class QueryResponse(BaseModel):
+    answer: str
+    sources: List[DocumentSource]
+
 
 rate_limiter = InMemoryRateLimiter(
     requests_per_second=10,
@@ -292,3 +307,16 @@ class Jina:
 
         return results
 
+pipeline_options = PdfPipelineOptions()
+pipeline_options.generate_picture_images = True
+pipeline_options.generate_page_images = True
+pipeline_options.images_scale = 2.0
+document_converter = DocumentConverter(
+    format_options={
+        InputFormat.PDF: PdfFormatOption(pipeline_options=pipeline_options)
+    }
+)
+
+openai_model = OpenAIModel()
+colqwen_model = ColQwenModel()
+sparse_embedder = SparseEmbedder()

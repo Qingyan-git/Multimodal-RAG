@@ -58,7 +58,7 @@ with left:
         st.image(render_pdf_page("frontend\sample.pdf", 1), use_container_width=True)
 
 with right: 
-    chat_container = st.container()
+    chat_container = st.container(height=500)
 
     user_input = st.chat_input("Ask anything")
 
