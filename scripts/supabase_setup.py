@@ -115,7 +115,7 @@ async def retrieve_pdf_info(page_id):
         # Execute the inner join query
         response = await (client
             .table("pages")
-            .select("page_id, num, pdfs(name), pdfs(path)")
+            .select("page_id, num, pdfs(name, path)")
             .eq("page_id", page_id)
             .limit(1)
             .single()

@@ -1,6 +1,8 @@
 import asyncio
 from pathlib import Path
 from PIL import Image
+import io
+import base64
 import os
 import sys
 import re
@@ -88,7 +90,7 @@ async def get_sources(page_ids,converter):
 
     for page_id in page_ids:
 
-        page_no, pdf_name, pdf_path = retrieve_pdf_info(page_id)
+        page_no, pdf_name, pdf_path = await retrieve_pdf_info(page_id)
         conversion_result = await asyncio.to_thread(
             converter.convert, 
             pdf_path, 
