@@ -247,4 +247,6 @@ def retrieve_and_generate(query):
     results = results[:5]
     return results 
 
-print(retrieve_and_generate("what can a vendor do to reactivate an inactive record"))
+results = retrieve_and_generate("What was the Neonatal Mortality Rate for the South-East Asia Region in 1990?")
+for item in results:
+    print(item["pdf_name"], item["page_num"])
