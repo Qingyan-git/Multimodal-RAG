@@ -29,13 +29,37 @@ async def get_connection():
         raise
 
 
+async def get_session(session_id):
+    try:
+
+        client = await get_connection()
+
+        response = await (client
+            .table('Sessions')
+            .select('ExpiresAt, UserID')
+            .eq('SessionID',session_id)
+            .limit(1)
+            .execute()
+        )
+        
+        if response.data:
+            return response.data
+
+        return []
+
+    except Exception as e:
+        print(f'Unable to get session, error \n{e}\n')
+        raise
+
+
 async def create_session(session_id,user_id):
 
     try:
         client = await get_connection()
 
-        created_at = datetime.now(timezone.utc).isoformat()
-        expires_at = created_at + timedelta(minutes=5)
+        now = datetime.now(timezone.utc)
+        created_at = now.isoformat()
+        expires_at = (now + timedelta(minutes=5)).isoformat()
 
         await (client
             .table('Sessions')
@@ -50,6 +74,7 @@ async def create_session(session_id,user_id):
 
     except Exception as e:
         print(f'Unable to create session, error \n{e}\n\n')
+        raise
 
 
 async def get_password(username):
@@ -72,6 +97,7 @@ async def get_password(username):
 
     except Exception as e:
         print(f'Unable to get password of user {username}, error \n{e}\n\n')
+        raise
 
 
 async def get_user(name):
@@ -94,6 +120,7 @@ async def get_user(name):
 
     except Exception as e:
         print(f'Unable to retrieve user {name} from supabase, error \n{e}\n')
+        raise
 
 
 async def create_user(name,password):
@@ -112,6 +139,7 @@ async def create_user(name,password):
 
     except Exception as e:
         print(f'Unable to create user {name} into supabase, error \n{e}\n\n')
+        raise
 
 
 async def get_chats(user_id):
@@ -132,6 +160,7 @@ async def get_chats(user_id):
 
     except Exception as e:
         print(f'Unable to get chats for user {user_id}, error \n{e}\n')
+        raise
 
 
 async def create_chat(chat_name,user_id):
@@ -160,16 +189,17 @@ async def create_chat(chat_name,user_id):
         raise
 
 
-async def get_chatitems(chat_id):
+async def get_chatitems(user_id,chat_id):
 
     try:
-        client = get_connection()
+        client = await get_connection()
 
         response = await (client
-            .table('ChatItem')
-            .select('*')
-            .eq('ChatID', chat_id)
-            .order('ChatItemID', desc=False)
+            .table("ChatItem")
+            .select("*, Chats!inner(UserID)")
+            .eq("ChatID", chat_id)
+            .eq("Chats.UserID", user_id)
+            .order("ChatItemID", desc=False)
             .execute()
         )
 
@@ -179,6 +209,7 @@ async def get_chatitems(chat_id):
 
     except Exception as e:
         print(f'Unable to get chatitems for chat {chat_id}, error \n{e}\n')
+        raise
 
 
 async def create_chatitem(question,response,chat_id):
@@ -188,12 +219,13 @@ async def create_chatitem(question,response,chat_id):
 
         await (client
             .table('ChatItem')
-            .insert({'Question' : question, 'Response' : response})
+            .insert({'ChatID' : chat_id, 'Question' : question, 'Response' : response})
             .execute()
         )
 
     except Exception as e:
         print(f'Unable to create chat item for question {question}, error \n{e}\n')
+        raise
 
 
 async def insert_pdf(name,path):
@@ -243,7 +275,7 @@ async def insert_page(filename,markdown,page_no):
         )
 
         if response.data:
-            page_id = response.data[0]['page_id']
+            page_id = response.data['page_id']
             
             return page_id
 
