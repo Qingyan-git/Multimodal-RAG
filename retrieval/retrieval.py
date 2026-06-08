@@ -12,12 +12,13 @@ from dotenv import load_dotenv
 # from ingestion.ingest_pdfs import save_to_file
 from scripts.supabase_setup import retrieve_pdf_info, retrieve_markdowns, get_path_from_pdf_name
 from scripts.qdrant_setup import similarity_search
-from scripts.models import OpenAIModel, ColQwenModel, SparseEmbedder, Jina, QueryRequest, QueryResponse, DocumentSource
+from scripts.models import QueryRequest, QueryResponse, DocumentSource
 from scripts.models import (
     openai_model,
     colqwen_model,
     document_converter,
-    sparse_embedder
+    sparse_embedder,
+    jina
 )
 
 
@@ -108,24 +109,6 @@ async def get_sources(page_ids):
     return sources
 
 
-async def get_image(pdf_name,page_no):
-
-    pdf_path = await get_path_from_pdf_name(pdf_name)
-
-    conversion_result = await asyncio.to_thread(
-        document_converter.convert, 
-        pdf_path, 
-        page_range=(page_no, page_no)
-    )
-    document = conversion_result.document
-
-    page = document.pages[page_no]
-    page_image = page.image.pil_image
-    image_base64 = encode_pil_to_base64(page_image)
-
-    return image_base64
-
-
 async def extract_and_truncate_sources(llm_output):
     """
     Splits the conversational answer from the metadata manifest block,
@@ -134,39 +117,38 @@ async def extract_and_truncate_sources(llm_output):
     Returns:
         tuple: (clean_conversational_answer_str, list_of_parsed_source_dicts)
     """
-    # 1. Split the string exactly at the '--- SOURCES ---' boundary marker
-    # Using re.split ensures that if the LLM output doesn't contain the header, 
-    # it safely falls back gracefully.
+
     parts = re.split(r"\n*---\s*SOURCES\s*---\n*", llm_output, maxsplit=1)
     
     clean_answer = parts[0].strip()
     source_block = parts[1] if len(parts) > 1 else ""
-    
-    # 2. Extract pairs matching your specific tag structure:
-    # Captures everything after 'PDF NAME: ' up to the ' |' barrier, 
-    # and all sequential digits inside 'PAGE NUMBER: '
+
     source_pattern = r"<used_source>PDF NAME:\s*(.*?)\s*\|\s*PAGE NUMBER:\s*(\d+)\s*</used_source>"
     matches = re.findall(source_pattern, source_block)
-    
-    print(f'matches : {matches}')
 
     used_sources = []
     for pdf_name, page_no in matches:
-        image_base64 = await get_image(pdf_name, int(page_no))
+
+        pdf_path = await get_path_from_pdf_name(pdf_name)
+
+        conversion_result = await asyncio.to_thread(
+            document_converter.convert, 
+            pdf_path, 
+            page_range=(page_no, page_no)
+        )
+
+        document = conversion_result.document
+        page = document.pages[page_no]
+        page_image = page.image.pil_image
+        image_base64 = encode_pil_to_base64(page_image)
+
         source = DocumentSource(pdf_name=pdf_name,page_num=int(page_no),image_base64=image_base64)
         used_sources.append(source)
-
-    # Create a readable list of strings first
-    sources_debug = [f"{s.pdf_name} page {s.page_num}" for s in used_sources]
-    # Then print them cleanly joined together
-    print(f"\nused_sources : {', '.join(sources_debug)}\n")
         
     return used_sources
 
 
 async def answer_user_question(question):
-
-    jina = Jina()
 
     #question = input('Enter the question : ')
 
@@ -174,34 +156,34 @@ async def answer_user_question(question):
     coarse, multi = await colqwen_model.embed_query(question)
 
     image_scores = await similarity_search(splade,coarse,multi)
-    print(f'\nimage_scores : {image_scores}\n')
+    # print(f'\nimage_scores : {image_scores}\n')
 
     page_ids = [key for key in image_scores.keys()]
-    print(f'\npage_ids : {page_ids}\n')
+    # print(f'\npage_ids : {page_ids}\n')
 
     markdowns = await retrieve_markdowns(page_ids)
     # print(f'\nmarkdowns : {markdowns}\n')
 
     text_scores = jina.text_rerank(question,markdowns)
-    print(f'\ntext_scores : {text_scores}\n')
+    # print(f'\ntext_scores : {text_scores}\n')
 
     combined_scores = {}
     for page_id in page_ids:
         combined_scores[page_id] = {
             'image_score' : image_scores.get(page_id, 0),
             'text_score' : text_scores.get(page_id, 0)}
-    print(f'\ncombined_scores : {combined_scores}\n')
+    # print(f'\ncombined_scores : {combined_scores}\n')
 
     rrf_results = apply_rrf(combined_scores)
-    print(f'\nrrf_results : {rrf_results}\n')
+    # print(f'\nrrf_results : {rrf_results}\n')
 
     answer_page_ids = [key for key in rrf_results.keys()]
-    print(f'\nanswer_page_ids : {answer_page_ids}\n')
+    # print(f'\nanswer_page_ids : {answer_page_ids}\n')
 
     sources = await get_sources(answer_page_ids)
 
     answer = await openai_model.answer_question(question,sources)
-    print(f'\nanswer : {answer}\n')
+    # print(f'\nanswer : {answer}\n')
 
     used_sources = await extract_and_truncate_sources(answer)
 
@@ -239,4 +221,4 @@ async def answer_testset():
 
 if __name__ == "__main__":
 
-    asyncio.run(answer_testset())
+    asyncio.run(answer_user_question('What does the government define a Third Party under these regulations?'))

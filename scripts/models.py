@@ -5,6 +5,9 @@ import base64
 import asyncio
 import torch
 import requests
+from enum import Enum
+from pydantic import BaseModel, Field
+from typing import List
 
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_core.messages import SystemMessage, HumanMessage
@@ -21,8 +24,6 @@ from fastembed import SparseTextEmbedding
 
 from scripts.config import settings
 
-from pydantic import BaseModel
-from typing import List
 
 class DocumentSource(BaseModel):
     pdf_name: str
@@ -37,15 +38,24 @@ class QueryResponse(BaseModel):
     sources: List[DocumentSource]
 
 
-rate_limiter = InMemoryRateLimiter(
-    requests_per_second=10,
-    max_bucket_size=10,
-    check_every_n_seconds=0.1
-)
+class IntentEnum(str, Enum):
+    chitchat = "chitchat"
+    rag_query = "rag_query"
+
+class RouteQuery(BaseModel):
+    intent: IntentEnum 
+
+
 
 class OpenAIModel:
 
     def __init__(self):
+
+        rate_limiter = InMemoryRateLimiter(
+            requests_per_second=10,
+            max_bucket_size=10,
+            check_every_n_seconds=0.1
+        )
 
         model = settings.openai_model
         api_key = settings.openai_api_key.get_secret_value()
@@ -60,6 +70,42 @@ class OpenAIModel:
             max_retries=2,
             reasoning_effort='minimal'
         )
+
+
+    async def classify_query(self,query):
+
+        structured_llm = self.model.with_structured_output(RouteQuery)
+
+        messages = [
+            SystemMessage(content="""
+                You are an expert query router for a RAG system.
+                Classify the incoming user query into one of these categories:
+                - 'chitchat': For greetings, small talk, goodbyes, or generic pleasantries.
+                - 'rag_query': For factual, technical, or specific questions that require looking up document sources.
+            """),
+            HumanMessage(content=query)
+        ]
+
+        response = await structured_llm.ainvoke(messages)
+        intent = response.intent
+
+        return intent
+
+    
+    async def respond_to_chitchat(self, query):
+
+        messages = [
+            SystemMessage(content=(
+                "You are a helpful and polite AI assistant. "
+                "The user is engaging in small talk, greetings, or casual conversation. "
+                "Respond naturally, warmly, and concisely. Keep your response within 1 sentence."
+            )),
+            HumanMessage(content=query)
+        ]
+
+        response = await self.model.ainvoke(messages)
+        
+        return response.content
 
 
     async def get_image_description(self,pil_image):
@@ -95,6 +141,30 @@ class OpenAIModel:
         ]
 
         response = await self.model.ainvoke(messages)
+        content = response.content
+
+        return content
+
+
+    async def rewrite_query(self, query_with_context):
+
+        messages = [
+            SystemMessage(content="""
+            You are an expert AI search-query engineering assistant. 
+
+            Your sole task is to analyze a conversation history and a new follow-up question, then rewrite the follow-up question into a single, completely standalone, self-contained query.
+
+            CRITICAL INSTRUCTIONS:
+            1. Replace all pronouns (e.g., "it", "they", "that", "he", "she", "before") with the specific library, tool, topic, or concept mentioned earlier in the conversation history.
+            2. If the follow-up question relies on context from previous turns, expand the query to include the core topic being discussed.
+            3. DO NOT answer the question under any circumstances.
+            4. DO NOT add conversational filler (e.g., "Here is your query:", "Standalone query:"). Return ONLY the raw, rewritten question string.
+            5. If the follow-up question is already completely self-contained and does not require any historical context, return it exactly as it was provided.
+            """),
+            HumanMessage(content=f'{query_with_context}')
+        ]
+
+        response = self.model.ainvoke(messages)
         content = response.content
 
         return content
@@ -316,7 +386,7 @@ document_converter = DocumentConverter(
         InputFormat.PDF: PdfFormatOption(pipeline_options=pipeline_options)
     }
 )
-
 openai_model = OpenAIModel()
 colqwen_model = ColQwenModel()
 sparse_embedder = SparseEmbedder()
+jina = Jina()

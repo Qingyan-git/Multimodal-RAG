@@ -15,7 +15,6 @@ class Settings(BaseSettings):
 
     qdrant_cluster_endpoint: str
     qdrant_collection_name: str 
-    qdrant_url: str 
     qdrant_api_key: SecretStr
 
     supabase_url: str

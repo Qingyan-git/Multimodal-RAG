@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 import asyncio
+from datetime import datetime, timezone, timedelta
 
 from supabase import acreate_client, AsyncClient
 from scripts.config import settings
@@ -28,28 +29,171 @@ async def get_connection():
         raise
 
 
-async def delete_rows():
+async def create_session(session_id,user_id):
 
     try:
         client = await get_connection()
 
-        print("Initiating database purge...\n")
+        created_at = datetime.now(timezone.utc).isoformat()
+        expires_at = created_at + timedelta(minutes=5)
 
-        # 1. Define both tasks as concurrent coroutines
-        # Changed filter to .gte() which plays better with primary key index scanning
-        task_pages = client.table('pages').delete(count="exact").gte('page_id', 0).execute()
-        task_pdfs = client.table('pdfs').delete(count="exact").gte('pdf_id', 0).execute()
-
-        # 2. Fire both requests simultaneously over the network
-        result_pages, result_pdfs = await asyncio.gather(task_pages, task_pdfs)
-
-        # 3. Extract the counts safely from the concurrent results
-        print(f'{result_pages.count} pages deleted\n')
-        print(f'{result_pdfs.count} pdfs deleted\n\n')
+        await (client
+            .table('Sessions')
+            .insert({
+                'SessionID' : session_id, 
+                'UserID' : user_id, 
+                'CreatedAt' : created_at, 
+                'ExpiresAt' : expires_at
+                })
+            .execute()
+        )
 
     except Exception as e:
-        print(f'Unable to delete rows in supabase db, error {e}\n\n')
+        print(f'Unable to create session, error \n{e}\n\n')
+
+
+async def get_password(username):
+    
+    try:
+        client = await get_connection()
+
+        response = await (client
+            .table('User')
+            .select('Password')
+            .eq('Username', username)
+            .limit(1)
+            .execute()
+        )
+
+        if response.data:
+            return response.data[0]['Password']
+        
+        return None
+
+    except Exception as e:
+        print(f'Unable to get password of user {username}, error \n{e}\n\n')
+
+
+async def get_user(name):
+
+    try:
+        client = await get_connection()
+
+        response = await(client
+            .table('User')
+            .select('UserID')
+            .eq('Username', name)
+            .limit(1)
+            .execute()
+        )
+
+        if response.data:
+            return response.data[0]['UserID']
+        
+        return None
+
+    except Exception as e:
+        print(f'Unable to retrieve user {name} from supabase, error \n{e}\n')
+
+
+async def create_user(name,password):
+    
+    try:
+        client = await get_connection()
+
+        await (client
+            .table('User')
+            .upsert({'Username': name, 'Password': password},
+            on_conflict='Username',
+            ignore_duplicates=True
+            )
+            .execute()
+        )
+
+    except Exception as e:
+        print(f'Unable to create user {name} into supabase, error \n{e}\n\n')
+
+
+async def get_chats(user_id):
+
+    try:
+        client = await get_connection()
+
+        response = await (client
+            .table('Chats')
+            .select('Name, ChatID')
+            .eq('UserID',user_id)
+            .execute()
+        )
+
+        if response.data:
+            return response.data
+        return []
+
+    except Exception as e:
+        print(f'Unable to get chats for user {user_id}, error \n{e}\n')
+
+
+async def create_chat(chat_name,user_id):
+
+    try:
+        client = await get_connection()
+
+        response = await (client
+            .table('Chats')
+            .insert(
+                {
+                    'UserID' : user_id,
+                    'Name' : chat_name,
+                }
+            )
+            .execute()
+        )
+
+        if response.data:
+            chat_id = response.data[0]['ChatID']
+            return chat_id
+        return None
+
+    except Exception as e:
+        print(f'Unable to create chat {chat_name}, error \n{e}\n\n')
         raise
+
+
+async def get_chatitems(chat_id):
+
+    try:
+        client = get_connection()
+
+        response = await (client
+            .table('ChatItem')
+            .select('*')
+            .eq('ChatID', chat_id)
+            .order('ChatItemID', desc=False)
+            .execute()
+        )
+
+        if response.data:
+            return response.data
+        return []
+
+    except Exception as e:
+        print(f'Unable to get chatitems for chat {chat_id}, error \n{e}\n')
+
+
+async def create_chatitem(question,response,chat_id):
+
+    try:
+        client = await get_connection()
+
+        await (client
+            .table('ChatItem')
+            .insert({'Question' : question, 'Response' : response})
+            .execute()
+        )
+
+    except Exception as e:
+        print(f'Unable to create chat item for question {question}, error \n{e}\n')
 
 
 async def insert_pdf(name,path):
@@ -57,7 +201,7 @@ async def insert_pdf(name,path):
     try:
         client = await get_connection()
 
-        response = await (client
+        await (client
             .table("pdfs")
             .upsert(
                 {'name' : name, 'path' : str(path)},
