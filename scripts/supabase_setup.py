@@ -52,14 +52,14 @@ async def get_session(session_id):
         raise
 
 
-async def create_session(session_id,user_id):
+async def create_session(session_id,user_id,delta=5):
 
     try:
         client = await get_connection()
 
         now = datetime.now(timezone.utc)
         created_at = now.isoformat()
-        expires_at = (now + timedelta(minutes=5)).isoformat()
+        expires_at = (now + timedelta(minutes=delta)).isoformat()
 
         await (client
             .table('Sessions')

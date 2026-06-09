@@ -38,5 +38,3 @@ async def answer_question_contextual(user_id,question):
 
         return answer
 
-
-

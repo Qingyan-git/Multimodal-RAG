@@ -92,6 +92,7 @@ async def get_sources(page_ids):
     for page_id in page_ids:
 
         page_no, pdf_name, pdf_path = await retrieve_pdf_info(page_id)
+        page_no = int(page_no)
         conversion_result = await asyncio.to_thread(
             document_converter.convert, 
             pdf_path, 
@@ -150,40 +151,40 @@ async def extract_and_truncate_sources(llm_output):
 
 async def answer_user_question(question):
 
-    #question = input('Enter the question : ')
+    # question = input('Enter the question : ')
 
     splade = await sparse_embedder.embed(question)
     coarse, multi = await colqwen_model.embed_query(question)
 
     image_scores = await similarity_search(splade,coarse,multi)
-    # print(f'\nimage_scores : {image_scores}\n')
+    print(f'\nimage_scores : {image_scores}\n')
 
     page_ids = [key for key in image_scores.keys()]
-    # print(f'\npage_ids : {page_ids}\n')
+    print(f'\npage_ids : {page_ids}\n')
 
     markdowns = await retrieve_markdowns(page_ids)
-    # print(f'\nmarkdowns : {markdowns}\n')
+    print(f'\nmarkdowns : {markdowns}\n')
 
     text_scores = jina.text_rerank(question,markdowns)
-    # print(f'\ntext_scores : {text_scores}\n')
+    print(f'\ntext_scores : {text_scores}\n')
 
     combined_scores = {}
     for page_id in page_ids:
         combined_scores[page_id] = {
             'image_score' : image_scores.get(page_id, 0),
             'text_score' : text_scores.get(page_id, 0)}
-    # print(f'\ncombined_scores : {combined_scores}\n')
+    print(f'\ncombined_scores : {combined_scores}\n')
 
     rrf_results = apply_rrf(combined_scores)
-    # print(f'\nrrf_results : {rrf_results}\n')
+    print(f'\nrrf_results : {rrf_results}\n')
 
     answer_page_ids = [key for key in rrf_results.keys()]
-    # print(f'\nanswer_page_ids : {answer_page_ids}\n')
+    print(f'\nanswer_page_ids : {answer_page_ids}\n')
 
     sources = await get_sources(answer_page_ids)
 
     answer = await openai_model.answer_question(question,sources)
-    # print(f'\nanswer : {answer}\n')
+    print(f'\nanswer : {answer}\n')
 
     used_sources = await extract_and_truncate_sources(answer)
 

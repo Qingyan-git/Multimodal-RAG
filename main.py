@@ -20,7 +20,7 @@ from scripts.models import OpenAIModel, ColQwenModel
 from retrieval.retrieval import answer_user_question
 
 from features.user_login import sign_up, login, verify_session
-# from scripts.supabase_setup import 
+from scripts.supabase_setup import get_chats, get_chatitems
 
 BASE_DIR = Path(__file__).resolve().parent
 dotenv_path = BASE_DIR / ".env"

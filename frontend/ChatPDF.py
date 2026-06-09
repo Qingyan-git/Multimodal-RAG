@@ -73,7 +73,7 @@ with right:
             with st.chat_message("assistant"):
                 with st.spinner("Thinking..."):
                     try: 
-                        response = requests.post(QUERY_URL, json={"text": user_input}, timeout=30)
+                        response = requests.post(QUERY_URL, json={"text": user_input}, timeout=300)
                         if response.status_code == 200:
                             data = response.json()
                             answer = data["answer"]
