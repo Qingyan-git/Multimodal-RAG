@@ -3,18 +3,17 @@ import os
 import asyncio
 
 from qdrant_client import AsyncQdrantClient, models
-from qdrant_client.models import PointStruct, Distance, VectorParams, models, SparseVector
+from qdrant_client.models import PointStruct, Distance, VectorParams, SparseVector
 from scripts.config import settings
+
 
 
 _client = None
 _lock = asyncio.Lock()
 
-# Creation functions
-
 async def get_qdrant_client():
     """
-    Returns a qdrant_client object
+    Returns a shared AsyncQdrantClient instance
     """
     try:
         global _client
@@ -28,7 +27,7 @@ async def get_qdrant_client():
                 _client = AsyncQdrantClient(
                     url=qdrant_cluster_endpoint,
                     api_key=qdrant_api_key.get_secret_value(),
-                    timeout=180
+                    timeout=300
                 )
 
         return _client
@@ -39,7 +38,6 @@ async def get_qdrant_client():
 
 
 async def create_collection():
-
     try:
         client = await get_qdrant_client()
         name = settings.qdrant_collection_name
@@ -48,17 +46,13 @@ async def create_collection():
             print(f'Collection already exists. Deleting and recreating for clean schema switch...\n\n')
             await client.delete_collection(collection_name=name)
 
+        # Re-create collection without coarse_embedding
         await client.create_collection(
             collection_name=name,
             vectors_config={
-                "coarse_embedding": models.VectorParams(
-                    size=128,
-                    distance=models.Distance.COSINE
-                ),
-
                 "page_embeddings": models.VectorParams(
                     size=128,
-                    distance=models.Distance.DOT,
+                    distance=models.Distance.COSINE,
                     multivector_config=models.MultiVectorConfig(
                         comparator=models.MultiVectorComparator.MAX_SIM
                     )
@@ -69,53 +63,32 @@ async def create_collection():
                     modifier=models.Modifier.IDF
                 )
             },
+            # On-disk HNSW ensures your multi-vector index doesn't explode your RAM usage
             hnsw_config=models.HnswConfigDiff(on_disk=True)
         )
 
-        print(f'Collection created\n\n')
+        print(f'Collection {name} successfully created.\n\n')
 
     except Exception as e:
         print(f'Unable to create collection in qdrant, error \n{e}\n\n')
         raise
 
 
-async def clear_points(name):
-
-    try:
-        client = await get_qdrant_client()
-        await client.delete(
-            collection_name=name,
-            points_selector=models.FilterSelector(
-                filter=models.Filter()
-            )
-        )
-
-        print(f'All points deleted from collection {name}\n\n')
-
-    except Exception as e:
-        print(f'Unable to delete all points from collection {name} in qdrant, error \n{e}\n\n')
-        raise
-
-
-
-# Execution functions
-
-
 def format_point(embedding):
-
+    """
+    Expects embedding dict containing: 'page_id', 'sparse', and 'multi'
+    """
     vector = models.PointStruct(
         id=str(uuid.uuid4()),
         vector={
-            "coarse_embedding": embedding['coarse'],
             "page_embeddings": embedding['multi'],
-
             "splade_vector": models.SparseVector(
                 indices=embedding['sparse']['indices'],
                 values=embedding['sparse']['values']
             )
         },
         payload={
-            "page_id" : embedding['page_id']
+            "page_id": embedding['page_id']
         }
     )
 
@@ -123,55 +96,42 @@ def format_point(embedding):
 
 
 async def upload_points(points, batch_size=16):
-
     try:
         name = settings.qdrant_collection_name
         client = await get_qdrant_client()
-        for i in range(0, len(points), batch_size):
-            batch = points[i:i + batch_size]
-            await client.upsert(
-                collection_name=name,
-                points=batch
-            )
+        await client.upsert(
+            collection_name=name,
+            points=points
+        )
 
     except Exception as e:
         print(f'Unable to upload points to collection {name} to qdrant, error \n{e}\n\n')
         raise
 
 
-async def similarity_search(splade_vector, coarse_vector, page_embeddings):
-
-    try :
+async def similarity_search(splade_vector, page_embeddings):
+    try:
         client = await get_qdrant_client()
         name = settings.qdrant_collection_name
 
-        qdrant_vector = SparseVector(
+        qdrant_sparse = models.SparseVector(
             indices=splade_vector['indices'],
             values=splade_vector['values']
         )
 
+        # Execute a direct multi-vector ANN search, combined with SPLADE for high-recall hybrid fusion
         response = await client.query_points(
-            collection_name=settings.qdrant_collection_name,
-
+            collection_name=name,
             prefetch=[
                 models.Prefetch(
-                    query=coarse_vector,
-                    using="coarse_embedding",
-                    limit=50
-                ),
-                models.Prefetch(
-                    query=qdrant_vector,
+                    query=qdrant_sparse,
                     using="splade_vector",
                     limit=50
-                ),
+                )
             ],
             query=page_embeddings,
             using="page_embeddings",
             limit=20,
-
-            params=models.SearchParams(
-                exact=True
-            )
         )
         
         retrieved = {}
@@ -187,16 +147,12 @@ async def similarity_search(splade_vector, coarse_vector, page_embeddings):
         raise
 
 
-
 if __name__ == '__main__':
-
     async def main():
-        sure = input('Are you sure? Enter Y to continue : ')
-        
+        sure = input('Are you sure? Enter Y to rebuild the collection : ')
         if sure == 'Y':
             await create_collection()
         else:
             print('Aborted\n\n')
 
     asyncio.run(main())
-
