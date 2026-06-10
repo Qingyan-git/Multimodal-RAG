@@ -213,6 +213,8 @@ async def answer_user_question(question):
 
     query_response = QueryResponse(answer=answer,sources=used_sources)
 
+    print(f'answer : \n{answer}\n')
+
     return query_response
 
 
@@ -245,4 +247,4 @@ async def answer_testset():
 
 if __name__ == "__main__":
 
-    asyncio.run(answer_user_question('bla bla bla'))
+    asyncio.run(answer_user_question('What was the global suicide death rate per 100,000 population for males in 2021?'))

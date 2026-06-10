@@ -7,8 +7,6 @@ from qdrant_client.models import PointStruct, Distance, VectorParams, models, Sp
 from scripts.config import settings
 
 
-_client = None
-_lock = asyncio.Lock()
 
 # Creation functions
 
@@ -17,21 +15,14 @@ async def get_qdrant_client():
     Returns a qdrant_client object
     """
     try:
-        global _client
-        if _client is not None:
-            return _client
-
-        async with _lock:
-            if _client is None:
-                qdrant_cluster_endpoint = settings.qdrant_cluster_endpoint
-                qdrant_api_key = settings.qdrant_api_key
-                _client = AsyncQdrantClient(
-                    url=qdrant_cluster_endpoint,
-                    api_key=qdrant_api_key.get_secret_value(),
-                    timeout=180
-                )
-
-        return _client
+        qdrant_cluster_endpoint = settings.qdrant_cluster_endpoint
+        qdrant_api_key = settings.qdrant_api_key
+        client = AsyncQdrantClient(
+            url=qdrant_cluster_endpoint,
+            api_key=qdrant_api_key.get_secret_value(),
+            timeout=180
+        )
+        return client
 
     except Exception as e:
         print(f'Failed to create qdrant client, error {e}\n\n')
@@ -61,7 +52,8 @@ async def create_collection():
                     distance=models.Distance.DOT,
                     multivector_config=models.MultiVectorConfig(
                         comparator=models.MultiVectorComparator.MAX_SIM
-                    )
+                    ),
+                    hnsw_config=models.HnswConfigDiff(m=0)
                 ),
             },
             sparse_vectors_config={
@@ -151,7 +143,7 @@ async def similarity_search(splade_vector, coarse_vector, page_embeddings):
         )
 
         response = await client.query_points(
-            collection_name=settings.qdrant_collection_name,
+            collection_name=name,
 
             prefetch=[
                 models.Prefetch(
@@ -169,9 +161,9 @@ async def similarity_search(splade_vector, coarse_vector, page_embeddings):
             using="page_embeddings",
             limit=20,
 
-            params=models.SearchParams(
-                exact=True
-            )
+            # search_params=models.SearchParams(
+            #     exact=True
+            # )
         )
         
         retrieved = {}

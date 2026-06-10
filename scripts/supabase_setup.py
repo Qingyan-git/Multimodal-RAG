@@ -6,23 +6,17 @@ from datetime import datetime, timezone, timedelta
 from supabase import acreate_client, AsyncClient
 from scripts.config import settings
 
-_client = None
-_lock = asyncio.Lock()
+
+
 
 async def get_connection():
     
     try:
-        global _client
-        if _client is not None:
-            return _client
+        url = settings.supabase_url
+        key = settings.supabase_key.get_secret_value()
+        client = await acreate_client(url, key)
 
-        async with _lock:
-            if _client is None:
-                url = settings.supabase_url
-                key = settings.supabase_key.get_secret_value()
-                _client = await acreate_client(url, key)
-
-        return _client
+        return client
     
     except Exception as e:
         print(f'Unable to get supabase connection, error {e}\n\n')

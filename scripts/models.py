@@ -164,7 +164,7 @@ class OpenAIModel:
             HumanMessage(content=f'{query_with_context}')
         ]
 
-        response = self.model.ainvoke(messages)
+        response = await self.model.ainvoke(messages)
         content = response.content
 
         return content
@@ -223,7 +223,11 @@ class OpenAIModel:
 
             CRITICAL INSTRUCTIONS FOR THE SOURCE MANIFEST:
             - DIRECT CORRELATION REQUIREMENT: A `<used_source>` line must ONLY be generated for a document if you explicitly cited that exact file and page number inline within your response text. If a source was provided but you did not use its facts to formulate the answer, DO NOT include it in the manifest.
-            - ABSOLUTE ZERO RULE: If you determine that the images do not contain enough information to answer the query, state: "I cannot find the answer based on the provided document sources." When this happens, you MUST NOT output any `<used_source>` tags or the `---` markdown line. The manifest must be completely empty.
+            
+            - ABSOLUTE ZERO RULE (MODIFIED): If you determine that the provided document images do not contain the specific information required to answer the user query, you MUST explicitly state: "I cannot find the answer based on the provided document sources." 
+              Immediately following that statement, you must list and quote the relevant parts or titles of the `<DocumentSource>` sections you evaluated during your search to show the user what was checked (e.g., "Checked: filename.pdf, Page X which contains..."). 
+              When this fallback occurs, you still MUST NOT output any final `<used_source>` XML tags or the `--- SOURCES ---` markdown line at the bottom.
+
             - The `<used_source>` tags must sit at the absolute end of your output, with one tag per line for each document used.
             - You must use the exact format: <used_source>PDF NAME: filename.pdf | PAGE NUMBER: X</used_source>
             - Notice the pipe character `|` separating the name and the page number. This is mandatory.
@@ -267,7 +271,7 @@ class ColQwenModel:
             embeddings = self.model(**inputs)
             embeddings = embeddings / embeddings.norm(dim=-1, keepdim=True)
             coarse_vector = self._get_coarse_embedding(embeddings).flatten().tolist()
-            embeddings_multivector = embeddings.squeeze(0).to(torch.float32).cpu()
+            embeddings_multivector = embeddings.squeeze(0).to(torch.float32).cpu().tolist()
 
             return coarse_vector, embeddings_multivector
 

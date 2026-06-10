@@ -12,8 +12,8 @@ from dotenv import load_dotenv
 from docling_core.types.doc import PictureItem
 from docling_core.transforms.serializer.markdown import MarkdownDocSerializer
 
-from scripts.supabase_setup import insert_pdf, insert_page, get_connection
-from scripts.qdrant_setup import format_point, upload_points, get_qdrant_client
+from scripts.supabase_setup import insert_pdf, insert_page
+from scripts.qdrant_setup import format_point, upload_points, get_qdrant_client, create_collection
 from scripts.models import (
     openai_model,
     colqwen_model,
@@ -207,4 +207,5 @@ async def ingest_pdf(path):
 
 if __name__ == "__main__":
 
+    create_collection()
     asyncio.run(ingest_pdf(Path(r'C:\Users\UserAdmin\Documents\Multimodal-RAG\pdfs\WHO World health statistics 2025.pdf')))
