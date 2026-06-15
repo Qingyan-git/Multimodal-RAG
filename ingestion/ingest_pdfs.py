@@ -23,27 +23,14 @@ from scripts.models import (
 
 from scripts.config import settings
 
+
 def clean_text(text: str) -> str:
     text = text.replace("\x00", "")
     text = re.sub(r'[\x00-\x08\x0B\x0C\x0E-\x1F]', '', text)
     return text
 
 
-def save_to_file(filepath,content,method='w'):
-
-    filepath.parent.mkdir(parents=True, exist_ok=True)
-    with filepath.open(method, encoding='utf-8') as f:
-        f.write('\n')
-        if isinstance(content, list):
-            for item in content:
-                f.write(f"{item}\n\n")
-        else:
-            f.write(content)
-        f.write('\n')
-
-
 def is_useable_image(img, page_w, page_h, min_dim=100, area_threshold=0.20):
-
     if not img.prov:
         return False
         
@@ -57,7 +44,7 @@ def is_useable_image(img, page_w, page_h, min_dim=100, area_threshold=0.20):
     if bbox.height < min_dim or bbox.width < min_dim:
         return False
 
-    # 2. Aspect Ratio Check (Your 0.2 to 5.0 range)
+    # 2. Aspect Ratio Check
     ratio = bbox.height / bbox.width 
     if ratio > 5 or ratio < 0.2:
         return False
@@ -73,30 +60,29 @@ def is_useable_image(img, page_w, page_h, min_dim=100, area_threshold=0.20):
     return True
 
 
-async def get_page_markdown(document,page_no,openai_model):
-
+async def get_page_markdown(document, page_no, openai_model):
     serializer = MarkdownDocSerializer(doc=document)
     items = []
     image_tasks = []
 
     for item, level in document.iterate_items(traverse_pictures=True, page_no=page_no):
-        if isinstance(item,PictureItem):
+        if isinstance(item, PictureItem):
+
             page_item = document.pages[page_no]
-            page_width = page_item.size.width
-            page_height = page_item.size.height
-            useable = is_useable_image(item,page_width,page_height)
-            if useable :
+            page_area  = page.item.size.width * page.item.size.height
+            item_bbox = item.prov[0].bbox
+            item_area = item_bbox.width * item_bbox.height
+            if item_area / page_area > 0.2:
                 pil_image = item.get_image(doc=document)
                 task = openai_model.get_image_description(pil_image)
                 image_tasks.append(task)
-                item_markdown = f'<-- PLACEHOLDER FOR IMAGE FOUND -->'
-                parsed_item = {'type' : 'image_placeholder', 'index' : len(image_tasks)-1}
+                parsed_item = {'type': 'image_placeholder', 'index': len(image_tasks)-1}
             else:
                 item_markdown = item.caption_text(doc=document)
-                parsed_item = {'type' : 'content', 'markdown' : item_markdown}
+                parsed_item = {'type': 'content', 'markdown': item_markdown}
         else:
             item_markdown = serializer.serialize(item=item).text
-            parsed_item = {'type' : 'content', 'markdown' : item_markdown}
+            parsed_item = {'type': 'content', 'markdown': item_markdown}
 
         items.append(parsed_item)
 
@@ -115,10 +101,8 @@ async def get_page_markdown(document,page_no,openai_model):
     return cleaned_text
 
 
-async def process_page_single(filepath,page_no,semaphore):
-
+async def process_page_single(filepath, page_no, semaphore):
     async with semaphore:
-
         conversion_result = await asyncio.to_thread(
             document_converter.convert, 
             filepath, 
@@ -126,86 +110,68 @@ async def process_page_single(filepath,page_no,semaphore):
         )
         document = conversion_result.document
 
-        markdown = await get_page_markdown(document,page_no,openai_model)
+        markdown = await get_page_markdown(document, page_no, openai_model)
         sparse = await sparse_embedder.embed(markdown)
 
         page = document.pages[page_no]
-        page_image = page.image.pil_image
-        coarse, multi = await colqwen_model.get_image_embedding(page_image)
-        page_id = await insert_page(filepath.name,markdown,page_no)
+        pil_image = page.image.pil_image
 
+        buffer = BytesIO()
+        rgb_image = pil_image.convert("RGB")
+        rgb_image.save(buffer, format="JPEG", quality=95)
+        page_image = buffer.getvalue()
+
+        page_id = await insert_page(filepath.name, markdown, page_no, page_image)
+
+        multi = await colqwen_model.get_image_embedding(pil_image)
+        
         embedding = {
-            'page_id' : page_id,
-            'sparse' : sparse,
-            'coarse' : coarse,
-            'multi' : multi
+            'page_id': page_id,
+            'sparse': sparse,
+            'multi': multi
         }
 
         vector = format_point(embedding)
-
-        # Explicitly call unload() on the document backends if the method exists
-        if hasattr(document, "unload"):
-            try:
-                document.unload()
-            except Exception:
-                pass
 
         return markdown, vector
 
 
 async def parse_pdf(filepath):
-
     filename = filepath.name
-    await insert_pdf(filename,filepath)
+    await insert_pdf(filename, filepath)
 
     semaphore = asyncio.Semaphore(1)
 
-    document_markdown = []
-    document_vectors = []
     with pymupdf.open(filepath) as doc:
         pages = len(doc)
     
-    tasks = [process_page_single(filepath,page_no,semaphore) for page_no in range(1,pages+1)]
+    tasks = [process_page_single(filepath, page_no, semaphore) for page_no in range(1, pages+1)]
     results = await asyncio.gather(*tasks)
+    
     document_markdown, document_vectors = zip(*results)
+
     await upload_points(list(document_vectors))
 
 
 async def ingest_pdf(path):
-    '''
-    Function to be called by frontend to ingest a pdf
-    Input : a pathlib Path() object where the path points to either a file or a directory
-    Output : No return, just print statements stating the completion of the ingestion
-    Exceptions : None but consider : 
-        1. When input is not a Path object 
-        2. The input does not point to a valid 
-        3. Ingestion Failure
-    '''
-
     try:
-
-        #folderpath = Path(os.getenv('pdfs_path'))
-
         if path.is_dir():
             for file in path.iterdir():
                 if file.suffix == '.pdf':
-
                     print(f'\n Processing {file.name}\n')
                     await parse_pdf(file)
                     print(f'\nDone\n')
 
-        elif path.is_file() and path.suffix=='.pdf':
+        elif path.is_file() and path.suffix == '.pdf':
             print(f'\n Processing {path.name}\n')
             await parse_pdf(path)
             print(f'\nDone\n')
 
     except Exception as e:
-        print(f'An error occured : \n{e}\n\n')
+        print(f'An error occurred: \n{e}\n\n')
         raise
-
 
 
 if __name__ == "__main__":
 
-    create_collection()
-    asyncio.run(ingest_pdf(Path(r'C:\Users\UserAdmin\Documents\Multimodal-RAG\pdfs\WHO World health statistics 2025.pdf')))
+    asyncio.run(ingest_pdf(Path(r'C:\Users\Chu Qingyan\Documents\WFH\Multimodal-RAG\pdfs')))

@@ -72,6 +72,33 @@ class OpenAIModel:
         )
 
 
+    async def summarise_chat_history(self,chat_items):
+
+        history_text = ""
+        for index, item in enumerate(chat_items):
+            history_text += f'\nTurn : {index}, Question : {item['Question']}, Answer : {item['Response']}\n'
+
+        messages = [
+            SystemMessage(content="""
+            You are a strict factual compliance assistant. Your sole task is to summarize the provided conversation history.
+            CRITICAL DIRECTIVES:
+            1. Prioritize absolute factual accuracy and truthfulness over brevity, length, or style.
+            2. Base your summary strictly and exclusively on the explicit facts stated in the transcript.
+            3. Do not assume, extrapolate, or introduce any outside knowledge or implicit context.
+            4. If a fact or conclusion is not explicitly stated in the text, treat it as non-existent.
+            5. Completely omit generic filler phrases (e.g., 'The user and assistant discussed...', 'This thread covers...').
+            OUTPUT FORMAT:
+            Provide a direct, dense summary of the hard facts, technical conclusions, and specific instructions agreed upon.
+            """),
+            HumanMessage(content=f"Here is the conversation history:\n\n{history_text}")
+        ]
+
+        response = await self.model.ainvoke(messages)
+        content = response.content
+
+        return content
+
+
     async def classify_query(self,query):
 
         structured_llm = self.model.with_structured_output(RouteQuery)
@@ -146,22 +173,21 @@ class OpenAIModel:
         return content
 
 
-    async def rewrite_query(self, query_with_context):
+    async def rewrite_query(self, formatted_query):
 
         messages = [
             SystemMessage(content="""
-            You are an expert AI search-query engineering assistant. 
+            You are an expert AI search-query optimizer. 
+            Your single task is to read a conversational context history alongside a new user question, and rewrite that question into a standalone, fully-fleshed search query.
 
-            Your sole task is to analyze a conversation history and a new follow-up question, then rewrite the follow-up question into a single, completely standalone, self-contained query.
-
-            CRITICAL INSTRUCTIONS:
-            1. Replace all pronouns (e.g., "it", "they", "that", "he", "she", "before") with the specific library, tool, topic, or concept mentioned earlier in the conversation history.
-            2. If the follow-up question relies on context from previous turns, expand the query to include the core topic being discussed.
-            3. DO NOT answer the question under any circumstances.
-            4. DO NOT add conversational filler (e.g., "Here is your query:", "Standalone query:"). Return ONLY the raw, rewritten question string.
-            5. If the follow-up question is already completely self-contained and does not require any historical context, return it exactly as it was provided.
+            CRITICAL RULES:
+            1. Output ONLY the rewritten search query. 
+            2. Absolutely no preambles, introductory text, conversational filler, or post-explanations (e.g., do NOT say "Here is your query:").
+            3. Do not answer the user's question. Only rewrite it.
+            4. Keep the rewritten query concise, semantic, and optimized for a vector database keyword lookup.
+            5. If the user's question is already a perfect standalone search query that requires no context from the history, output the original question word-for-word.
             """),
-            HumanMessage(content=f'{query_with_context}')
+            HumanMessage(content=f'{formatted_query}')
         ]
 
         response = await self.model.ainvoke(messages)
@@ -223,11 +249,7 @@ class OpenAIModel:
 
             CRITICAL INSTRUCTIONS FOR THE SOURCE MANIFEST:
             - DIRECT CORRELATION REQUIREMENT: A `<used_source>` line must ONLY be generated for a document if you explicitly cited that exact file and page number inline within your response text. If a source was provided but you did not use its facts to formulate the answer, DO NOT include it in the manifest.
-            
-            - ABSOLUTE ZERO RULE (MODIFIED): If you determine that the provided document images do not contain the specific information required to answer the user query, you MUST explicitly state: "I cannot find the answer based on the provided document sources." 
-              Immediately following that statement, you must list and quote the relevant parts or titles of the `<DocumentSource>` sections you evaluated during your search to show the user what was checked (e.g., "Checked: filename.pdf, Page X which contains..."). 
-              When this fallback occurs, you still MUST NOT output any final `<used_source>` XML tags or the `--- SOURCES ---` markdown line at the bottom.
-
+            - ABSOLUTE ZERO RULE: If you determine that the images do not contain enough information to answer the query, state: "I cannot find the answer based on the provided document sources." When this happens, you MUST NOT output any `<used_source>` tags or the `---` markdown line. The manifest must be completely empty.
             - The `<used_source>` tags must sit at the absolute end of your output, with one tag per line for each document used.
             - You must use the exact format: <used_source>PDF NAME: filename.pdf | PAGE NUMBER: X</used_source>
             - Notice the pipe character `|` separating the name and the page number. This is mandatory.
@@ -257,62 +279,41 @@ class ColQwenModel:
         ).eval()
         self.processor = ColQwen2Processor.from_pretrained(name,trust_remote_code=True)
 
-
-    def _get_coarse_embedding(self, embeddings_tensor):
-        pooled = embeddings_tensor.mean(dim=1)
-        normalised = pooled / pooled.norm(dim=-1, keepdim=True)
-        return normalised.to(torch.float32).cpu()
-
-
-    def _calculate_embedding(self, image):
-        inputs = self.processor.process_images(images=[image])
-        inputs = {k: v.to(self.model.device) for k, v in inputs.items()}
-        with torch.no_grad():
-            embeddings = self.model(**inputs)
-            embeddings = embeddings / embeddings.norm(dim=-1, keepdim=True)
-            coarse_vector = self._get_coarse_embedding(embeddings).flatten().tolist()
-            embeddings_multivector = embeddings.squeeze(0).to(torch.float32).cpu().tolist()
-
-            return coarse_vector, embeddings_multivector
-
     
-    async def get_image_embedding(self, image):
-        loop = asyncio.get_running_loop()
-        
-        # This offloads the heavy tensor math to a background worker thread,
-        # yielding execution back to the loop so your Supabase/OpenAI tasks can run simultaneously
-        coarse_vector, embeddings_multivector = await loop.run_in_executor(
-            None,                  # Uses default ThreadPoolExecutor
-            self._calculate_embedding, 
-            image
-        )
+    async def get_image_embedding(self,image):
 
-        return coarse_vector, embeddings_multivector
+        def _calculate_embedding(image):
 
+            processed_image = self.processor.process_images([image]).to(self.model.device)
 
-    def _embed_query(self,query):
-        inputs = self.processor.process_queries(queries=[query])
-        inputs = {k: v.to(self.model.device) for k, v in inputs.items()}
+            with torch.no_grad():
+                image_embeddings = self.model(**processed_image)
 
-        with torch.no_grad():
-            embeddings = self.model(**inputs)
-            embeddings = embeddings / embeddings.norm(dim=-1, keepdim=True) # L2 normalization
+            page_embedding = image_embeddings.squeeze(0).to(torch.float32).cpu().numpy().tolist()
 
-            coarse_vector = self._get_coarse_embedding(embeddings).flatten().tolist()
-            embeddings = embeddings.squeeze(0).to(torch.float32).cpu().tolist()
-        return coarse_vector, embeddings
+            return page_embedding
 
+        page_embedding = await asyncio.to_thread(_calculate_embedding, image)
     
-    async def embed_query(self,query):
-        loop = asyncio.get_running_loop()
+        return page_embedding
 
-        coarse_vector, embeddings = await loop.run_in_executor(
-            None,
-            self._embed_query,
-            query
-        )
 
-        return coarse_vector, embeddings
+    async def get_query_embedding(self,query):
+
+        def _calculate_embedding(query):
+
+            processed_query = self.processor.process_queries([query]).to(self.model.device)
+
+            with torch.no_grad():
+                query_embedding = self.model(**processed_query)
+
+            query_embedding = query_embedding.squeeze(0).to(torch.float32).cpu().numpy().tolist()
+
+            return query_embedding
+
+        query_embedding = await asyncio.to_thread(_calculate_embedding, query)
+    
+        return query_embedding
 
 
 

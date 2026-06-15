@@ -6,35 +6,57 @@ from scripts.models import openai_model
 from scripts.config import settings
 
 
-async def contextualise_query(question,chat_history):
 
-    context_string = ""
+async def contextualise_query(question, chat_summary, uncached_chats):
 
-    for i, item in enumerate(chat_history):
-        context_string += f'Chat History Item Number : {i}\n'
-        context_string += f'Question asked by user : {item['Question']}\n'
-        context_string += f'Response given by LLM : {item['Response']}\n'
+    summary_text = chat_summary if chat_summary else "No long-term consolidated memory available for this session."
 
-    context_string += f'Current query : {question}\n'
+    history_lines = []
+    if uncached_chats:
+        for turn in uncached_chats:
+            history_lines.append(f"User: {turn['question']}\nAssistant: {turn['response']}")
+        history_text = "\n\n".join(history_lines)
+    else:
+        history_text = "No immediate recent message turns recorded."
 
-    rewritten_query = await openai_model.rewrite_query(context_string)
+    formatted_prompt = f"""You are an advanced conversational AI context engine. Your task is to analyze a user's new question along with their conversation history, and rewrite the question into a clear, standalone, optimized search query for a document retrieval engine.
+
+        --- CONVERSATIONAL MEMORY LAYERS ---
+
+        <long_term_cached_summary>
+        {summary_text}
+        </long_term_cached_summary>
+
+        <recent_uncached_history>
+        From oldest to most recent :
+        {history_text}
+        </recent_uncached_history>
+
+        --- CURRENT USER INPUT ---
+        User's Question : {question}
+
+        Provide only the rewritten, standalone query without any preambles, explanation text, or conversational tone."""
+
+    rewritten_query = await openai_model.rewrite_query(formatted_prompt)
 
     return rewritten_query
 
 
-async def answer_question_contextual(user_id,question):
-    
-    intent = await openai_model.classify_query(question)
+async def summarise_chat(user_id, chat_id):
 
-    if intent == 'chitchat':
-        response = await openai_model.respond_to_chitchat(question)
-        
-        return response
+    chat_items = await get_non_cached(user_id, chat_id)
+    chat_ids = [item['ChatItemID'] for item in chat_items]
 
-    else:
-        chat_history = get_chats(user_id)
-        contextualised_question = await contextualise_query(query,chat_history)
-        answer = await answer_user_question(contextualise_question)
+    if len(chat_ids) < 5:
+        return
 
-        return answer
+    summarised_chat = await openai_model.summarise_chat_history(chat_items)
 
+    result = await append_summary(user_id,chat_id,summarised_chat)
+
+    if not result:
+        raise ValueError(f'ChatID does not match up with UserID\n')
+
+    await convert_cached(chat_ids)
+
+    return

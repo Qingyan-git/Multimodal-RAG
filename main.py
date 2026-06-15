@@ -16,11 +16,13 @@ from docling.datamodel.base_models import InputFormat
 from docling.datamodel.pipeline_options import PdfPipelineOptions
 from docling.document_converter import DocumentConverter, PdfFormatOption
 from fastembed import SparseTextEmbedding
+
+
 from scripts.models import OpenAIModel, ColQwenModel
 from retrieval.retrieval import answer_user_question
-
 from features.user_login import sign_up, login, verify_session
-from scripts.supabase_setup import get_chats, get_chatitems
+from features.history_aware_answer import contextualise_query, summarise_chat
+from scripts.supabase_setup import get_chats, get_chatitems, create_chat, create_chatitem, get_chat_history
 
 BASE_DIR = Path(__file__).resolve().parent
 dotenv_path = BASE_DIR / ".env"
@@ -57,7 +59,8 @@ class DocumentSource(BaseModel):
     image_base64: str 
 
 class QueryRequest(BaseModel):
-    text: str
+    question : str
+    chat_id : str
 
 class QueryResponse(BaseModel):
     answer: str
@@ -66,6 +69,18 @@ class QueryResponse(BaseModel):
 class UserCredentials(BaseModel):
     username : str
     password : str
+
+
+async def user_verification(session_id:str=Cookie(None)):
+
+    if not session_id:
+        raise HTTPException(status_code=401, detail="Please log in first.")
+
+    user_id = await verify_session(session_id)
+    if not user_id:
+        raise HTTPException(status_code=401, detail="Session expired or invalid, please log in again.")
+        
+    return user_id
 
 
 @app.post("/signup")
@@ -94,11 +109,11 @@ async def user_login(user_data:UserCredentials, response:Response):
         username = user_data.username
         password = user_data.password
 
-        cookie = await login(username,password)
+        session_id = await login(username,password)
 
         response.set_cookie(
             key="session_id",
-            value=cookie["session_id"],
+            value=session_id,
             httponly=True,
             secure=True,
             samesite="strict",
@@ -118,23 +133,69 @@ async def user_login(user_data:UserCredentials, response:Response):
 
 
 @app.post("/query", response_model=QueryResponse)
-async def query(request: QueryRequest):
-    try: 
-        query_response = await answer_user_question(request.text)
-        return {
-            "answer": query_response.answer,
-            "sources": query_response.sources
-        }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Pipeline failed: {str(e)}")
+async def query(payload: QueryRequest, request: Request, user_id: int = Depends(user_verification)):
+    try:
 
-'''
-For /query, need to accept a response_model that includes the chat_id from which the question was asked in.
-So that the chats can be properly updated.
-Also if the user requests a new chat, then the object with a placeholder chat_id is passed to /query, and the
-new chat is created in the /query function and saved to db and such.
-Streamlit files will need to be updated to reflect this change.
-'''
+        chat_id = payload.chat_id
+        question = payload.question
+
+        openai_model = request.app.state.models["openai_model"]
+        intent = await openai_model.classify_query(question)
+
+        if chat_id == 'PLACEHOLDER':
+            chat_name = f'{question[:20]}...'
+            chat_id = await create_chat(chat_name,user_id)
+
+            if intent == 'chitchat':
+                answer = await openai_model.respond_to_chitchat(question)
+                used_sources = []
+
+            else:
+                answer, used_sources = await answer_user_question(question)
+
+            await create_chatitem(question,answer,user_id,chat_id)
+
+        else:
+
+            if intent == 'chitchat':
+                answer = await openai_model.respond_to_chitchat(question)
+                used_sources = []
+
+            else:
+                chat_summary, uncached_chats = await get_chat_history(user_id, chat_id)
+                rewritten_query = await contextualise_query(question, chat_summary, uncached_chats)
+                answer, used_sources = await answer_user_question(rewritten_query)
+
+            await create_chatitem(question,answer,user_id,chat_id)
+            await summarise_chat(user_id, chat_id)
+
+        return QueryResponse(answer=answer,sources=used_sources)
+
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to answer user question, error \n{e}\n")
+
+
+
+
+        
+
+
+#         query_response = await answer_user_question(request.text)
+#         return {
+#             "answer": query_response.answer,
+#             "sources": query_response.sources
+#         }
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=f"Pipeline failed: {str(e)}")
+
+# '''
+# For /query, need to accept a response_model that includes the chat_id from which the question was asked in.
+# So that the chats can be properly updated.
+# Also if the user requests a new chat, then the object with a placeholder chat_id is passed to /query, and the
+# new chat is created in the /query function and saved to db and such.
+# Streamlit files will need to be updated to reflect this change.
+# '''
 
 
 @app.post("/upload")
@@ -148,18 +209,6 @@ async def upload_pdf(background_tasks: BackgroundTasks, file: UploadFile = File(
     background_tasks.add_task(ingest_pdfs.ingest_pdf, Path(target_path))
 
     return {"status": "success", "message": "File received"}
-
-
-async def user_verification(session_id:str=Cookie(None)):
-
-    if not session_id:
-        raise HTTPException(status_code=401, detail="Please log in first.")
-
-    user_id = await verify_session(session_id)
-    if not user_id:
-        raise HTTPException(status_code=401, detail="Session expired or invalid.")
-        
-    return user_id
 
 
 @app.post("/chats")
@@ -194,4 +243,5 @@ async def enter_chat(chat_id:str,user_id: int = Depends(user_verification)):
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+
+    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)

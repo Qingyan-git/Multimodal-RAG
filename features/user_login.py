@@ -5,31 +5,28 @@ from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
 from datetime import datetime, timezone
 
-from scripts.supabase_setup import create_user, get_user, get_password, get_session, create_session
+from scripts.supabase_setup import create_user, get_user, get_password, get_session, create_session, get_chatitems, append_summary
 from scripts.config import settings
 
 
 async def verify_session(session_id):
-
     try:
-
         response = await get_session(session_id)
-        session = response[0]
+        if not response:
+            raise ValueError('Session does not exist')
 
-        if not session:
-            raise ValueError(f'Session does not exist')
-
-        expiry_str = session['ExpiresAt']
+        expiry_str = response['expiresat'] 
         expiry = datetime.fromisoformat(expiry_str)
 
         if datetime.now(timezone.utc) > expiry:
+            raise HTTPException(status_code=500, detail=f"Session {session_id} has expired, please log in again")
             return None
         else:
-            return session['UserID']
+            return response['userid']
 
     except Exception as e:
         print(f'Unable to verify session_id, error \n{e}\n')
-        raise
+        return None
 
 
 async def sign_up(username,password):
@@ -57,7 +54,7 @@ async def login(username,password):
             raise ValueError(f'User does not exist\n')
 
         hashed_password = await get_password(username)
-        if hashed_password is None:
+        if not hashed_password:
             raise ValueError(f'User does not have password\n')      
 
         try:
