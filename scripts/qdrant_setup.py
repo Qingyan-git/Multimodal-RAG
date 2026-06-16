@@ -112,22 +112,22 @@ async def similarity_search(splade_vector, page_embeddings):
             values=splade_vector['values']
         )
 
-        response = await client.query_points(
-            collection_name=name,
-            prefetch=[
-                models.Prefetch(query=qdrant_sparse, using="splade_vector", limit=50),
-                models.Prefetch(query=page_embeddings, using="page_embeddings", limit=50),
-            ],
-            query=models.FusionQuery(fusion=models.Fusion.RRF),
-            limit=20,
-        )
-
         # response = await client.query_points(
         #     collection_name=name,
-        #     query=page_embeddings,
-        #     using="page_embeddings",
-        #     limit=20
+        #     prefetch=[
+        #         models.Prefetch(query=qdrant_sparse, using="splade_vector", limit=50),
+        #         models.Prefetch(query=page_embeddings, using="page_embeddings", limit=50),
+        #     ],
+        #     query=models.FusionQuery(fusion=models.Fusion.RRF),
+        #     limit=20,
         # )
+
+        response = await client.query_points(
+            collection_name=name,
+            query=page_embeddings,
+            using="page_embeddings",
+            limit=3,
+        )
         
         retrieved = {}
         for point in response.points:

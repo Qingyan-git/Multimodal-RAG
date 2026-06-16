@@ -96,7 +96,7 @@ with st.sidebar:
             st.caption("🔒 Log in to view saved chat archives.")
             
     except Exception as e:
-        st.caption("Connect backend to look up chat records.")
+        st.sidebar.error(f"Debug Error: {e}")
 
     # Account Management Controls
     st.divider()

@@ -10,7 +10,6 @@ import pandas as pd
 from dotenv import load_dotenv
 from datetime import datetime
 
-# from ingestion.ingest_pdfs import save_to_file
 from scripts.supabase_setup import retrieve_markdowns, retrieve_source_from_pageid, retrieve_source_from_pdf_name
 from scripts.qdrant_setup import similarity_search
 from scripts.models import QueryRequest, QueryResponse, DocumentSource
@@ -178,39 +177,43 @@ async def answer_user_question(question):
 
 if __name__ == "__main__":
 
-    question = 'Which specific cause provided a HALE gain through morbidity reduction for the 70+ age group between 2000 and 2019?'
-    # 'What was the specific HALE loss attributed to diabetes mellitus morbidity in the 30–69 age group globally between 2000 and 2019?'
-    # 'Which cause is the leading driver of HALE gain for the African Region in the 30–69 age group (2000–2019)?',
-    # 'Which WHO region is the only one to show a HALE loss due to Collective violence and legal intervention in the 2000–2019 data?',
-    # 'Which condition caused the largest morbidity-related HALE loss globally during the 2019–2021 period?',
-    # 'How many years of HALE were lost in the Region of the Americas due to COVID-19 mortality in the 70+ age group specifically?'
-    # 'What is the leading cause of HALE disadvantage for females compared to males globally?',
-    # 'What is the HALE advantage for females in the Western Pacific Region regarding stroke mortality?',
-    # 'What was the global HALE advantage for females over males regarding COVID-19 mortality in 2021?',
-    # 'Which region saw the smallest female HALE advantage (0.01 years) in COVID-19 mortality for the 70+ age group in 2021?',
-    # 'What is the HALE gap between High-income and Low-income countries caused by Lower respiratory infections in the 0–1 age group?',
-    # 'What is the negative HALE contribution of Drug use disorders for High-income countries when compared to Lower-middle-income countries?',
-    # 'What is the HALE lead for High-income countries over Lower-middle-income countries due specifically to COVID-19 mortality?',
-    # 'Which cause contributes a -0.16 year HALE disadvantage to High-income countries when compared to Low-income countries in the 2021 comparison?',
-    # 'What was the estimated Maternal Mortality Ratio for the African Region in the year 2023?',
-    # 'What was the Neonatal Mortality Rate for the South-East Asia Region in 1990?',
-    # 'Which World Bank income group shows the most significant projected reduction in premature NCD mortality by 2030?',
-    # 'What was the global suicide death rate per 100,000 population for males in 2021?',
-    # 'Which region had the highest crude death rate (33.9) for interpersonal violence among males in 2021?',
-    # 'What percentage of the global population requiring NTD interventions resides in the South-East Asia Region according to the 2023 distribution data?'
+    questions = ['Which specific cause provided a HALE gain through morbidity reduction for the 70+ age group between 2000 and 2019?',
+    'What was the specific HALE loss attributed to diabetes mellitus morbidity in the 30–69 age group globally between 2000 and 2019?',
+    'Which cause is the leading driver of HALE gain for the African Region in the 30–69 age group (2000–2019)?',
+    'Which WHO region is the only one to show a HALE loss due to Collective violence and legal intervention in the 2000–2019 data?',
+    'Which condition caused the largest morbidity-related HALE loss globally during the 2019–2021 period?',
+    'How many years of HALE were lost in the Region of the Americas due to COVID-19 mortality in the 70+ age group specifically?',
+    'What is the leading cause of HALE disadvantage for females compared to males globally?',
+    'What is the HALE advantage for females in the Western Pacific Region regarding stroke mortality?',
+    'What was the global HALE advantage for females over males regarding COVID-19 mortality in 2021?',
+    'Which region saw the smallest female HALE advantage (0.01 years) in COVID-19 mortality for the 70+ age group in 2021?',
+    'What is the HALE gap between High-income and Low-income countries caused by Lower respiratory infections in the 0–1 age group?',
+    'What is the negative HALE contribution of Drug use disorders for High-income countries when compared to Lower-middle-income countries?',
+    'What is the HALE lead for High-income countries over Lower-middle-income countries due specifically to COVID-19 mortality?',
+    'Which cause contributes a -0.16 year HALE disadvantage to High-income countries when compared to Low-income countries in the 2021 comparison?',
+    'What was the estimated Maternal Mortality Ratio for the African Region in the year 2023?',
+    'What was the Neonatal Mortality Rate for the South-East Asia Region in 1990?',
+    'Which World Bank income group shows the most significant projected reduction in premature NCD mortality by 2030?',
+    'What was the global suicide death rate per 100,000 population for males in 2021?',
+    'Which region had the highest crude death rate (33.9) for interpersonal violence among males in 2021?',
+    'What percentage of the global population requiring NTD interventions resides in the South-East Asia Region according to the 2023 distribution data?']
 
-    response = asyncio.run(answer_user_question(question))
 
-    answer_text = response[0]
-    used_sources = response[1]
-    print(f'\nQuestion : {question}\n')
-    print(f'\nAnswer : {answer_text}\n')
+    for question in questions:
+        print(f'\n\n')
+        response = asyncio.run(answer_user_question(question))
 
-    if used_sources:
-            source_strings = [f"{src['pdf_name']} (Page {src['page_num']})" for src in used_sources]
-            print(f'\nUsed Sources : {", ".join(source_strings)}\n')
-    else:
-        print('\nUsed Sources : None\n')
+        answer_text = response[0]
+        used_sources = response[1]
+        print(f'\nQuestion : {question}\n')
+        print(f'\nAnswer : {answer_text}\n')
+
+        if used_sources:
+                source_strings = [f"{src['pdf_name']} (Page {src['page_num']})" for src in used_sources]
+                print(f'\nUsed Sources : {", ".join(source_strings)}\n')
+        else:
+            print('\nUsed Sources : None\n')
+        print(f'\n\n')
 
 
 

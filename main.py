@@ -238,7 +238,7 @@ async def show_chats(user_id:int=Depends(user_verification)):
         }
         
     except Exception as e:
-        raise HTTPException(status_code=500, detail="Failed to retrieve user chats, error \n{e}\n")
+        raise HTTPException(status_code=500, detail=f"Failed to retrieve user chats, error \n{e}\n")
 
 
 @app.post("/chats/{chat_id}")

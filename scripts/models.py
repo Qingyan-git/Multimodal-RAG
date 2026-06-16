@@ -549,7 +549,7 @@ class Jina:
 pipeline_options = PdfPipelineOptions()
 pipeline_options.generate_picture_images = True
 pipeline_options.generate_page_images = True
-pipeline_options.images_scale = 2.0
+pipeline_options.images_scale = 4.0
 document_converter = DocumentConverter(
     format_options={
         InputFormat.PDF: PdfFormatOption(pipeline_options=pipeline_options)
