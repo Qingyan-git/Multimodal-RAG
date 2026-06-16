@@ -6,6 +6,7 @@ import sys
 import re
 import gc
 import torch
+import io 
 import pymupdf
 from dotenv import load_dotenv
 
@@ -68,8 +69,8 @@ async def get_page_markdown(document, page_no, openai_model):
     for item, level in document.iterate_items(traverse_pictures=True, page_no=page_no):
         if isinstance(item, PictureItem):
 
-            page_item = document.pages[page_no]
-            page_area  = page.item.size.width * page.item.size.height
+            page = document.pages[page_no]
+            page_area  = page.size.width * page.size.height
             item_bbox = item.prov[0].bbox
             item_area = item_bbox.width * item_bbox.height
             if item_area / page_area > 0.2:
@@ -116,7 +117,7 @@ async def process_page_single(filepath, page_no, semaphore):
         page = document.pages[page_no]
         pil_image = page.image.pil_image
 
-        buffer = BytesIO()
+        buffer = io.BytesIO()
         rgb_image = pil_image.convert("RGB")
         rgb_image.save(buffer, format="JPEG", quality=95)
         page_image = buffer.getvalue()
@@ -174,4 +175,4 @@ async def ingest_pdf(path):
 
 if __name__ == "__main__":
 
-    asyncio.run(ingest_pdf(Path(r'C:\Users\Chu Qingyan\Documents\WFH\Multimodal-RAG\pdfs')))
+    asyncio.run(ingest_pdf(Path(r'C:\Users\UserAdmin\Documents\Multimodal-RAG\pdfs\WHO World health statistics 2025.pdf')))

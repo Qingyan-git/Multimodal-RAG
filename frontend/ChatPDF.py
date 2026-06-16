@@ -38,8 +38,7 @@ if "show_auth_modal" not in st.session_state:
 if "http_session" not in st.session_state:
     st.session_state.http_session = requests.Session()
 
-# Helper flag to check if session_id cookie exists in our persistent session
-is_logged_in = "session_id" in st.session_state.http_session.cookies
+is_logged_in = "session_id" in st.session_state.http_session.cookies.get_dict()
 
 # --- SIDEBAR VIEW ---
 with st.sidebar:

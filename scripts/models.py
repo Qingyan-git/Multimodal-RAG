@@ -9,11 +9,14 @@ from enum import Enum
 from pydantic import BaseModel, Field
 from typing import List
 
+from transformers import Qwen3VLForConditionalGeneration, AutoProcessor
+from transformers import ColQwen2ForRetrieval, ColQwen2Processor
+from transformers.utils.import_utils import is_flash_attn_2_available
+
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_core.messages import SystemMessage, HumanMessage
 from langchain_core.rate_limiters import InMemoryRateLimiter
 
-from transformers.utils.import_utils import is_flash_attn_2_available
 from colpali_engine.models import ColQwen2, ColQwen2Processor
 
 from docling.datamodel.base_models import InputFormat
@@ -202,9 +205,9 @@ class OpenAIModel:
         
         for source in sources:
 
-            pdf_name = source.pdf_name
-            page_no = source.page_num
-            image_base64 = source.image_base64
+            pdf_name = source[0]
+            page_no = source[1]
+            image_base64 = source[2]
 
             message.append({
                 "type": "text",
@@ -265,55 +268,216 @@ class OpenAIModel:
 
 
 
+class Qwen3VL:
+
+    def __init__(self):
+        
+        # 1. Load the model using optimal local VRAM map settings
+        self.model = Qwen3VLForConditionalGeneration.from_pretrained(
+            settings.qwen3vl_model,
+            dtype=torch.bfloat16,
+            attn_implementation="flash_attention_2" if is_flash_attn_2_available() else "sdpa",
+            device_map="auto",
+        )
+        
+        # 2. Load the corresponding multimodal processor
+        self.processor = AutoProcessor.from_pretrained(settings.qwen3vl_model)
+
+    
+    async def _generate(self, messages, max_tokens=4096):
+        """
+        Internal private wrapper to handle tokenization, device transfer, 
+        inference execution, and tensor trimming.
+        """
+        inputs = self.processor.apply_chat_template(
+            messages,
+            tokenize=True,
+            add_generation_prompt=True,
+            return_dict=True,
+            return_tensors="pt"
+        )
+        inputs = inputs.to(self.model.device)
+
+        with torch.no_grad():
+            generated_ids = self.model.generate(**inputs, max_new_tokens=max_tokens)
+        
+        generated_ids_trimmed = [
+            out_ids[len(in_ids) :] for in_ids, out_ids in zip(inputs.input_ids, generated_ids)
+        ]
+        
+        output_text = self.processor.batch_decode(
+            generated_ids_trimmed, 
+            skip_special_tokens=True, 
+            clean_up_tokenization_spaces=False
+        )
+        
+        return output_text
+
+    
+    async def answer_question(self, question, sources):
+
+        user_messages = []
+
+        for source in sources:
+            pdf_name = source[0]
+            page_no = source[1]
+            pil_image = source[2]
+
+            user_messages.append({
+                "type": "text",
+                "text": f"\n<DocumentSource file='{pdf_name}' page='{page_no}'>\n"
+            })
+            user_messages.append({
+                "type": "image",
+                "image": pil_image
+            })
+            user_messages.append({
+                "type": "text",
+                "text": f"\n</DocumentSource>\n"
+            })
+
+        user_messages.append({
+            "type": "text",
+            "text": f"\nUser Query: {question}"
+        })
+
+        messages = [
+            {
+                "role": "system",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": """You are a specialized Document Analysis Assistant. You are provided with document images wrapped inside `<DocumentSource file="..." page="...">` XML boundaries.
+
+                        YOUR CORE TASKS:
+                        1. Formulate a comprehensive answer based solely on the text, charts, or visual evidence in the provided images.
+                        2. Provide explicit inline citations using the file and page properties whenever you state a fact extracted from an image (e.g., [filename.pdf, Page 1]).
+                        3. Underneath your complete answer, output a machine-readable list capturing ONLY the source documents you actively cited.
+
+                        STRICT OUTPUT FORMAT MATCHING:
+                        Your output must strictly separate the prose response from the source metadata using the exact tag block shown below:
+
+                        [Your detailed conversational and analysis response goes here, utilizing regular inline citations.]
+
+                        --- SOURCES ---
+                        <used_source>PDF NAME: [Exact PDF Name] | PAGE NUMBER: [Exact Page Number]</used_source>
+
+                        CRITICAL INSTRUCTIONS FOR THE SOURCE MANIFEST:
+                        - DIRECT CORRELATION REQUIREMENT: A `<used_source>` line must ONLY be generated for a document if you explicitly cited that exact file and page number inline within your response text. If a source was provided but you did not use its facts to formulate the answer, DO NOT include it in the manifest.
+                        - ABSOLUTE ZERO RULE: If you determine that the images do not contain enough information to answer the query, state: "I cannot find the answer based on the provided document sources." When this happens, you MUST NOT output any `<used_source>` tags or the `---` markdown line. The manifest must be completely empty.
+                        - The `<used_source>` tags must sit at the absolute end of your output, with one tag per line for each document used.
+                        - You must use the exact format: <used_source>PDF NAME: filename.pdf | PAGE NUMBER: X</used_source>
+                        - Notice the pipe character `|` separating the name and the page number. This is mandatory.
+                        - Do not add any conversational transitions, markdown bullet points, or extra spaces outside or inside the `<used_source>` tags."""
+                    }
+                ]
+            },
+            {
+                "role": "user",
+                "content": user_messages
+            }
+        ]
+
+        output_text_list = await self._generate(messages, max_tokens=4096)
+        
+        return output_text_list[0]
+
+
+
 class ColQwenModel:
 
     def __init__(self):
         name = settings.colqwen_model
 
-        self.model = ColQwen2.from_pretrained(
-            name,
-            torch_dtype=torch.bfloat16,
-            device_map='auto',
-            attn_implementation="flash_attention_2" if is_flash_attn_2_available() else "sdpa",
-            trust_remote_code=True
-        ).eval()
-        self.processor = ColQwen2Processor.from_pretrained(name,trust_remote_code=True)
+        self.model = ColQwen2ForRetrieval.from_pretrained(
+                name,
+                torch_dtype=torch.bfloat16,
+                device_map="auto",
+                attn_implementation="flash_attention_2" if is_flash_attn_2_available() else "sdpa",
+            )
+        self.processor = ColQwen2Processor.from_pretrained(name)
 
-    
+        # self.model = ColQwen2.from_pretrained(
+        #     name,
+        #     torch_dtype=torch.bfloat16,
+        #     device_map='auto',
+        #     attn_implementation="flash_attention_2" if is_flash_attn_2_available() else "sdpa",
+        #     trust_remote_code=True
+        # ).eval()
+        # self.processor = ColQwen2Processor.from_pretrained(name,trust_remote_code=True)
+
+
     async def get_image_embedding(self,image):
 
-        def _calculate_embedding(image):
+            def _calculate_embedding(image):
 
-            processed_image = self.processor.process_images([image]).to(self.model.device)
+                processed_image = self.processor(images=[image], return_tensors="pt").to(self.model.device)
 
-            with torch.no_grad():
-                image_embeddings = self.model(**processed_image)
+                with torch.no_grad():
+                    image_embeddings = self.model(**processed_image).embeddings
 
-            page_embedding = image_embeddings.squeeze(0).to(torch.float32).cpu().numpy().tolist()
+                page_embedding = image_embeddings.squeeze(0).to(torch.float32).cpu().numpy().tolist()
 
+                return page_embedding
+
+            page_embedding = await asyncio.to_thread(_calculate_embedding, image)
+        
             return page_embedding
 
-        page_embedding = await asyncio.to_thread(_calculate_embedding, image)
+
+    # async def get_image_embedding(self,image):
+
+    #     def _calculate_embedding(image):
+
+    #         processed_image = self.processor.process_images([image]).to(self.model.device)
+
+    #         with torch.no_grad():
+    #             image_embeddings = self.model(**processed_image)
+
+    #         page_embedding = image_embeddings.squeeze(0).to(torch.float32).cpu().numpy().tolist()
+
+    #         return page_embedding
+
+    #     page_embedding = await asyncio.to_thread(_calculate_embedding, image)
     
-        return page_embedding
+    #     return page_embedding
 
 
     async def get_query_embedding(self,query):
 
-        def _calculate_embedding(query):
+            def _calculate_embedding(query):
 
-            processed_query = self.processor.process_queries([query]).to(self.model.device)
+                processed_query = self.processor(text=[query], return_tensors="pt").to(self.model.device)
 
-            with torch.no_grad():
-                query_embedding = self.model(**processed_query)
+                with torch.cuda.device(self.model.device):
+                    with torch.no_grad():
+                        query_embedding = self.model(**processed_query).embeddings
 
-            query_embedding = query_embedding.squeeze(0).to(torch.float32).cpu().numpy().tolist()
+                query_embedding = query_embedding.squeeze(0).to(torch.float32).cpu().numpy().tolist()
 
+                return query_embedding
+
+            query_embedding = await asyncio.to_thread(_calculate_embedding, query)
+        
             return query_embedding
 
-        query_embedding = await asyncio.to_thread(_calculate_embedding, query)
+
+    # async def get_query_embedding(self,query):
+
+    #     def _calculate_embedding(query):
+
+    #         processed_query = self.processor.process_queries([query]).to(self.model.device)
+
+    #         with torch.no_grad():
+    #             query_embedding = self.model(**processed_query)
+
+    #         query_embedding = query_embedding.squeeze(0).to(torch.float32).cpu().numpy().tolist()
+
+    #         return query_embedding
+
+    #     query_embedding = await asyncio.to_thread(_calculate_embedding, query)
     
-        return query_embedding
+    #     return query_embedding
 
 
 
@@ -392,6 +556,7 @@ document_converter = DocumentConverter(
     }
 )
 openai_model = OpenAIModel()
+qwen3vl_model = Qwen3VL()
 colqwen_model = ColQwenModel()
 sparse_embedder = SparseEmbedder()
 jina = Jina()

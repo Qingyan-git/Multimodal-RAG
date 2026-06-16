@@ -5,8 +5,10 @@ class Settings(BaseSettings):
     openai_model: str = "gpt-5-nano"
     openai_api_key: SecretStr
 
-    colqwen_model: str = 'vidore/colqwen2-v1.0'
+    colqwen_model: str = 'vidore/colqwen2-v1.0-hf'
     sparse_embedding_model: str = 'prithvida/Splade_PP_en_v1'
+
+    qwen3vl_model : str = "Qwen/Qwen3-VL-2B-Instruct"
 
     hf_token: SecretStr
 

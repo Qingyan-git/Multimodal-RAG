@@ -6,7 +6,6 @@ import uvicorn
 from ingestion import ingest_pdfs
 from pathlib import Path
 from dotenv import load_dotenv
-from retrieval.retrieval import answer_user_question
 
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException, Request
@@ -18,7 +17,7 @@ from docling.document_converter import DocumentConverter, PdfFormatOption
 from fastembed import SparseTextEmbedding
 
 
-from scripts.models import OpenAIModel, ColQwenModel
+from scripts.models import OpenAIModel, ColQwenModel, Qwen3VL, SparseEmbedder
 from retrieval.retrieval import answer_user_question
 from features.user_login import sign_up, login, verify_session
 from features.history_aware_answer import contextualise_query, summarise_chat
@@ -41,8 +40,9 @@ async def lifespan(app: FastAPI):
             format_options={InputFormat.PDF: PdfFormatOption(pipeline_options=pipeline_options)}
         ),
         "openai_model": OpenAIModel(),
+        "qwen3vl_model" : Qwen3VL(),
         "colqwen_model": ColQwenModel(),
-        "sparse_embedder": SparseTextEmbedding()
+        "sparse_embedder": SparseEmbedder()
     }
     
     yield
@@ -115,8 +115,8 @@ async def user_login(user_data:UserCredentials, response:Response):
             key="session_id",
             value=session_id,
             httponly=True,
-            secure=True,
-            samesite="strict",
+            secure=False,
+            samesite="lax",
             max_age=300
         )
 
@@ -139,7 +139,6 @@ async def query(payload: QueryRequest, request: Request, user_id: int = Depends(
         chat_id = payload.chat_id
         question = payload.question
 
-        openai_model = request.app.state.models["openai_model"]
         intent = await openai_model.classify_query(question)
 
         if chat_id == 'PLACEHOLDER':

@@ -16,6 +16,7 @@ from scripts.qdrant_setup import similarity_search
 from scripts.models import QueryRequest, QueryResponse, DocumentSource
 from scripts.models import (
     openai_model,
+    qwen3vl_model,
     colqwen_model,
     document_converter,
     sparse_embedder,
@@ -78,19 +79,12 @@ def apply_rrf(results, k=60):
     return dict(sorted_items)
 
 
-def encode_pil_to_base64(pil_image):
-    buffered = io.BytesIO()
-    pil_image.save(buffered, format='jpeg', quality=95)
-    return base64.b64encode(buffered.getvalue()).decode('utf-8')
-
-
 async def get_sources(page_ids):
     async def _process_source(page_id):
         pdf_name, page_no, page_image = await retrieve_source_from_pageid(page_id)
+        pil_image = Image.open(io.BytesIO(page_image)).convert("RGB")
 
-        image_base64 = encode_pil_to_base64(page_image)
-
-        source = DocumentSource(pdf_name=pdf_name, page_num=page_no, image_base64=image_base64)
+        source = (pdf_name, page_no, pil_image)
         return source
 
     tasks = [_process_source(page_id) for page_id in page_ids]
@@ -107,36 +101,40 @@ async def extract_and_truncate_sources(llm_output):
     matches = re.findall(source_pattern, source_block)
 
     async def _process_match(pdf_name, page_no):
-        page_no = int(page_no)
-        pdf_path = await get_path_from_pdf_name(pdf_name)
 
-        conversion_result = await asyncio.to_thread(
-            document_converter.convert, 
-            pdf_path, 
-            page_range=(page_no, page_no)
-        )
-
-        document = conversion_result.document
-        page = document.pages[page_no]
-        page_image = page.image.pil_image
-        image_base64 = encode_pil_to_base64(page_image)
-
+        page_image = await retrieve_source_from_pdf_name(pdf_name,page_no)
+        image_base64 = base64.b64encode(page_image).decode('utf-8')
         source = DocumentSource(pdf_name=pdf_name, page_num=page_no, image_base64=image_base64)
+
         return source
 
-    tasks = [_process_match(pdf_name, page_no) for pdf_name, page_no in matches]
+    tasks = [_process_match(pdf_name, int(page_no)) for pdf_name, page_no in matches]
     used_sources = await asyncio.gather(*tasks)
         
     return clean_answer, used_sources
 
 
-async def answer_user_question(question):
+async def answer_user_question(question, models_context: dict = None):
 
     print(f'\nquestion : {question}\n')
 
+    # Assign models dynamically based on how this function was executed
+    if models_context:
+        # Use the hot, live instances spinning inside your FastAPI server
+        active_sparse = models_context.get("sparse_embedder")
+        active_colqwen = models_context.get("colqwen_model")
+        active_openai = models_context.get("openai_model")
+    else:
+        # Fallback instantly to your top-level script imports for local testing
+        active_sparse = sparse_embedder
+        active_colqwen = colqwen_model
+        active_openai = openai_model
+
     pre = datetime.now()
-    splade = await sparse_embedder.embed(question)
-    multi = await colqwen_model.get_query_embedding(question)
+    # Swapped: sparse_embedder -> active_sparse
+    splade = await active_sparse.embed(question)
+    # Swapped: colqwen_model -> active_colqwen
+    multi = await active_colqwen.get_query_embedding(question)
     post = datetime.now()
     print(f'Time taken to embed question vector: {(post-pre).total_seconds()}\n')
 
@@ -176,52 +174,54 @@ async def answer_user_question(question):
     print(f'Time taken to get sources: {(post-pre).total_seconds()}\n')
 
     pre = datetime.now()
-    answer = await openai_model.answer_question(question, sources)
+    # Swapped: openai_model -> active_openai
+    answer = await active_openai.answer_question(question, sources)
     post = datetime.now()
-    print(f'Time taken to answer question on openai: {(post-pre).total_seconds()}\n')
+    print(f'Time taken to answer question on model: {(post-pre).total_seconds()}\n')
 
     pre = datetime.now()
     cleaned_answer, used_sources = await extract_and_truncate_sources(answer)
     post = datetime.now()
     print(f'Time taken to extract out used sources: {(post-pre).total_seconds()}\n')
 
-    print(f'\nanswer : \n{cleaned_answer}\n')
-
-    return answer, used_sources
+    return cleaned_answer, used_sources
 
 
 if __name__ == "__main__":
 
-    questions = [
-    'Which specific cause provided a HALE gain through morbidity reduction for the 70+ age group between 2000 and 2019?',
-    'What was the specific HALE loss attributed to diabetes mellitus morbidity in the 30–69 age group globally between 2000 and 2019?',
-    'Which cause is the leading driver of HALE gain for the African Region in the 30–69 age group (2000–2019)?',
-    'Which WHO region is the only one to show a HALE loss due to Collective violence and legal intervention in the 2000–2019 data?',
-    'Which condition caused the largest morbidity-related HALE loss globally during the 2019–2021 period?',
-    'How many years of HALE were lost in the Region of the Americas due to COVID-19 mortality in the 70+ age group specifically?',
-    'What is the leading cause of HALE disadvantage for females compared to males globally?',
-    'What is the HALE advantage for females in the Western Pacific Region regarding stroke mortality?',
-    'What was the global HALE advantage for females over males regarding COVID-19 mortality in 2021?',
-    'Which region saw the smallest female HALE advantage (0.01 years) in COVID-19 mortality for the 70+ age group in 2021?',
-    'What is the HALE gap between High-income and Low-income countries caused by Lower respiratory infections in the 0–1 age group?',
-    'What is the negative HALE contribution of Drug use disorders for High-income countries when compared to Lower-middle-income countries?',
-    'What is the HALE lead for High-income countries over Lower-middle-income countries due specifically to COVID-19 mortality?',
-    'Which cause contributes a -0.16 year HALE disadvantage to High-income countries when compared to Low-income countries in the 2021 comparison?',
-    'What was the estimated Maternal Mortality Ratio for the African Region in the year 2023?',
-    'What was the Neonatal Mortality Rate for the South-East Asia Region in 1990?',
-    'Which World Bank income group shows the most significant projected reduction in premature NCD mortality by 2030?',
-    'What was the global suicide death rate per 100,000 population for males in 2021?',
-    'Which region had the highest crude death rate (33.9) for interpersonal violence among males in 2021?',
-    'What percentage of the global population requiring NTD interventions resides in the South-East Asia Region according to the 2023 distribution data?']
+    question = 'Which specific cause provided a HALE gain through morbidity reduction for the 70+ age group between 2000 and 2019?'
+    # 'What was the specific HALE loss attributed to diabetes mellitus morbidity in the 30–69 age group globally between 2000 and 2019?'
+    # 'Which cause is the leading driver of HALE gain for the African Region in the 30–69 age group (2000–2019)?',
+    # 'Which WHO region is the only one to show a HALE loss due to Collective violence and legal intervention in the 2000–2019 data?',
+    # 'Which condition caused the largest morbidity-related HALE loss globally during the 2019–2021 period?',
+    # 'How many years of HALE were lost in the Region of the Americas due to COVID-19 mortality in the 70+ age group specifically?'
+    # 'What is the leading cause of HALE disadvantage for females compared to males globally?',
+    # 'What is the HALE advantage for females in the Western Pacific Region regarding stroke mortality?',
+    # 'What was the global HALE advantage for females over males regarding COVID-19 mortality in 2021?',
+    # 'Which region saw the smallest female HALE advantage (0.01 years) in COVID-19 mortality for the 70+ age group in 2021?',
+    # 'What is the HALE gap between High-income and Low-income countries caused by Lower respiratory infections in the 0–1 age group?',
+    # 'What is the negative HALE contribution of Drug use disorders for High-income countries when compared to Lower-middle-income countries?',
+    # 'What is the HALE lead for High-income countries over Lower-middle-income countries due specifically to COVID-19 mortality?',
+    # 'Which cause contributes a -0.16 year HALE disadvantage to High-income countries when compared to Low-income countries in the 2021 comparison?',
+    # 'What was the estimated Maternal Mortality Ratio for the African Region in the year 2023?',
+    # 'What was the Neonatal Mortality Rate for the South-East Asia Region in 1990?',
+    # 'Which World Bank income group shows the most significant projected reduction in premature NCD mortality by 2030?',
+    # 'What was the global suicide death rate per 100,000 population for males in 2021?',
+    # 'Which region had the highest crude death rate (33.9) for interpersonal violence among males in 2021?',
+    # 'What percentage of the global population requiring NTD interventions resides in the South-East Asia Region according to the 2023 distribution data?'
 
-    responses = []
-    for question in questions:
-        print('\n\n')
-        response = asyncio.run(answer_user_question(question))
-        responses.append(response)
-        print('\n\n')
+    response = asyncio.run(answer_user_question(question))
 
-    for item in responses:
-        print(f'\nQuestion : {item[0]}, Sources in answer : {item[1]}\n')
+    answer_text = response[0]
+    used_sources = response[1]
+    print(f'\nQuestion : {question}\n')
+    print(f'\nAnswer : {answer_text}\n')
+
+    if used_sources:
+            source_strings = [f"{src.pdf_name} (Page {src.page_num})" for src in used_sources_list]
+            print(f'\nUsed Sources : {", ".join(source_strings)}\n')
+    else:
+        print('\nUsed Sources : None\n')
+
 
 

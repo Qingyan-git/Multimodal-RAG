@@ -19,7 +19,7 @@ async def verify_session(session_id):
         expiry = datetime.fromisoformat(expiry_str)
 
         if datetime.now(timezone.utc) > expiry:
-            raise HTTPException(status_code=500, detail=f"Session {session_id} has expired, please log in again")
+            raise ValuerError(f"Session has expired, please log in again")
             return None
         else:
             return response['userid']

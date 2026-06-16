@@ -406,11 +406,7 @@ async def retrieve_source_from_pdf_name(pdf_name, page_no):
 
         response = await (client
             .table("pages")
-            .select(
-                "num",
-                "bucket_path",
-                "pdfs(name)"
-            )
+            .select("bucket_path, pdfs!inner(name)")
             .eq("num", page_no)
             .eq("pdfs.name", pdf_name)
             .limit(1)
@@ -419,10 +415,7 @@ async def retrieve_source_from_pdf_name(pdf_name, page_no):
 
         if response.data:
             info = response.data[0]
-            retrieved_pdf_name = info['pdfs']['name']
-            retrieved_page_no = info['num']
             bucket_path = info['bucket_path']
-
             bucket_name = settings.supabase_bucket_name
             page_image = await (client
                 .storage
@@ -430,7 +423,7 @@ async def retrieve_source_from_pdf_name(pdf_name, page_no):
                 .download(bucket_path)
             )
 
-            return retrieved_pdf_name, retrieved_page_no, page_image
+            return page_image
         else:
             return None
 

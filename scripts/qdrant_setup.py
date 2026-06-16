@@ -33,7 +33,7 @@ async def create_collection():
         name = settings.qdrant_collection_name
 
         if await client.collection_exists(name):
-            print(f'Collection already exists. Deleting and recreating for clean schema switch...\n\n')
+            print(f'Collection already exists. Deleting and recreating collection...\n\n')
             await client.delete_collection(collection_name=name)
 
         # Re-create collection without coarse_embedding
@@ -121,6 +121,13 @@ async def similarity_search(splade_vector, page_embeddings):
             query=models.FusionQuery(fusion=models.Fusion.RRF),
             limit=20,
         )
+
+        # response = await client.query_points(
+        #     collection_name=name,
+        #     query=page_embeddings,
+        #     using="page_embeddings",
+        #     limit=20
+        # )
         
         retrieved = {}
         for point in response.points:
