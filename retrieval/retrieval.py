@@ -18,7 +18,6 @@ from scripts.models import (
     openai_model,
     qwen3vl_model,
     colqwen_model,
-    document_converter,
     sparse_embedder,
     jina
 )
@@ -82,9 +81,9 @@ def apply_rrf(results, k=60):
 async def get_sources(page_ids):
     async def _process_source(page_id):
         pdf_name, page_no, page_image = await retrieve_source_from_pageid(page_id)
-        pil_image = Image.open(io.BytesIO(page_image)).convert("RGB")
+        image_base64 = base64.b64encode(page_image).decode('utf-8')
 
-        source = (pdf_name, page_no, pil_image)
+        source = (pdf_name, page_no, image_base64)
         return source
 
     tasks = [_process_source(page_id) for page_id in page_ids]
@@ -104,7 +103,12 @@ async def extract_and_truncate_sources(llm_output):
 
         page_image = await retrieve_source_from_pdf_name(pdf_name,page_no)
         image_base64 = base64.b64encode(page_image).decode('utf-8')
-        source = DocumentSource(pdf_name=pdf_name, page_num=page_no, image_base64=image_base64)
+
+        return {
+            "pdf_name": pdf_name,
+            "page_num": int(page_no),
+            "image_base64": image_base64
+        }
 
         return source
 
@@ -114,27 +118,13 @@ async def extract_and_truncate_sources(llm_output):
     return clean_answer, used_sources
 
 
-async def answer_user_question(question, models_context: dict = None):
+async def answer_user_question(question):
 
     print(f'\nquestion : {question}\n')
 
-    # Assign models dynamically based on how this function was executed
-    if models_context:
-        # Use the hot, live instances spinning inside your FastAPI server
-        active_sparse = models_context.get("sparse_embedder")
-        active_colqwen = models_context.get("colqwen_model")
-        active_openai = models_context.get("openai_model")
-    else:
-        # Fallback instantly to your top-level script imports for local testing
-        active_sparse = sparse_embedder
-        active_colqwen = colqwen_model
-        active_openai = openai_model
-
     pre = datetime.now()
-    # Swapped: sparse_embedder -> active_sparse
-    splade = await active_sparse.embed(question)
-    # Swapped: colqwen_model -> active_colqwen
-    multi = await active_colqwen.get_query_embedding(question)
+    splade = await sparse_embedder.embed(question)
+    multi = await colqwen_model.get_query_embedding(question)
     post = datetime.now()
     print(f'Time taken to embed question vector: {(post-pre).total_seconds()}\n')
 
@@ -174,10 +164,9 @@ async def answer_user_question(question, models_context: dict = None):
     print(f'Time taken to get sources: {(post-pre).total_seconds()}\n')
 
     pre = datetime.now()
-    # Swapped: openai_model -> active_openai
-    answer = await active_openai.answer_question(question, sources)
+    answer = await openai_model.answer_question(question, sources)
     post = datetime.now()
-    print(f'Time taken to answer question on model: {(post-pre).total_seconds()}\n')
+    print(f'Time taken to answer question on qwen3vl: {(post-pre).total_seconds()}\n')
 
     pre = datetime.now()
     cleaned_answer, used_sources = await extract_and_truncate_sources(answer)
@@ -218,7 +207,7 @@ if __name__ == "__main__":
     print(f'\nAnswer : {answer_text}\n')
 
     if used_sources:
-            source_strings = [f"{src.pdf_name} (Page {src.page_num})" for src in used_sources_list]
+            source_strings = [f"{src['pdf_name']} (Page {src['page_num']})" for src in used_sources]
             print(f'\nUsed Sources : {", ".join(source_strings)}\n')
     else:
         print('\nUsed Sources : None\n')

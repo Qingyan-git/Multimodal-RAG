@@ -8,7 +8,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException
 from scripts.models import QueryRequest, QueryResponse
 
 from docling.datamodel.base_models import InputFormat
@@ -17,7 +17,7 @@ from docling.document_converter import DocumentConverter, PdfFormatOption
 from fastembed import SparseTextEmbedding
 
 
-from scripts.models import OpenAIModel, ColQwenModel, Qwen3VL, SparseEmbedder
+from scripts.models import openai_model, colqwen_model, qwen3vl_model, sparse_embedder, jina
 from retrieval.retrieval import answer_user_question
 from features.user_login import sign_up, login, verify_session
 from features.history_aware_answer import contextualise_query, summarise_chat
@@ -27,27 +27,27 @@ BASE_DIR = Path(__file__).resolve().parent
 dotenv_path = BASE_DIR / ".env"
 load_dotenv(dotenv_path=dotenv_path, override=True)
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
+# @asynccontextmanager
+# async def lifespan(app: FastAPI):
     
-    pipeline_options = PdfPipelineOptions()
-    pipeline_options.generate_picture_images = True
-    pipeline_options.generate_page_images = True
-    pipeline_options.images_scale = 2.0
+#     pipeline_options = PdfPipelineOptions()
+#     pipeline_options.generate_picture_images = True
+#     pipeline_options.generate_page_images = True
+#     pipeline_options.images_scale = 2.0
     
-    app.state.models = {
-        "converter": DocumentConverter(
-            format_options={InputFormat.PDF: PdfFormatOption(pipeline_options=pipeline_options)}
-        ),
-        "openai_model": OpenAIModel(),
-        "qwen3vl_model" : Qwen3VL(),
-        "colqwen_model": ColQwenModel(),
-        "sparse_embedder": SparseEmbedder()
-    }
+#     app.state.models = {
+#         "converter": DocumentConverter(
+#             format_options={InputFormat.PDF: PdfFormatOption(pipeline_options=pipeline_options)}
+#         ),
+#         "openai_model": OpenAIModel(),
+#         "qwen3vl_model" : Qwen3VL(),
+#         "colqwen_model": ColQwenModel(),
+#         "sparse_embedder": SparseEmbedder()
+#     }
     
-    yield
+#     yield
 
-    app.state.models.clear()
+#     app.state.models.clear()
 
 
 app = FastAPI(title="RAG Backend")
@@ -133,7 +133,7 @@ async def user_login(user_data:UserCredentials, response:Response):
 
 
 @app.post("/query", response_model=QueryResponse)
-async def query(payload: QueryRequest, request: Request, user_id: int = Depends(user_verification)):
+async def query(payload: QueryRequest, user_id: int = Depends(user_verification)):
     try:
 
         chat_id = payload.chat_id
@@ -147,10 +147,18 @@ async def query(payload: QueryRequest, request: Request, user_id: int = Depends(
 
             if intent == 'chitchat':
                 answer = await openai_model.respond_to_chitchat(question)
-                used_sources = []
+                sources = []
 
             else:
                 answer, used_sources = await answer_user_question(question)
+                sources = [
+                    DocumentSource(
+                        pdf_name=src["pdf_name"],
+                        page_num=src["page_num"],
+                        image_base64=src["image_base64"]
+                    )
+                    for src in used_sources
+                ]
 
             await create_chatitem(question,answer,user_id,chat_id)
 
@@ -158,17 +166,25 @@ async def query(payload: QueryRequest, request: Request, user_id: int = Depends(
 
             if intent == 'chitchat':
                 answer = await openai_model.respond_to_chitchat(question)
-                used_sources = []
+                sources = []
 
             else:
                 chat_summary, uncached_chats = await get_chat_history(user_id, chat_id)
                 rewritten_query = await contextualise_query(question, chat_summary, uncached_chats)
                 answer, used_sources = await answer_user_question(rewritten_query)
+                sources = [
+                    DocumentSource(
+                        pdf_name=src["pdf_name"],
+                        page_num=src["page_num"],
+                        image_base64=src["image_base64"]
+                    )
+                    for src in used_sources
+                ]
 
             await create_chatitem(question,answer,user_id,chat_id)
             await summarise_chat(user_id, chat_id)
 
-        return QueryResponse(answer=answer,sources=used_sources)
+        return QueryResponse(answer=answer,sources=sources)
 
 
     except Exception as e:
