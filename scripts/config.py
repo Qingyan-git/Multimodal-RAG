@@ -23,6 +23,8 @@ class Settings(BaseSettings):
     supabase_key: SecretStr
     supabase_bucket_name : str
 
+    results_path : str
+
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
 settings = Settings()

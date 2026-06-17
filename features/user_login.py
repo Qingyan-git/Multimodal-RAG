@@ -5,7 +5,7 @@ from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
 from datetime import datetime, timezone
 
-from scripts.supabase_setup import create_user, get_user, get_password, get_session, create_session, get_chatitems, append_summary
+from scripts.supabase import create_user, get_user, get_password, get_session, create_session, get_chatitems, append_summary
 from scripts.config import settings
 
 

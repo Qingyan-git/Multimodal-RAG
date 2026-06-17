@@ -13,8 +13,8 @@ from dotenv import load_dotenv
 from docling_core.types.doc import PictureItem
 from docling_core.transforms.serializer.markdown import MarkdownDocSerializer
 
-from scripts.supabase_setup import insert_pdf, insert_page
-from scripts.qdrant_setup import format_point, upload_points, get_qdrant_client, create_collection
+from scripts.supabase import insert_pdf, insert_page
+from scripts.qdrant import format_point, upload_points, get_qdrant_client, create_collection
 from scripts.models import (
     openai_model,
     colqwen_model,
@@ -23,12 +23,6 @@ from scripts.models import (
 )
 
 from scripts.config import settings
-
-
-def clean_text(text: str) -> str:
-    text = text.replace("\x00", "")
-    text = re.sub(r'[\x00-\x08\x0B\x0C\x0E-\x1F]', '', text)
-    return text
 
 
 def is_useable_image(img, page_w, page_h, min_dim=100, area_threshold=0.20):
@@ -97,9 +91,8 @@ async def get_page_markdown(document, page_no, openai_model):
             page_markdown.append(item['markdown'])
 
     final_markdown = f'\n\nPage {page_no} from document {document.name}\n\n' + ''.join(page_markdown)
-    cleaned_text = clean_text(final_markdown)
 
-    return cleaned_text
+    return final_markdown
 
 
 async def process_page_single(filepath, page_no, semaphore):
@@ -159,12 +152,12 @@ async def ingest_pdf(path):
         if path.is_dir():
             for file in path.iterdir():
                 if file.suffix == '.pdf':
-                    print(f'\n Processing {file.name}\n')
+                    print(f'\nProcessing {file.name}\n')
                     await parse_pdf(file)
                     print(f'\nDone\n')
 
         elif path.is_file() and path.suffix == '.pdf':
-            print(f'\n Processing {path.name}\n')
+            print(f'\nProcessing {path.name}\n')
             await parse_pdf(path)
             print(f'\nDone\n')
 
@@ -175,4 +168,4 @@ async def ingest_pdf(path):
 
 if __name__ == "__main__":
 
-    asyncio.run(ingest_pdf(Path(r'C:\Users\UserAdmin\Documents\Multimodal-RAG\pdfs\WHO World health statistics 2025.pdf')))
+    asyncio.run(ingest_pdf(Path(r'C:\Users\UserAdmin\Documents\Multimodal-RAG\pdfs')))

@@ -19,6 +19,25 @@ async def get_connection():
         raise
 
 
+async def get_documents():
+    try:
+        name = settings.supabase_bucket_name
+        client = await get_connection()
+        response = await (client
+        .from_(name)
+        .list(
+                "folder",
+                {
+                    "sortBy": {"column": "name", "order": "desc"},
+                }
+            )
+        )
+
+
+    except Exception as e:
+        print(f'Unable to get documents from supabase, error \n{e}\n')
+
+
 async def get_session(session_id):
     try:
         client = await get_connection()
@@ -121,9 +140,15 @@ async def get_chats(user_id):
             .eq('userid', user_id)
             .execute()
         )
+        chats = []
         if response.data:
-            return response.data
+            for item in response.data:
+                name = item['name']
+                chatid = item['chatid']
+                chats.append({'name' : name, 'chatid' : chatid})
+            return chats
         return []
+
     except Exception as e:
         print(f'Unable to get chats for user {user_id}, error \n{e}\n')
         raise
@@ -255,15 +280,22 @@ async def get_chatitems(user_id, chat_id):
         client = await get_connection()
         response = await (client
             .table("chatitem")
-            .select("*, chats!inner(userid)")
+            .select("question, response, chats!inner(userid)")
             .eq("chatid", chat_id)
             .eq("chats.userid", user_id)
             .order("chatitemid", desc=False)
             .execute()
         )
+
+        chat_items = []
         if response.data:
-            return response.data
+            for item in response.data:
+                question = item['question']
+                response = item['response']
+                chat_items.append({'question' : question, 'response' : response})
+            return chat_items
         return []
+
     except Exception as e:
         print(f'Unable to get chatitems for chat {chat_id}, error \n{e}\n')
         raise
@@ -383,7 +415,9 @@ async def retrieve_source_from_pageid(page_id):
             info = response.data[0]
             pdf_name = info['pdfs']['name']
             page_no = info['num']
-            bucket_path = info['bucket_path']
+            bucket_path = str(info['bucket_path'])
+
+            print(f"DEBUG: Attempting to download from bucket '{settings.supabase_bucket_name}' at path: '{bucket_path}'")
 
             bucket_name = settings.supabase_bucket_name
             page_image = await (client
@@ -394,10 +428,35 @@ async def retrieve_source_from_pageid(page_id):
 
             return pdf_name, page_no, page_image
         else:
+            print(f"DEBUG: NO PAGE_IMAGE FOUND AT : {response.data[0]['bucket_path']}")
             return None
 
     except Exception as e:
-        print(f'Unable to retrieve page data, error \n{e}\n')
+        print(f'Unable to retrieve page data from pageid, error \n{e}\n')
+
+
+async def retrieve_string_from_pageid(page_id):
+    try:
+        client = await get_connection()
+
+        response = await (client
+            .table('pages')
+            .select('pdfs(name), num')
+            .eq('page_id', page_id)
+            .single()
+            .execute()
+        )
+
+        if response.data:
+            pdf_name = response.data['pdfs']['name']
+            page_no = response.data['num']
+            return pdf_name,page_no
+
+        else:
+            return []
+
+    except Exception as e:
+        print(f'Unable to retrieve page_no from pageid, error \n{e}\n')
 
 
 async def retrieve_source_from_pdf_name(pdf_name, page_no):
@@ -415,7 +474,7 @@ async def retrieve_source_from_pdf_name(pdf_name, page_no):
 
         if response.data:
             info = response.data[0]
-            bucket_path = info['bucket_path']
+            bucket_path = str(info['bucket_path'])
             bucket_name = settings.supabase_bucket_name
             page_image = await (client
                 .storage
@@ -425,10 +484,13 @@ async def retrieve_source_from_pdf_name(pdf_name, page_no):
 
             return page_image
         else:
+
+            print(f"DEBUG: NO PAGE_IMAGE FOUND AT : {response.data[0]['bucket_path']}")
+
             return None
 
     except Exception as e:
-        print(f'Unable to retrieve page data, error \n{e}\n')
+        print(f'Unable to retrieve page data from pdf name, error \n{e}\n')
         raise
 
 

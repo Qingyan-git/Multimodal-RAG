@@ -4,6 +4,7 @@ import asyncio
 from retrieval.retrieval import answer_user_question
 from scripts.models import openai_model
 from scripts.config import settings
+from scripts.supabase import get_non_cached, append_summary, convert_cached
 
 
 
@@ -45,7 +46,7 @@ async def contextualise_query(question, chat_summary, uncached_chats):
 async def summarise_chat(user_id, chat_id):
 
     chat_items = await get_non_cached(user_id, chat_id)
-    chat_ids = [item['ChatItemID'] for item in chat_items]
+    chat_ids = [item['chatitemid'] for item in chat_items]
 
     if len(chat_ids) < 5:
         return

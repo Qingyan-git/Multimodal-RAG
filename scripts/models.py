@@ -17,8 +17,6 @@ from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_core.messages import SystemMessage, HumanMessage
 from langchain_core.rate_limiters import InMemoryRateLimiter
 
-from colpali_engine.models import ColQwen2, ColQwen2Processor
-
 from docling.datamodel.base_models import InputFormat
 from docling.datamodel.pipeline_options import PdfPipelineOptions
 from docling.document_converter import DocumentConverter, PdfFormatOption
@@ -79,7 +77,7 @@ class OpenAIModel:
 
         history_text = ""
         for index, item in enumerate(chat_items):
-            history_text += f'\nTurn : {index}, Question : {item['Question']}, Answer : {item['Response']}\n'
+            history_text += f'\nTurn : {index}, Question : {item['question']}, Answer : {item['response']}\n'
 
         messages = [
             SystemMessage(content="""

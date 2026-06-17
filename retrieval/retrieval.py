@@ -10,8 +10,8 @@ import pandas as pd
 from dotenv import load_dotenv
 from datetime import datetime
 
-from scripts.supabase_setup import retrieve_markdowns, retrieve_source_from_pageid, retrieve_source_from_pdf_name
-from scripts.qdrant_setup import similarity_search
+from scripts.supabase import retrieve_markdowns, retrieve_source_from_pageid, retrieve_source_from_pdf_name, retrieve_string_from_pageid
+from scripts.qdrant import similarity_search
 from scripts.models import QueryRequest, QueryResponse, DocumentSource
 from scripts.models import (
     openai_model,
@@ -20,6 +20,8 @@ from scripts.models import (
     sparse_embedder,
     jina
 )
+
+from scripts.config import settings
 
 
 def apply_rrf(results, k=60):
@@ -80,9 +82,13 @@ def apply_rrf(results, k=60):
 async def get_sources(page_ids):
     async def _process_source(page_id):
         pdf_name, page_no, page_image = await retrieve_source_from_pageid(page_id)
-        image_base64 = base64.b64encode(page_image).decode('utf-8')
+        if page_image == None:
+            print(f'\nNO PAGE IMAGE DETECTED FROM {pdf_name} {page_no}\n')
+            image_base64 = ""
+        else:
+            image_base64 = base64.b64encode(page_image).decode('utf-8')
 
-        source = (pdf_name, page_no, image_base64)
+        source = (pdf_name, page_no, image_base64) 
         return source
 
     tasks = [_process_source(page_id) for page_id in page_ids]
@@ -101,7 +107,12 @@ async def extract_and_truncate_sources(llm_output):
     async def _process_match(pdf_name, page_no):
 
         page_image = await retrieve_source_from_pdf_name(pdf_name,page_no)
-        image_base64 = base64.b64encode(page_image).decode('utf-8')
+
+        if page_image == None:
+            print(f'\nNO PAGE IMAGE DETECTED FROM {pdf_name} {page_no}\n')
+            image_base64 = ""
+        else:
+            image_base64 = base64.b64encode(page_image).decode('utf-8')
 
         return {
             "pdf_name": pdf_name,
@@ -111,7 +122,7 @@ async def extract_and_truncate_sources(llm_output):
 
         return source
 
-    tasks = [_process_match(pdf_name, int(page_no)) for pdf_name, page_no in matches]
+    tasks = [_process_match(pdf_name, page_no) for pdf_name, page_no in matches]
     used_sources = await asyncio.gather(*tasks)
         
     return clean_answer, used_sources
@@ -165,55 +176,69 @@ async def answer_user_question(question):
     pre = datetime.now()
     answer = await openai_model.answer_question(question, sources)
     post = datetime.now()
-    print(f'Time taken to answer question on qwen3vl: {(post-pre).total_seconds()}\n')
+    print(f'Time taken to answer question on openai: {(post-pre).total_seconds()}\n')
 
     pre = datetime.now()
     cleaned_answer, used_sources = await extract_and_truncate_sources(answer)
     post = datetime.now()
     print(f'Time taken to extract out used sources: {(post-pre).total_seconds()}\n')
 
+
+    '''
+    check here if object nonetype iterable error
+    '''
     return cleaned_answer, used_sources
+
+
+async def answer_csv(path):
+
+    '''
+    need to change the return of answer_user_question from cleaned_answer, used_sources to cleaned_answer, answer_page_ids
+    '''
+
+    df = pd.read_csv(path)
+    questions = df.iloc[:, 0].tolist()
+    results = []
+    for question in questions:
+        cleaned_answer,answer_page_ids = await answer_user_question(question)
+        sources_string = ""
+        for page_id in answer_page_ids:
+            pdf_name, page_no = await retrieve_string_from_pageid(page_id)
+            sources_string += f"-- Source : Page {page_no} from file {pdf_name} --\n"
+        result = {
+            'Question' : question,
+            'Answer' : cleaned_answer,
+            'Sources' : sources_string
+        }
+        results.append(result)
+
+    result_df = pd.DataFrame(results)
+    save_path = Path(settings.results_path) / f'{path.stem}_results.csv'
+    result_df.to_csv(save_path,index=False)
+
+
+async def answer_testset(path):
+    try:
+        if path.is_dir():
+            for file in path.iterdir():
+                if file.suffix == '.csv':
+                    print(f'\nProcessing {file.name}\n')
+                    await answer_csv(file)
+                    print(f'\nDone\n')
+
+        elif path.is_file() and path.suffix == '.csv':
+            print(f'\nProcessing {path.name}\n')
+            await answer_csv(path)
+            print(f'\nDone\n')
+
+    except Exception as e:
+        print(f'An error occurred: \n{e}\n\n')
+        raise
+
 
 
 if __name__ == "__main__":
 
-    questions = ['Which specific cause provided a HALE gain through morbidity reduction for the 70+ age group between 2000 and 2019?',
-    'What was the specific HALE loss attributed to diabetes mellitus morbidity in the 30–69 age group globally between 2000 and 2019?',
-    'Which cause is the leading driver of HALE gain for the African Region in the 30–69 age group (2000–2019)?',
-    'Which WHO region is the only one to show a HALE loss due to Collective violence and legal intervention in the 2000–2019 data?',
-    'Which condition caused the largest morbidity-related HALE loss globally during the 2019–2021 period?',
-    'How many years of HALE were lost in the Region of the Americas due to COVID-19 mortality in the 70+ age group specifically?',
-    'What is the leading cause of HALE disadvantage for females compared to males globally?',
-    'What is the HALE advantage for females in the Western Pacific Region regarding stroke mortality?',
-    'What was the global HALE advantage for females over males regarding COVID-19 mortality in 2021?',
-    'Which region saw the smallest female HALE advantage (0.01 years) in COVID-19 mortality for the 70+ age group in 2021?',
-    'What is the HALE gap between High-income and Low-income countries caused by Lower respiratory infections in the 0–1 age group?',
-    'What is the negative HALE contribution of Drug use disorders for High-income countries when compared to Lower-middle-income countries?',
-    'What is the HALE lead for High-income countries over Lower-middle-income countries due specifically to COVID-19 mortality?',
-    'Which cause contributes a -0.16 year HALE disadvantage to High-income countries when compared to Low-income countries in the 2021 comparison?',
-    'What was the estimated Maternal Mortality Ratio for the African Region in the year 2023?',
-    'What was the Neonatal Mortality Rate for the South-East Asia Region in 1990?',
-    'Which World Bank income group shows the most significant projected reduction in premature NCD mortality by 2030?',
-    'What was the global suicide death rate per 100,000 population for males in 2021?',
-    'Which region had the highest crude death rate (33.9) for interpersonal violence among males in 2021?',
-    'What percentage of the global population requiring NTD interventions resides in the South-East Asia Region according to the 2023 distribution data?']
-
-
-    for question in questions:
-        print(f'\n\n')
-        response = asyncio.run(answer_user_question(question))
-
-        answer_text = response[0]
-        used_sources = response[1]
-        print(f'\nQuestion : {question}\n')
-        print(f'\nAnswer : {answer_text}\n')
-
-        if used_sources:
-                source_strings = [f"{src['pdf_name']} (Page {src['page_num']})" for src in used_sources]
-                print(f'\nUsed Sources : {", ".join(source_strings)}\n')
-        else:
-            print('\nUsed Sources : None\n')
-        print(f'\n\n')
-
+    asyncio.run(answer_testset(Path(r'C:\Users\UserAdmin\Documents\Multimodal-RAG\testset\test_set - Guide to Data Protection.csv')))
 
 

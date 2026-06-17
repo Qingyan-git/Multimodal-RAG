@@ -63,29 +63,35 @@ with st.sidebar:
         # 🟢 FIX: Use the persistent session object
         chats_response = st.session_state.http_session.post(CHATS_URL, timeout=5)
         if chats_response.status_code == 200:
-            chats_data = chats_response.json().get("chats", [])
+            user_chats = chats_response.json().get("chats", [])
             
-            if chats_data:
-                for chat in chats_data:
-                    chat_id = chat.get("chat_id")
-                    title = chat.get("title", f"Chat {chat_id}")
+            if user_chats:
+                for chat in user_chats:
+                    chat_id = chat.get("chatid")
+                    name = chat.get("name")
                     
                     is_active = st.session_state.selected_chat_id == chat_id
-                    button_label = f"▶️ {title}" if is_active else title
+                    button_label = f"▶️ {name}" if is_active else name
                     
                     if st.button(button_label, key=f"chat_{chat_id}", use_container_width=True):
                         st.session_state.selected_chat_id = chat_id
                         
                         history_url = f"{CHATS_URL}/{chat_id}"
-                        # 🟢 FIX: Use the persistent session object
-                        history_response = st.session_state.http_session.post(history_url, timeout=5)
+                        history_response = st.session_state.http_session.post(history_url, timeout=15)
                         
                         if history_response.status_code == 200:
                             items = history_response.json().get("chat_items", [])
-                            st.session_state.chat_history = [
-                                {"role": item["role"], "content": item["content"]} 
-                                for item in items
-                            ]
+
+                            new_chat_history_list = []
+                            for item in items:
+                                # Append the User's question
+                                if "question" in item:
+                                    new_chat_history_list.append({"role": "user", "content": item["question"]})
+
+                                if "response" in item:
+                                    new_chat_history_list.append({"role": "assistant", "content": item["response"]})
+
+                            st.session_state.chat_history = new_chat_history_list
                             st.session_state.current_sources = [] 
                             st.rerun()
                         else:
@@ -228,7 +234,7 @@ with left:
 
 # Right Column: Main Chat Room Interface
 with right: 
-    chat_container = st.container()
+    chat_container = st.container(height=600)
     
     # Block input if not authenticated yet to align gracefully with validation
     if not is_logged_in:
@@ -248,18 +254,18 @@ with right:
                 with st.chat_message("assistant"):
                     with st.spinner("Thinking..."):
                         try: 
-                            # 🟢 FIX: Notice the payload schema shift from 'text' back to 'question' to line up accurately with your QueryRequest model!
                             payload = {
                                 "question": user_input,
-                                "chat_id": st.session_state.selected_chat_id or "PLACEHOLDER"
+                                "chat_id": st.session_state.selected_chat_id or -1
                             }
                             
-                            # 🟢 FIX: Run the pipeline request inside the active, cookie-bearing state session context
                             response = st.session_state.http_session.post(QUERY_URL, json=payload, timeout=300)
                             if response.status_code == 200:
                                 data = response.json()
                                 answer = data["answer"]
-                                sources = data.get("sources", [])
+                                sources = data["sources"]
+                                chat_id = data["chat_id"]
+                                st.session_state.selected_chat_id = chat_id
 
                                 st.markdown(answer)
 

@@ -21,7 +21,7 @@ from scripts.models import openai_model, colqwen_model, qwen3vl_model, sparse_em
 from retrieval.retrieval import answer_user_question
 from features.user_login import sign_up, login, verify_session
 from features.history_aware_answer import contextualise_query, summarise_chat
-from scripts.supabase_setup import get_chats, get_chatitems, create_chat, create_chatitem, get_chat_history
+from scripts.supabase import get_chats, get_chatitems, create_chat, create_chatitem, get_chat_history
 
 BASE_DIR = Path(__file__).resolve().parent
 dotenv_path = BASE_DIR / ".env"
@@ -60,9 +60,10 @@ class DocumentSource(BaseModel):
 
 class QueryRequest(BaseModel):
     question : str
-    chat_id : str
+    chat_id : int
 
 class QueryResponse(BaseModel):
+    chat_id : int
     answer: str
     sources: List[DocumentSource]
 
@@ -141,7 +142,7 @@ async def query(payload: QueryRequest, user_id: int = Depends(user_verification)
 
         intent = await openai_model.classify_query(question)
 
-        if chat_id == 'PLACEHOLDER':
+        if chat_id == -1:
             chat_name = f'{question[:20]}...'
             chat_id = await create_chat(chat_name,user_id)
 
@@ -184,51 +185,15 @@ async def query(payload: QueryRequest, user_id: int = Depends(user_verification)
             await create_chatitem(question,answer,user_id,chat_id)
             await summarise_chat(user_id, chat_id)
 
-        return QueryResponse(answer=answer,sources=sources)
+        return QueryResponse(chat_id=chat_id,answer=answer,sources=sources)
 
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to answer user question, error \n{e}\n")
 
 
-
-
-        
-
-
-#         query_response = await answer_user_question(request.text)
-#         return {
-#             "answer": query_response.answer,
-#             "sources": query_response.sources
-#         }
-#     except Exception as e:
-#         raise HTTPException(status_code=500, detail=f"Pipeline failed: {str(e)}")
-
-# '''
-# For /query, need to accept a response_model that includes the chat_id from which the question was asked in.
-# So that the chats can be properly updated.
-# Also if the user requests a new chat, then the object with a placeholder chat_id is passed to /query, and the
-# new chat is created in the /query function and saved to db and such.
-# Streamlit files will need to be updated to reflect this change.
-# '''
-
-
-@app.post("/upload")
-async def upload_pdf(background_tasks: BackgroundTasks, file: UploadFile = File(...)):
-    target_path = os.path.join(STORAGE_DIR, file.filename)
-    
-    with open(target_path, "wb") as f:
-        content = await file.read()
-        f.write(content)
-
-    background_tasks.add_task(ingest_pdfs.ingest_pdf, Path(target_path))
-
-    return {"status": "success", "message": "File received"}
-
-
 @app.post("/chats")
 async def show_chats(user_id:int=Depends(user_verification)):
-
     try:
         user_chats = await get_chats(user_id)
         
@@ -254,6 +219,27 @@ async def enter_chat(chat_id:str,user_id: int = Depends(user_verification)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to enter chat and load history, error \n{e}\n")
 
+
+@app.post("/upload")
+async def upload_pdf(background_tasks: BackgroundTasks, file: UploadFile = File(...)):
+    try:
+
+        content = await file.read()
+        target_path = LOCAL_STORAGE_DIR / file.filename
+        with open(target_path, "wb") as f:
+            f.write(content)
+
+        absolute_local_path = str(target_path.resolve())
+
+        background_tasks.add_task(ingest_pdfs.ingest_pdf, Path(absolute_local_path))
+
+        return {
+            "status": "success",
+            "message": f"'{original_name}' successfully processed.",
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"File processing failed: {e}")
 
 
 
