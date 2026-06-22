@@ -9,8 +9,9 @@ import re
 import pandas as pd
 from dotenv import load_dotenv
 from datetime import datetime
+import pymupdf
 
-from scripts.supabase import retrieve_markdowns, retrieve_source_from_pageid, retrieve_source_from_pdf_name, retrieve_string_from_pageid
+from scripts.supabase import retrieve_markdowns, retrieve_source_from_pageid, retrieve_info_from_pageid, retrieve_string_from_pageid
 from scripts.qdrant import similarity_search
 from scripts.models import QueryRequest, QueryResponse, DocumentSource
 from scripts.models import (
@@ -81,79 +82,100 @@ def apply_rrf(results, k=60):
 
 async def get_sources(page_ids):
     async def _process_source(page_id):
-        pdf_name, page_no, page_image = await retrieve_source_from_pageid(page_id)
+        pdf_path, pdf_name, page_no = await retrieve_info_from_pageid(page_id)
+
+        # with pymupdf.open(Path(r'C:\Users\Chu Qingyan\Documents\WFH\Multimodal-RAG\pdfs\WHO World health statistics 2025.pdf')) as doc:
+        #     page = doc[page_no-1]
+        #     pix = page.get_pixmap() 
+        #     image_bytes = pix.tobytes("jpeg")
+        #     image_base64 = base64.b64encode(image_bytes).decode('utf-8')
+
+        # source = (page_id,pdf_name,page_no,image_base64)
+        # return source
+
+        pdf_name, page_no, page_image = retrieve_source_from_pageid(page_id)
         if page_image == None:
             print(f'\nNO PAGE IMAGE DETECTED FROM {pdf_name} {page_no}\n')
             image_base64 = ""
         else:
             image_base64 = base64.b64encode(page_image).decode('utf-8')
 
-        source = (pdf_name, page_no, image_base64) 
+        source = (page_id, pdf_name, page_no, image_base64) 
         return source
+
+        '''
+        here to toggle between pymupdf and supabase
+        '''
 
     tasks = [_process_source(page_id) for page_id in page_ids]
     sources = await asyncio.gather(*tasks)
     return sources
 
 
-async def extract_and_truncate_sources(llm_output):
+async def extract_used_sources(llm_output, original_sources):
+
     parts = re.split(r"\n*---\s*SOURCES\s*---\n*", llm_output, maxsplit=1)
-    clean_answer = parts[0] if len(parts) > 1 else llm_output
-    source_block = parts[1] if len(parts) > 1 else ""
+    clean_answer = parts[0].strip() if len(parts) > 1 else llm_output
+    source_block = parts[1] if len(parts) > 1 else None
 
-    source_pattern = r"<used_source>PDF NAME:\s*(.*?)\s*\|\s*PAGE NUMBER:\s*(\d+)\s*</used_source>"
-    matches = re.findall(source_pattern, source_block)
+    if source_block == None:
+        return clean_answer, [{
+            'pdf_name' : source[1],
+            'page_num' : source[2],
+            'image_base64' : source[3]
+        } for source in original_sources]
 
-    async def _process_match(pdf_name, page_no):
+    else:
+        source_pattern = r"<used_source>ID:\s*([^<]+)\s*</used_source>"
+        matched_ids = re.findall(source_pattern, source_block)
 
-        page_image = await retrieve_source_from_pdf_name(pdf_name,page_no)
+        used_sources = []
+        source_map = {str(src[0]).strip(): src for src in original_sources}
+        for page_id in matched_ids:
+            clean_id = page_id.strip()
+            if clean_id in source_map:
+                source_data = source_map[clean_id]
+                used_sources.append({
+                    "pdf_name": source_data[1],
+                    "page_num": int(source_data[2]),
+                    "image_base64": source_data[3]
+                })
+            else:
+                print(f"Warning: LLM cited ID '{clean_id}', but it wasn't in original_sources.")
 
-        if page_image == None:
-            print(f'\nNO PAGE IMAGE DETECTED FROM {pdf_name} {page_no}\n')
-            image_base64 = ""
-        else:
-            image_base64 = base64.b64encode(page_image).decode('utf-8')
-
-        return {
-            "pdf_name": pdf_name,
-            "page_num": int(page_no),
-            "image_base64": image_base64
-        }
-
-        return source
-
-    tasks = [_process_match(pdf_name, page_no) for pdf_name, page_no in matches]
-    used_sources = await asyncio.gather(*tasks)
-        
-    return clean_answer, used_sources
+        return clean_answer, used_sources
 
 
 async def answer_user_question(question):
 
+    time_taken = ''
+
     print(f'\nquestion : {question}\n')
+
+    total_pre = datetime.now()
 
     pre = datetime.now()
     splade = await sparse_embedder.embed(question)
     multi = await colqwen_model.get_query_embedding(question)
     post = datetime.now()
-    print(f'Time taken to embed question vector: {(post-pre).total_seconds()}\n')
+    time_taken += f'Time taken to embed question vector: {(post-pre).total_seconds()}\n'
 
     pre = datetime.now()
     image_scores = await similarity_search(splade, multi)
     post = datetime.now()
-    print(f'Time taken to do similarity search: {(post-pre).total_seconds()}\n')
+    time_taken += f'Time taken to do similarity search: {(post-pre).total_seconds()}\n'
     page_ids = list(image_scores.keys())
     print(f'\nsimilarity search page_ids : {page_ids}\n')
 
     pre = datetime.now()
     markdowns = await retrieve_markdowns(page_ids)
     post = datetime.now()
-    print(f'Time taken to retrieve markdowns: {(post-pre).total_seconds()}\n')
+    time_taken += f'Time taken to retrieve markdowns: {(post-pre).total_seconds()}\n'
 
     pre = datetime.now()
     text_scores = jina.text_rerank(question, markdowns)
     post = datetime.now()
-    print(f'Time taken to do text reranking: {(post-pre).total_seconds()}\n')
+    time_taken += f'Time taken to do text reranking: {(post-pre).total_seconds()}\n'
 
     pre = datetime.now()
     combined_scores = {}
@@ -164,25 +186,30 @@ async def answer_user_question(question):
         }
     rrf_results = apply_rrf(combined_scores)
     post = datetime.now()
-    print(f'Time taken to do rrf: {(post-pre).total_seconds()}\n')
+    time_taken += f'Time taken to do rrf: {(post-pre).total_seconds()}\n'
     answer_page_ids = list(rrf_results.keys())
     print(f'\nanswer_page_ids : {answer_page_ids}\n')
 
     pre = datetime.now()
     sources = await get_sources(answer_page_ids)
     post = datetime.now()
-    print(f'Time taken to get sources: {(post-pre).total_seconds()}\n')
+    time_taken += f'Time taken to get sources: {(post-pre).total_seconds()}\n'
 
     pre = datetime.now()
     answer = await openai_model.answer_question(question, sources)
     post = datetime.now()
-    print(f'Time taken to answer question on openai: {(post-pre).total_seconds()}\n')
+    time_taken += f'Time taken to answer question on openai: {(post-pre).total_seconds()}\n'
 
     pre = datetime.now()
-    cleaned_answer, used_sources = await extract_and_truncate_sources(answer)
+    cleaned_answer, used_sources = await extract_used_sources(answer,sources)
     post = datetime.now()
-    print(f'Time taken to extract out used sources: {(post-pre).total_seconds()}\n')
+    time_taken += f'Time taken to extract out used sources: {(post-pre).total_seconds()}\n'
 
+    total_post = datetime.now()
+    total_time = (total_post - total_pre).total_seconds()
+    time_taken += f'Total time taken to answer question : {total_time}\n'
+
+    print(f'\nTime taken : {time_taken}\n')
 
     '''
     check here if object nonetype iterable error
@@ -193,14 +220,14 @@ async def answer_user_question(question):
 async def answer_csv(path):
 
     '''
-    need to change the return of answer_user_question from cleaned_answer, used_sources to cleaned_answer, answer_page_ids
+    need to change the return of answer_user_question from cleaned_answer, used_sources to cleaned_answer, answer_page_ids, time_taken
     '''
 
     df = pd.read_csv(path)
     questions = df.iloc[:, 0].tolist()
     results = []
     for question in questions:
-        cleaned_answer,answer_page_ids = await answer_user_question(question)
+        cleaned_answer,answer_page_ids,time_taken = await answer_user_question(question)
         sources_string = ""
         for page_id in answer_page_ids:
             pdf_name, page_no = await retrieve_string_from_pageid(page_id)
@@ -208,7 +235,8 @@ async def answer_csv(path):
         result = {
             'Question' : question,
             'Answer' : cleaned_answer,
-            'Sources' : sources_string
+            'Sources' : sources_string,
+            'Time taken' : time_taken
         }
         results.append(result)
 
@@ -239,6 +267,6 @@ async def answer_testset(path):
 
 if __name__ == "__main__":
 
-    asyncio.run(answer_testset(Path(r'C:\Users\UserAdmin\Documents\Multimodal-RAG\testset\test_set - Guide to Data Protection.csv')))
+    asyncio.run(answer_testset(Path(r'C:\Users\Chu Qingyan\Documents\WFH\Multimodal-RAG\testset')))
 
 

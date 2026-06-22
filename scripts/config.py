@@ -24,6 +24,7 @@ class Settings(BaseSettings):
     supabase_bucket_name : str
 
     results_path : str
+    local_storage_dir : str
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 

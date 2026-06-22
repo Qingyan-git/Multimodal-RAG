@@ -16,12 +16,11 @@ from docling.datamodel.pipeline_options import PdfPipelineOptions
 from docling.document_converter import DocumentConverter, PdfFormatOption
 from fastembed import SparseTextEmbedding
 
-
 from scripts.models import openai_model, colqwen_model, qwen3vl_model, sparse_embedder, jina
 from retrieval.retrieval import answer_user_question
 from features.user_login import sign_up, login, verify_session
-from features.history_aware_answer import contextualise_query, summarise_chat
-from scripts.supabase import get_chats, get_chatitems, create_chat, create_chatitem, get_chat_history
+from features.history_aware_answer import process_user_question
+from scripts.supabase import get_chats, get_chatitems, create_chat, create_chatitem, get_chat_history, get_documents, download_document
 
 BASE_DIR = Path(__file__).resolve().parent
 dotenv_path = BASE_DIR / ".env"
@@ -58,14 +57,17 @@ class DocumentSource(BaseModel):
     page_num: int
     image_base64: str 
 
+
 class QueryRequest(BaseModel):
     question : str
     chat_id : int
+
 
 class QueryResponse(BaseModel):
     chat_id : int
     answer: str
     sources: List[DocumentSource]
+
 
 class UserCredentials(BaseModel):
     username : str
@@ -85,21 +87,31 @@ async def user_verification(session_id:str=Cookie(None)):
 
 
 @app.post("/signup")
-async def user_signup(user_data:UserCredentials):
+async def user_signup(user_data: UserCredentials, response: Response):
     try:
         username = user_data.username
         password = user_data.password
 
-        await sign_up(username,password)
+        await sign_up(username, password)
+
+        session_id = await login(username, password)
+
+        response.set_cookie(
+            key="session_id",
+            value=session_id,
+            httponly=True,
+            secure=False,
+            samesite="lax",
+            max_age=300
+        )
 
         return { 
-                "message": f"User {username} registered successfully.",
-                "status": "success"
+            "message": f"User {username} registered and logged in successfully.",
+            "status": "success"
         }
 
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
-
     except Exception as e:
         raise HTTPException(status_code=400, detail=f'Unable to sign up, error \n{e}\n')
 
@@ -136,57 +148,24 @@ async def user_login(user_data:UserCredentials, response:Response):
 @app.post("/query", response_model=QueryResponse)
 async def query(payload: QueryRequest, user_id: int = Depends(user_verification)):
     try:
-
-        chat_id = payload.chat_id
         question = payload.question
+        chat_id = payload.chat_id
+        
+        response = await process_user_question(question,chat_id,user_id)
 
-        intent = await openai_model.classify_query(question)
+        query_response = QueryResponse(
+            chat_id=response['chat_id'],
+            answer=response['answer'],
+            sources=[
+            DocumentSource(
+                    pdf_name=src["pdf_name"],
+                    page_num=src["page_num"],
+                    image_base64=src["image_base64"]
+                )
+                for src in response['sources']]
+        )
 
-        if chat_id == -1:
-            chat_name = f'{question[:20]}...'
-            chat_id = await create_chat(chat_name,user_id)
-
-            if intent == 'chitchat':
-                answer = await openai_model.respond_to_chitchat(question)
-                sources = []
-
-            else:
-                answer, used_sources = await answer_user_question(question)
-                sources = [
-                    DocumentSource(
-                        pdf_name=src["pdf_name"],
-                        page_num=src["page_num"],
-                        image_base64=src["image_base64"]
-                    )
-                    for src in used_sources
-                ]
-
-            await create_chatitem(question,answer,user_id,chat_id)
-
-        else:
-
-            if intent == 'chitchat':
-                answer = await openai_model.respond_to_chitchat(question)
-                sources = []
-
-            else:
-                chat_summary, uncached_chats = await get_chat_history(user_id, chat_id)
-                rewritten_query = await contextualise_query(question, chat_summary, uncached_chats)
-                answer, used_sources = await answer_user_question(rewritten_query)
-                sources = [
-                    DocumentSource(
-                        pdf_name=src["pdf_name"],
-                        page_num=src["page_num"],
-                        image_base64=src["image_base64"]
-                    )
-                    for src in used_sources
-                ]
-
-            await create_chatitem(question,answer,user_id,chat_id)
-            await summarise_chat(user_id, chat_id)
-
-        return QueryResponse(chat_id=chat_id,answer=answer,sources=sources)
-
+        return query_response
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to answer user question, error \n{e}\n")
@@ -225,21 +204,53 @@ async def upload_pdf(background_tasks: BackgroundTasks, file: UploadFile = File(
     try:
 
         content = await file.read()
-        target_path = LOCAL_STORAGE_DIR / file.filename
+        filesize_bytes = len(content)
+        target_path = settings.local_storage_dir / file.filename
         with open(target_path, "wb") as f:
             f.write(content)
-
         absolute_local_path = str(target_path.resolve())
-
-        background_tasks.add_task(ingest_pdfs.ingest_pdf, Path(absolute_local_path))
+        background_tasks.add_task(ingest_pdfs.ingest_pdf, Path(absolute_local_path), filesize_bytes)
 
         return {
             "status": "success",
-            "message": f"'{original_name}' successfully processed.",
+            "message": f"'{file.filename}' successfully processed.",
         }
+
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"File processing failed: {e}")
+
+
+@app.post("/documents")
+async def return_documents(user_id: int = Depends(user_verification)):
+    try:
+        uploaded_documents = await get_documents()
+
+        return {
+            "status" : "success",
+            "documents" : uploaded_documents
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f'Unable to retrieve uploaded documents, error \n{e}\n')
+
+
+@app.post("/documents/download/{document_name}")
+async def download_document_name(document_name: str, user_id: int = Depends(user_verification)):
+    try:
+        pdf = await download_document(document_name)
+
+        if not pdf:
+            raise HTTPException(status_code=404, detail="File bytes not found in storage bucket.")
+
+        return StreamingResponse(
+            BytesIO(pdf),
+            media_type="application/pdf",
+            headers={"Content-Disposition": f"attachment; filename={document_name}"}
+        )
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f'Unable to download selected document, error \n{e}\n')
 
 
 

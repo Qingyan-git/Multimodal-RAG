@@ -1,155 +1,151 @@
 import streamlit as st
 import pandas as pd
 import requests
-from datetime import datetime
 
 BASE_URL = "http://127.0.0.1:8000"
 DOCUMENTS_URL = f"{BASE_URL}/documents"
 UPLOAD_URL = f"{BASE_URL}/upload"
 
-st.title("Supabase Document Management")
+st.title("Documents")
 
-# 🟢 Fetch live list from FastAPI backend
-table_data = []
+# Initialize a persistent session in Streamlit state if it doesn't exist
+if "http_session" not in st.session_state:
+    st.session_state.http_session = requests.Session()
+
+# 📥 Initialize a temporary download buffer state to handle on-demand downloads safely
+if "download_buffer" not in st.session_state:
+    st.session_state.download_buffer = None
+
+docs = []
+connection_success = False
+
+# 🟢 Fetch live list from FastAPI backend using POST
 try:
-    res = requests.get(DOCUMENTS_URL, timeout=10)
+    res = st.session_state.http_session.post(DOCUMENTS_URL, timeout=10)
+    
     if res.status_code == 200:
+        connection_success = True
         docs = res.json().get("documents", [])
-        for doc in docs:
-            # Format size into Megabytes
-            size_mb = doc["size_bytes"] / (1024 * 1024)
-            
-            # Format Supabase ISO string (e.g., 2026-06-17T07:38:21Z) to clean viewing string
-            try:
-                dt = datetime.fromisoformat(doc["created_at"].replace("Z", "+00:00"))
-                formatted_date = dt.strftime("%b %d, %Y %H:%M")
-            except Exception:
-                formatted_date = doc["created_at"]
-
-            table_data.append({
-                "Document Name": doc["name"],
-                "File Size": f"{round(size_mb, 2)} MB",
-                "Date Created": formatted_date,
-                "Status": "✅"
-            })
+    elif res.status_code == 401:
+        st.warning("Please log in first to view documents.")
     else:
-        st.error("Failed to load documents from server database storage.")
+        st.error(f"Failed to load documents from server database storage. (Status Code: {res.status_code})")
+        
 except Exception as e:
     st.error(f"Error connecting to backend: {e}")
 
-# Build DataFrame
-df = pd.DataFrame(table_data)
+# 🔵 Render Data Section
+if connection_success:
+    if docs:
+        st.write("### 📂 Available Documents")
+        
+        # 🟢 Updated Layout Columns: Name, Upload Date, Size, Action Button
+        col_header1, col_header2, col_header3, col_header4 = st.columns([3, 2, 1, 1.5])
+        with col_header1:
+            st.markdown("**Document Name**")
+        with col_header2:
+            st.markdown("**Uploaded At**")
+        with col_header3:
+            st.markdown("**Size**")
+        with col_header4:
+            st.markdown("**Action**")
+        st.markdown("---")
+        
+        # Dynamic Row Generation
+        for idx, doc in enumerate(docs):
+            document_name = doc.get("name", "Unknown Document")
+            
+            # 🟢 Format the timestamp cleanly (e.g., "22 Jun 2026, 19:05")
+            raw_date = doc.get("created_at")
+            if raw_date:
+                try:
+                    dt = datetime.fromisoformat(raw_date.replace("Z", "+00:00"))
+                    formatted_date = dt.strftime("%d %b %Y, %H:%M")
+                except Exception:
+                    formatted_date = str(raw_date)[:16]
+            else:
+                formatted_date = "—"
+                
+            # 🟢 Format raw bytes into human-readable MB or KB
+            raw_size = doc.get("filesize")
+            if raw_size is not None:
+                if raw_size >= 1024 * 1024:
+                    formatted_size = f"{raw_size / (1024 * 1024):.2f} MB"
+                else:
+                    formatted_size = f"{raw_size / 1024:.1f} KB"
+            else:
+                formatted_size = "—"
+            
+            # 🟢 Render updated columns layout per document
+            row_col1, row_col2, row_col3, row_col4 = st.columns([3, 2, 1, 1.5])
+            with row_col1:
+                st.write(f"📄 {document_name}")
+            with row_col2:
+                st.caption(formatted_date)
+            with row_col3:
+                st.caption(formatted_size)
+            with row_col4:
+                # Triggers the on-demand API fetch call strictly on-click
+                if st.button("📥 Download", key=f"fetch_{idx}", use_container_width=True):
+                    with st.spinner("Downloading..."):
+                        try:
+                            download_url = f"{BASE_URL}/documents/download/{document_name}"
+                            dl_res = st.session_state.http_session.post(download_url, timeout=30)
+                            
+                            if dl_res.status_code == 200:
+                                st.session_state.download_buffer = {
+                                    "name": document_name,
+                                    "bytes": dl_res.content
+                                }
+                                st.rerun()
+                            else:
+                                st.error(f"Download failed: {dl_res.text}")
+                        except Exception as e:
+                            st.error(f"Error connecting to download route: {e}")
+                            
+        # 🟢 If a document has been pulled into the buffer, expose local save panel
+        if st.session_state.download_buffer:
+            st.markdown("---")
+            st.success(f"🎉 **{st.session_state.download_buffer['name']}** is compiled and ready!")
+            
+            st.download_button(
+                label="💾 Click Here to Save File to Device",
+                data=st.session_state.download_buffer["bytes"],
+                file_name=st.session_state.download_buffer["name"],
+                mime="application/pdf",
+                use_container_width=True
+            )
+            
+            if st.button("🧹 Clear Download Cache", use_container_width=True):
+                st.session_state.download_buffer = None
+                st.rerun()
+    else:
+        st.info("No documents found in cloud storage.")
 
-if not df.empty:
-    st.dataframe(
-        df, 
-        use_container_width=True,
-        hide_index=True,
-        column_config={
-            "Document Name": st.column_config.TextColumn(width="large"),
-            "Status": st.column_config.TextColumn(width="small")
-        }
-    )
-else:
-    st.info("No documents found in cloud storage.")
+# --- Separator ---
+st.markdown("---")
 
-# Upload form logic
+# 🟡 Upload form logic
 with st.form("upload_form", clear_on_submit=True):
     uploaded_files = st.file_uploader(
         "Drag and drop your PDF files here", 
         type=["pdf"], 
         accept_multiple_files=True
     )
-    submit_button = st.form_submit_button("Upload", use_container_width=True)
+    submit_button = st.form_submit_button("Upload Documents", use_container_width=True)
 
 if submit_button and uploaded_files:
     for uploaded_file in uploaded_files:
         try: 
             file_bytes = uploaded_file.getvalue()
             files_payload = {"file": (uploaded_file.name, file_bytes, "application/pdf")}
-            response = requests.post(UPLOAD_URL, files=files_payload, timeout=15)
+            response = st.session_state.http_session.post(UPLOAD_URL, files=files_payload, timeout=15)
 
             if response.status_code == 200:
-                st.toast(f"Uploaded {uploaded_file.name} successfully")
+                st.toast(f"Uploaded {uploaded_file.name} successfully!")
             else:
-                st.error(f"Upload failed: {response.text}")
+                st.error(f"Upload failed for {uploaded_file.name}: {response.text}")
         except Exception as e:
             st.error(f"Upload failed: {e}")
             
-    # Trigger interface refresh to reflect new storage updates
     st.rerun()
-
-
-
-
-
-
-
-
-
-
-# import streamlit as st
-# import os 
-# import time 
-# import pandas as pd
-# import requests
-
-# BASE_URL = "http://127.0.0.1:8000"
-# UPLOAD_URL = f"{BASE_URL}/upload"
-
-# STORAGE_DIR = r"C:\Users\UserAdmin\Documents\Multimodal-RAG\pdfs"
-# os.makedirs(STORAGE_DIR, exist_ok=True)
-
-# if os.path.exists(STORAGE_DIR):
-#     all_files = [f for f in os.listdir(STORAGE_DIR)]
-# else:
-#     all_files = []
-
-# table_data = []
-# for filename in all_files:
-#     full_path = os.path.join(STORAGE_DIR, filename)
-#     full_size_mb = os.path.getsize(full_path) / (1024*1024)
-#     last_modified = time.ctime(os.path.getmtime(full_path))
-
-#     table_data.append({
-#         "Document Name": filename,
-#         "File Size": f"{round(full_size_mb, 2)} MB",
-#         "Date": last_modified,
-#         "Status": "✅"
-#     })
-
-# df = pd.DataFrame(table_data)
-
-# st.dataframe(
-#     df, 
-#     use_container_width=True,
-#     hide_index=True,
-#     column_config={
-#         "Document Name": st.column_config.TextColumn(width="large"),
-#         "Status": st.column_config.TextColumn(width="small")
-#     }
-# )
-
-# with st.form("upload_form", clear_on_submit=True):
-#     uploaded_files = st.file_uploader(
-#         "Drag and drop your PDF files here", 
-#         type=["pdf"], 
-#         accept_multiple_files=True
-#     )
-#     submit_button = st.form_submit_button("Upload", use_container_width=True)
-
-# if submit_button and uploaded_files:
-#     for uploaded_file in uploaded_files:
-#         try: 
-#             file_bytes = uploaded_file.getvalue()
-#             files_payload = {"file": (uploaded_file.name, file_bytes, "application/pdf")}
-#             response = requests.post(UPLOAD_URL, files=files_payload, timeout=10)
-
-#             if response.status_code == 200:
-#                 st.toast(f"Upload successful")
-#             else:
-#                 st.error(f"Upload failed: {response.text}")
-#         except Exception as e:
-#             st.error(f"Upload failed: {e}")
-
-# st.rerun()

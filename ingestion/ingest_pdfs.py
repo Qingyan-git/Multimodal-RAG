@@ -130,9 +130,9 @@ async def process_page_single(filepath, page_no, semaphore):
         return markdown, vector
 
 
-async def parse_pdf(filepath):
+async def parse_pdf(filepath, filesize):
     filename = filepath.name
-    await insert_pdf(filename, filepath)
+    await insert_pdf(filename, filepath, filesize)
 
     semaphore = asyncio.Semaphore(1)
 

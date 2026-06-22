@@ -122,26 +122,26 @@ async def similarity_search(splade_vector, page_embeddings):
         #     limit=20,
         # )
 
-        # response = await client.query_points(
-        #     collection_name=name,
-        #     prefetch=[
-        #         models.Prefetch(
-        #             query=qdrant_sparse,     # The sparse vector
-        #             using="splade_vector",   # The sparse vector namespace
-        #             limit=100
-        #         )
-        #     ],
-        #     query=page_embeddings,           # The dense vector re-ranks the top 50
-        #     using="page_embeddings",         # The dense vector namespace
-        #     limit=20,                        # Returns final top 20
-        # )
-
         response = await client.query_points(
             collection_name=name,
-            query=page_embeddings,
-            using="page_embeddings",
-            limit=20,
+            prefetch=[
+                models.Prefetch(
+                    query=qdrant_sparse,     # The sparse vector
+                    using="splade_vector",   # The sparse vector namespace
+                    limit=200
+                )
+            ],
+            query=page_embeddings,           # The dense vector re-ranks the top 50
+            using="page_embeddings",         # The dense vector namespace
+            limit=20,                        # Returns final top 20
         )
+
+        # response = await client.query_points(
+        #     collection_name=name,
+        #     query=page_embeddings,
+        #     using="page_embeddings",
+        #     limit=20,
+        # )
         
         retrieved = {}
         for point in response.points:

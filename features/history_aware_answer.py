@@ -1,10 +1,12 @@
 
 import asyncio
+from fastapi import HTTPException, status
 
 from retrieval.retrieval import answer_user_question
 from scripts.models import openai_model
 from scripts.config import settings
-from scripts.supabase import get_non_cached, append_summary, convert_cached
+from scripts.supabase import get_non_cached, append_summary, convert_cached, create_chat, create_chatitem, get_chat_history
+
 
 
 
@@ -61,3 +63,51 @@ async def summarise_chat(user_id, chat_id):
     await convert_cached(chat_ids)
 
     return
+
+
+async def process_user_question(question,chat_id,user_id):
+
+    prompt_safety = await openai_model.check_guardrail(question)
+    is_safe = prompt_safety.is_safe
+
+    if is_safe == False:
+        violation = prompt_safety.violation_category
+        reasoning = prompt_safety.reasoning
+
+        raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, 
+                detail=f"Query rejected due to : {violation}. Reason: {reasoning}"
+            )
+    
+    else:
+        intent = await openai_model.classify_query(question)
+
+        if chat_id == -1:
+            chat_name = f'{question[:20]}...'
+            chat_id = await create_chat(chat_name,user_id)
+
+        if intent == 'chitchat':
+            answer = await openai_model.respond_to_chitchat(question)
+            sources = []
+
+        else:
+            chat_summary, uncached_chats = await get_chat_history(user_id, chat_id)
+            rewritten_query = await contextualise_query(question, chat_summary, uncached_chats)
+            answer, used_sources = await answer_user_question(rewritten_query)
+            sources = [
+                {
+                    'pdf_name' : src['pdf_name'],
+                    'page_num' : src['page_num'],
+                    'image_base64' : src['image_base64']
+                }
+                for src in used_sources
+            ]
+
+        await create_chatitem(question,answer,user_id,chat_id)
+        await summarise_chat(user_id, chat_id)
+
+        return {
+            'chat_id' : chat_id,
+            'answer' : answer,
+            'sources' : sources
+        }

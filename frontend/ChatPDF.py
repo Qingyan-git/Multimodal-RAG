@@ -172,14 +172,15 @@ elif st.session_state.show_auth_modal == "signup":
         with col1:
             if st.form_submit_button("Register", use_container_width=True):
                 try:
-                    signup_res = requests.post(
+                    # 🟢 CHANGED: Use st.session_state.http_session to intercept and preserve the login cookie
+                    signup_res = st.session_state.http_session.post(
                         f"{BASE_URL}/signup", 
                         json={"username": new_username, "password": new_password},
                         timeout=10
                     )
                     if signup_res.status_code == 200:
-                        st.success("Account created successfully!")
-                        st.session_state.show_auth_modal = "login" 
+                        st.success(f"Welcome to ChatPDF, {new_username}! You are now logged in.")
+                        st.session_state.show_auth_modal = None # Close modal instantly
                         time.sleep(1)
                         st.rerun()
                     else:

@@ -21,21 +21,47 @@ async def get_connection():
 
 async def get_documents():
     try:
-        name = settings.supabase_bucket_name
         client = await get_connection()
         response = await (client
-        .from_(name)
-        .list(
-                "folder",
-                {
-                    "sortBy": {"column": "name", "order": "desc"},
-                }
-            )
+            .table('pdfs')
+            .select('name, created_at, filesize')
+            .order('created_at', desc=True)
+            .execute()
         )
 
+        if response.data:
+            return response.data
+        return []
 
     except Exception as e:
         print(f'Unable to get documents from supabase, error \n{e}\n')
+
+
+async def download_document(name):
+    try:
+        client = await get_connection()
+        response = await (client
+            .table('pdfs')
+            .select('path')
+            .eq('name', name)
+            .limit(1)
+            .execute()
+        )
+
+        if response.data:
+            download_path = response.data[0]['path']
+            bucket_name = settings.supabase_bucket_name
+            pdf = await (client
+                .storage
+                .from_(bucket_name)
+                .download(download_path)
+            )
+            return pdf
+
+        return []
+
+    except Exception as e:
+        print(f'Unable to download document {name}, error \n{e}\n')
 
 
 async def get_session(session_id):
@@ -252,7 +278,7 @@ async def get_chat_history(user_id, chat_id):
             .execute()
         )
 
-        chat_summary = response.data[0]['chatsummary'] if response.data else None
+        chat_summary = response.data[0]['chatsummary'] if response.data else ""
 
         response = await (client
             .table('chatitem')
@@ -267,9 +293,10 @@ async def get_chat_history(user_id, chat_id):
         if response.data:
             uncached_chats = [{'question': item['question'], 'response': item['response']} for item in response.data]
         else:
-            uncached_chats = None
+            uncached_chats = []
 
         return chat_summary, uncached_chats
+        
     except Exception as e:
         print(f'Unable to get chat history, error \n{e}\n')
         raise
@@ -327,13 +354,13 @@ async def create_chatitem(question, response, user_id, chat_id):
         raise
 
 
-async def insert_pdf(name, path):
+async def insert_pdf(name, path, filesize):
     try:
         client = await get_connection()
         await (client
             .table("pdfs")
             .upsert(
-                {'name': name, 'path': str(path)},
+                {'name': name, 'path': str(path), 'filesize': filesize},
                 on_conflict="path",
                 ignore_duplicates=False,
             )
@@ -417,8 +444,6 @@ async def retrieve_source_from_pageid(page_id):
             page_no = info['num']
             bucket_path = str(info['bucket_path'])
 
-            print(f"DEBUG: Attempting to download from bucket '{settings.supabase_bucket_name}' at path: '{bucket_path}'")
-
             bucket_name = settings.supabase_bucket_name
             page_image = await (client
                 .storage
@@ -428,7 +453,34 @@ async def retrieve_source_from_pageid(page_id):
 
             return pdf_name, page_no, page_image
         else:
-            print(f"DEBUG: NO PAGE_IMAGE FOUND AT : {response.data[0]['bucket_path']}")
+            return None
+
+    except Exception as e:
+        print(f'Unable to retrieve page data from pageid, error \n{e}\n')
+
+
+async def retrieve_info_from_pageid(page_id):
+    try:
+        client = await get_connection()
+
+        response = await (client
+        .table("pages")
+        .select(
+            "num",
+            "pdfs(name, path)",
+        )
+        .eq("page_id", page_id)
+        .limit(1)
+        .execute())
+
+        if response.data:
+            info = response.data[0]
+            pdf_path = info['pdfs']['path']
+            pdf_name = info['pdfs']['name']
+            page_no = info['num']
+
+            return pdf_path, pdf_name, page_no
+        else:
             return None
 
     except Exception as e:
@@ -443,55 +495,20 @@ async def retrieve_string_from_pageid(page_id):
             .table('pages')
             .select('pdfs(name), num')
             .eq('page_id', page_id)
-            .single()
+            .limit(1)
             .execute()
         )
 
         if response.data:
-            pdf_name = response.data['pdfs']['name']
-            page_no = response.data['num']
+            pdf_name = response.data[0]['pdfs']['name']
+            page_no = response.data[0]['num']
             return pdf_name,page_no
 
         else:
             return []
 
     except Exception as e:
-        print(f'Unable to retrieve page_no from pageid, error \n{e}\n')
-
-
-async def retrieve_source_from_pdf_name(pdf_name, page_no):
-    try:
-        client = await get_connection()
-
-        response = await (client
-            .table("pages")
-            .select("bucket_path, pdfs!inner(name)")
-            .eq("num", page_no)
-            .eq("pdfs.name", pdf_name)
-            .limit(1)
-            .execute()
-        )
-
-        if response.data:
-            info = response.data[0]
-            bucket_path = str(info['bucket_path'])
-            bucket_name = settings.supabase_bucket_name
-            page_image = await (client
-                .storage
-                .from_(bucket_name)
-                .download(bucket_path)
-            )
-
-            return page_image
-        else:
-
-            print(f"DEBUG: NO PAGE_IMAGE FOUND AT : {response.data[0]['bucket_path']}")
-
-            return None
-
-    except Exception as e:
-        print(f'Unable to retrieve page data from pdf name, error \n{e}\n')
-        raise
+        print(f'Unable to retrieve string from pageid, error \n{e}\n')
 
 
 async def retrieve_markdowns(page_ids):
