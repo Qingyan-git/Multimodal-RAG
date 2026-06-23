@@ -82,7 +82,7 @@ async def get_session(session_id):
         raise
 
 
-async def create_session(session_id, user_id, delta=5):
+async def create_session(session_id, user_id, delta=15):
     try:
         client = await get_connection()
 

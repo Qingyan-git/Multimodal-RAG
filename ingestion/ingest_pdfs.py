@@ -25,35 +25,6 @@ from scripts.models import (
 from scripts.config import settings
 
 
-def is_useable_image(img, page_w, page_h, min_dim=100, area_threshold=0.20):
-    if not img.prov:
-        return False
-        
-    prov = img.prov[0]
-    bbox = prov.bbox
-    
-    # 1. Basic Dimension Check
-    if bbox.height == 0 or bbox.width == 0:
-        return False
-    
-    if bbox.height < min_dim or bbox.width < min_dim:
-        return False
-
-    # 2. Aspect Ratio Check
-    ratio = bbox.height / bbox.width 
-    if ratio > 5 or ratio < 0.2:
-        return False
-        
-    # 3. Normalized Area Check
-    image_area = bbox.width * bbox.height
-    page_area = page_w * page_h
-    normalized_area = image_area / page_area
-    
-    if normalized_area < area_threshold:
-        return False
-        
-    return True
-
 
 async def get_page_markdown(document, page_no, openai_model):
     serializer = MarkdownDocSerializer(doc=document)
