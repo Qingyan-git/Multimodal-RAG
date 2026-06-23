@@ -10,8 +10,6 @@ from dotenv import load_dotenv
 from contextlib import asynccontextmanager
 from io import BytesIO
 
-from scripts.models import QueryRequest, QueryResponse
-
 from docling.datamodel.base_models import InputFormat
 from docling.datamodel.pipeline_options import PdfPipelineOptions
 from docling.document_converter import DocumentConverter, PdfFormatOption
@@ -31,7 +29,7 @@ app = FastAPI(title="RAG Backend")
 class DocumentSource(BaseModel):
     pdf_name: str
     page_num: int
-    image_base64: str 
+    signed_url: str 
 
 
 class QueryRequest(BaseModel):
@@ -136,7 +134,7 @@ async def query(payload: QueryRequest, user_id: int = Depends(user_verification)
             DocumentSource(
                     pdf_name=src["pdf_name"],
                     page_num=src["page_num"],
-                    image_base64=src["image_base64"]
+                    signed_url=src["signed_url"]
                 )
                 for src in response['sources']]
         )

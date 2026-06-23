@@ -25,20 +25,6 @@ from fastembed import SparseTextEmbedding
 
 from scripts.config import settings
 
-
-class DocumentSource(BaseModel):
-    pdf_name: str
-    page_num: int
-    image_base64: str 
-
-class QueryRequest(BaseModel):
-    text: str
-
-class QueryResponse(BaseModel):
-    answer: str
-    sources: List[DocumentSource]
-
-
 class IntentEnum(str, Enum):
     chitchat = "chitchat"
     rag_query = "rag_query"
@@ -76,6 +62,8 @@ class OpenAIModel:
             max_retries=2,
             reasoning_effort='low'
         )
+
+        print(f'\nModel used : {model}\n')
 
 
     async def check_guardrail(self,prompt):
@@ -239,7 +227,7 @@ class OpenAIModel:
             page_id = source[0]
             pdf_name = source[1]
             page_no = source[2]
-            image_base64 = source[3]
+            source_url = source[3]
 
             message.append({
                 "type": "text",
@@ -250,7 +238,7 @@ class OpenAIModel:
             message.append({
                 "type": "image_url",
                 "image_url": {
-                    "url": f"data:image/jpeg;base64,{image_base64}",
+                    "url": source_url,
                     "detail": "high"
                 }
             })
@@ -271,19 +259,19 @@ class OpenAIModel:
 
             YOUR CORE TASKS:
             1. Formulate a comprehensive answer based solely on the text, charts, or visual evidence in the provided images.
-            2. Provide explicit inline citations using the exact `id` property from the source tag whenever you state a fact extracted from an image (e.g., [Source ID: 45]).
+            2. Provide explicit inline citations specifying the document name and page number whenever you state a fact extracted from an image, matching the layout: {document_name} : Pages {page_no} (e.g., WHO World health statistics 2025.pdf : Pages 14).
             3. Underneath your complete answer, output a machine-readable list capturing ONLY the source IDs you actively cited.
 
             STRICT OUTPUT FORMAT MATCHING:
             Your output must strictly separate the prose response from the source metadata using the exact tag block shown below:
 
-            [Your detailed conversational and analysis response goes here, utilizing regular inline ID citations.]
+            [Your detailed conversational and analysis response goes here, utilizing regular inline citations in the format {document_name} : Pages {page_no}]
 
             --- SOURCES ---
             <used_source>ID: [Exact Source ID]</used_source>
 
             CRITICAL INSTRUCTIONS FOR THE SOURCE MANIFEST:
-            - DIRECT CORRELATION REQUIREMENT: A `<used_source>` line must ONLY be generated for a document if you explicitly cited that exact `id` inline within your response text. If a source was provided but you did not use its facts, DO NOT include it in the manifest.
+            - DIRECT CORRELATION REQUIREMENT: A `<used_source>` line must ONLY be generated for a document if you explicitly cited its facts inline within your response text. If a source was provided but you did not use its facts, DO NOT include it in the manifest.
             - ABSOLUTE ZERO RULE: If you determine that the images do not contain enough information to answer the query, state: "I cannot find the answer based on the provided document sources." When this happens, you MUST NOT output any `<used_source>` tags or the `---` markdown line. The manifest must be completely empty.
             - The `<used_source>` tags must sit at the absolute end of your output, with one tag per line for each source used.
             - You must use the exact format: <used_source>ID: X</used_source>

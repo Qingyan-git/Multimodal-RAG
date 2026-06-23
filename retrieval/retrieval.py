@@ -13,7 +13,6 @@ import pymupdf
 
 from scripts.supabase import retrieve_markdowns, retrieve_source_from_pageid, retrieve_info_from_pageid, retrieve_string_from_pageid
 from scripts.qdrant import similarity_search
-from scripts.models import QueryRequest, QueryResponse, DocumentSource
 from scripts.models import (
     openai_model,
     qwen3vl_model,
@@ -82,30 +81,9 @@ def apply_rrf(results, k=60):
 
 async def get_sources(page_ids):
     async def _process_source(page_id):
-        # pdf_path, pdf_name, page_no = await retrieve_info_from_pageid(page_id)
-
-        # with pymupdf.open(Path(r'C:\Users\Chu Qingyan\Documents\WFH\Multimodal-RAG\pdfs\WHO World health statistics 2025.pdf')) as doc:
-        #     page = doc[page_no-1]
-        #     pix = page.get_pixmap() 
-        #     image_bytes = pix.tobytes("jpeg")
-        #     image_base64 = base64.b64encode(image_bytes).decode('utf-8')
-
-        # source = (page_id,pdf_name,page_no,image_base64)
-        # return source
-
-        pdf_name, page_no, page_image = await retrieve_source_from_pageid(page_id)
-        if page_image == None:
-            print(f'\nNO PAGE IMAGE DETECTED FROM {pdf_name} {page_no}\n')
-            image_base64 = ""
-        else:
-            image_base64 = base64.b64encode(page_image).decode('utf-8')
-
-        source = (page_id, pdf_name, page_no, image_base64) 
+        pdf_name, page_no, source_url = await retrieve_source_from_pageid(page_id)
+        source = (page_id, pdf_name, page_no, source_url) 
         return source
-
-        '''
-        here to toggle between pymupdf and supabase
-        '''
 
     tasks = [_process_source(page_id) for page_id in page_ids]
     sources = await asyncio.gather(*tasks)
@@ -122,7 +100,7 @@ async def extract_used_sources(llm_output, original_sources):
         return clean_answer, [{
             'pdf_name' : source[1],
             'page_num' : source[2],
-            'image_base64' : source[3]
+            "signed_url": source_data[3]
         } for source in original_sources]
 
     else:
@@ -138,7 +116,7 @@ async def extract_used_sources(llm_output, original_sources):
                 used_sources.append({
                     "pdf_name": source_data[1],
                     "page_num": int(source_data[2]),
-                    "image_base64": source_data[3]
+                    "signed_url": source_data[3]
                 })
             else:
                 print(f"Warning: LLM cited ID '{clean_id}', but it wasn't in original_sources.")

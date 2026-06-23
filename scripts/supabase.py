@@ -456,14 +456,15 @@ async def retrieve_source_from_pageid(page_id):
             page_no = info['num']
             bucket_path = str(info['bucket_path'])
 
-            bucket_name = settings.supabase_bucket_name
-            page_image = await (client
+            signed_url_response = await (client
                 .storage
-                .from_(bucket_name)
-                .download(bucket_path)
+                .from_(settings.supabase_bucket_name)
+                .create_signed_url(bucket_path, 300)
             )
 
-            return pdf_name, page_no, page_image
+            signed_url = signed_url_response.get('signedURL')
+
+            return pdf_name, page_no, signed_url
         else:
             return None
 

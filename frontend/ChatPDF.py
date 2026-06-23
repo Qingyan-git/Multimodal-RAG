@@ -216,14 +216,13 @@ with left:
                 for idx, page_tab in enumerate(page_tabs):
                     with page_tab:
                         current_page = pages[idx]
-                        if current_page.get("image_base64"):
-                            b64_data = current_page["image_base64"]
-                            if "," in b64_data:
-                                b64_data = b64_data.split(",")[1]
-                                
-                            img_data = base64.b64decode(b64_data)
-                            pil_img = Image.open(BytesIO(img_data))
-                            st.image(pil_img, use_container_width=True)
+                        
+                        # 🟢 RENDER DIRECTLY VIA SIGNED_URL
+                        if current_page.get("signed_url"):
+                            url = current_page["signed_url"]
+                            st.image(url, use_container_width=True)
+                        else:
+                            st.warning("No image available for this page.")
     else:
         st.info("👋 Welcome to ChatPDF!")
         st.markdown("""
@@ -232,6 +231,7 @@ with left:
         2. Click **➕ New Chat** inside your sidebar to start fresh.
         3. Enter a question on the right panel to extract real-time image contexts.
         """)
+
 
 # Right Column: Main Chat Room Interface
 with right: 

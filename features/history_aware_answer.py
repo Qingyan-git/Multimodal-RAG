@@ -94,14 +94,6 @@ async def process_user_question(question,chat_id,user_id):
             chat_summary, uncached_chats = await get_chat_history(user_id, chat_id)
             rewritten_query = await contextualise_query(question, chat_summary, uncached_chats)
             answer, used_sources = await answer_user_question(rewritten_query)
-            sources = [
-                {
-                    'pdf_name' : src['pdf_name'],
-                    'page_num' : src['page_num'],
-                    'image_base64' : src['image_base64']
-                }
-                for src in used_sources
-            ]
 
         await create_chatitem(question,answer,user_id,chat_id)
         await summarise_chat(user_id, chat_id)
@@ -109,5 +101,5 @@ async def process_user_question(question,chat_id,user_id):
         return {
             'chat_id' : chat_id,
             'answer' : answer,
-            'sources' : sources
+            'sources' : used_sources
         }

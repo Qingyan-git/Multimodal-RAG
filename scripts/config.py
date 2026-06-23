@@ -2,7 +2,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import SecretStr
 
 class Settings(BaseSettings):
-    openai_model: str = "gpt-5-nano"
+    openai_model: str
     openai_api_key: SecretStr
 
     colqwen_model: str = 'vidore/colqwen2-v1.0-hf'
