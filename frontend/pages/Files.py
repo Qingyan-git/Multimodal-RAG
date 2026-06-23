@@ -1,11 +1,13 @@
 import streamlit as st
 import pandas as pd
 import requests
+from datetime import datetime
 
 BASE_URL = "http://127.0.0.1:8000"
 DOCUMENTS_URL = f"{BASE_URL}/documents"
 UPLOAD_URL = f"{BASE_URL}/upload"
 
+st.set_page_config(page_title="Documents Manager", layout="wide")
 st.title("Documents")
 
 # Initialize a persistent session in Streamlit state if it doesn't exist
@@ -39,7 +41,7 @@ if connection_success:
     if docs:
         st.write("### 📂 Available Documents")
         
-        # 🟢 Updated Layout Columns: Name, Upload Date, Size, Action Button
+        # 🟢 Layout Columns: Name, Upload Date, Size, Action Button
         col_header1, col_header2, col_header3, col_header4 = st.columns([3, 2, 1, 1.5])
         with col_header1:
             st.markdown("**Document Name**")
@@ -55,7 +57,7 @@ if connection_success:
         for idx, doc in enumerate(docs):
             document_name = doc.get("name", "Unknown Document")
             
-            # 🟢 Format the timestamp cleanly (e.g., "22 Jun 2026, 19:05")
+            # 🟢 Format the timestamp cleanly
             raw_date = doc.get("created_at")
             if raw_date:
                 try:
@@ -85,7 +87,7 @@ if connection_success:
             with row_col3:
                 st.caption(formatted_size)
             with row_col4:
-                # Triggers the on-demand API fetch call strictly on-click
+                # 1. Fetch file bytes into state memory upon button interaction
                 if st.button("📥 Download", key=f"fetch_{idx}", use_container_width=True):
                     with st.spinner("Downloading..."):
                         try:
@@ -93,6 +95,7 @@ if connection_success:
                             dl_res = st.session_state.http_session.post(download_url, timeout=30)
                             
                             if dl_res.status_code == 200:
+                                # Save the data cleanly into Streamlit's state memory
                                 st.session_state.download_buffer = {
                                     "name": document_name,
                                     "bytes": dl_res.content
@@ -102,23 +105,39 @@ if connection_success:
                                 st.error(f"Download failed: {dl_res.text}")
                         except Exception as e:
                             st.error(f"Error connecting to download route: {e}")
-                            
-        # 🟢 If a document has been pulled into the buffer, expose local save panel
+
+        # 2. 🟢 If data exists in the buffer, render hidden native button and click it instantly via DOM
         if st.session_state.download_buffer:
-            st.markdown("---")
-            st.success(f"🎉 **{st.session_state.download_buffer['name']}** is compiled and ready!")
+            # Render a structural wrapper containing our auto-trigger mechanism
+            with st.container():
+                st.download_button(
+                    label="Processing...",
+                    data=st.session_state.download_buffer["bytes"],
+                    file_name=st.session_state.download_buffer["name"],
+                    mime="application/pdf",
+                    key="auto_trigger_download_btn"
+                )
+                
+                # Native, safe JavaScript snippet executed directly on the main page DOM (avoids iframe sandbox)
+                st.components.v1.html(
+                    """
+                    <script>
+                        // Target all parent buttons rendered on the main page canvas
+                        const buttons = window.parent.document.querySelectorAll("button");
+                        for (const button of buttons) {
+                            if (button.innerText.includes("Processing...")) {
+                                button.click();
+                                break;
+                            }
+                        }
+                    </script>
+                    """,
+                    height=0,
+                    width=0
+                )
             
-            st.download_button(
-                label="💾 Click Here to Save File to Device",
-                data=st.session_state.download_buffer["bytes"],
-                file_name=st.session_state.download_buffer["name"],
-                mime="application/pdf",
-                use_container_width=True
-            )
-            
-            if st.button("🧹 Clear Download Cache", use_container_width=True):
-                st.session_state.download_buffer = None
-                st.rerun()
+            # Flush the memory state immediately to block automated loop recursion re-downloads
+            st.session_state.download_buffer = None
     else:
         st.info("No documents found in cloud storage.")
 

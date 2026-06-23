@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException, status, UploadFile, File, BackgroundTasks, Depends, Cookie, Response
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from typing import List, Dict, Any
 import os 
@@ -6,9 +7,9 @@ import uvicorn
 from ingestion import ingest_pdfs
 from pathlib import Path
 from dotenv import load_dotenv
-
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, HTTPException
+from io import BytesIO
+
 from scripts.models import QueryRequest, QueryResponse
 
 from docling.datamodel.base_models import InputFormat
@@ -16,6 +17,7 @@ from docling.datamodel.pipeline_options import PdfPipelineOptions
 from docling.document_converter import DocumentConverter, PdfFormatOption
 from fastembed import SparseTextEmbedding
 
+from scripts.config import settings
 from scripts.models import openai_model, colqwen_model, qwen3vl_model, sparse_embedder, jina
 from retrieval.retrieval import answer_user_question
 from features.user_login import sign_up, login, verify_session
@@ -25,29 +27,6 @@ from scripts.supabase import get_chats, get_chatitems, create_chat, create_chati
 BASE_DIR = Path(__file__).resolve().parent
 dotenv_path = BASE_DIR / ".env"
 load_dotenv(dotenv_path=dotenv_path, override=True)
-
-# @asynccontextmanager
-# async def lifespan(app: FastAPI):
-    
-#     pipeline_options = PdfPipelineOptions()
-#     pipeline_options.generate_picture_images = True
-#     pipeline_options.generate_page_images = True
-#     pipeline_options.images_scale = 2.0
-    
-#     app.state.models = {
-#         "converter": DocumentConverter(
-#             format_options={InputFormat.PDF: PdfFormatOption(pipeline_options=pipeline_options)}
-#         ),
-#         "openai_model": OpenAIModel(),
-#         "qwen3vl_model" : Qwen3VL(),
-#         "colqwen_model": ColQwenModel(),
-#         "sparse_embedder": SparseEmbedder()
-#     }
-    
-#     yield
-
-#     app.state.models.clear()
-
 
 app = FastAPI(title="RAG Backend")
 STORAGE_DIR = r"C:\Users\UserAdmin\Documents\Multimodal-RAG\pdfs"
@@ -226,9 +205,17 @@ async def return_documents(user_id: int = Depends(user_verification)):
     try:
         uploaded_documents = await get_documents()
 
+        documents = []
+        for document in uploaded_documents:
+            documents.append({
+                'name' : document['name'],
+                'filesize' : document['filesize'],
+                'created_at' : document['created_at'] 
+            })
+
         return {
             "status" : "success",
-            "documents" : uploaded_documents
+            "documents" : documents
         }
 
     except Exception as e:
