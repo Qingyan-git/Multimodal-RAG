@@ -260,7 +260,7 @@ with right:
                                 "chat_id": st.session_state.selected_chat_id or -1
                             }
                             
-                            response = st.session_state.http_session.post(QUERY_URL, json=payload, timeout=300)
+                            response = st.session_state.http_session.post(QUERY_URL, json=payload, timeout=(15*60))
                             if response.status_code == 200:
                                 data = response.json()
                                 answer = data["answer"]

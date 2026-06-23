@@ -354,7 +354,7 @@ async def create_chatitem(question, response, user_id, chat_id):
         raise
 
 
-async def insert_pdf(name, path, filesize):
+async def insert_pdf(file, name, path, filesize):
     try:
         client = await get_connection()
         await (client
@@ -366,6 +366,18 @@ async def insert_pdf(name, path, filesize):
             )
             .execute()
         )
+
+        bucket_name = settings.supabase_bucket_name
+        await (client
+            .storage
+            .from_(bucket_name)
+            .upload(
+                file=file,
+                path=path,
+                file_options={"cache-control": "3600", "upsert": "true"}
+            )
+        )
+
     except Exception as e:
         print(f'Unable to insert pdf {name} into supabase, error {e}\n\n')
         raise

@@ -154,6 +154,8 @@ with st.form("upload_form", clear_on_submit=True):
     submit_button = st.form_submit_button("Upload Documents", use_container_width=True)
 
 if submit_button and uploaded_files:
+    upload_occurred = False
+    
     for uploaded_file in uploaded_files:
         try: 
             file_bytes = uploaded_file.getvalue()
@@ -162,9 +164,17 @@ if submit_button and uploaded_files:
 
             if response.status_code == 200:
                 st.toast(f"Uploaded {uploaded_file.name} successfully!")
+                upload_occurred = True
+            elif response.status_code == 401:
+                # 🛑 Catching the 401 Unauthorized block from FastAPI dependencies
+                st.error("🔒 Unauthorized: Please log in first to upload documents.")
+                break  # Halt further file processing iterations if unauthorized
             else:
                 st.error(f"Upload failed for {uploaded_file.name}: {response.text}")
+                
         except Exception as e:
             st.error(f"Upload failed: {e}")
             
-    st.rerun()
+    # Only refresh the UI state if at least one upload completed successfully
+    if upload_occurred:
+        st.rerun()

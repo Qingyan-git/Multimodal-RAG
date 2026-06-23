@@ -82,7 +82,7 @@ def apply_rrf(results, k=60):
 
 async def get_sources(page_ids):
     async def _process_source(page_id):
-        pdf_path, pdf_name, page_no = await retrieve_info_from_pageid(page_id)
+        # pdf_path, pdf_name, page_no = await retrieve_info_from_pageid(page_id)
 
         # with pymupdf.open(Path(r'C:\Users\Chu Qingyan\Documents\WFH\Multimodal-RAG\pdfs\WHO World health statistics 2025.pdf')) as doc:
         #     page = doc[page_no-1]
@@ -93,7 +93,7 @@ async def get_sources(page_ids):
         # source = (page_id,pdf_name,page_no,image_base64)
         # return source
 
-        pdf_name, page_no, page_image = retrieve_source_from_pageid(page_id)
+        pdf_name, page_no, page_image = await retrieve_source_from_pageid(page_id)
         if page_image == None:
             print(f'\nNO PAGE IMAGE DETECTED FROM {pdf_name} {page_no}\n')
             image_base64 = ""

@@ -101,10 +101,7 @@ async def process_page_single(filepath, page_no, semaphore):
         return markdown, vector
 
 
-async def parse_pdf(filepath, filesize):
-    filename = filepath.name
-    await insert_pdf(filename, filepath, filesize)
-
+async def parse_pdf(filepath):
     semaphore = asyncio.Semaphore(1)
 
     with pymupdf.open(filepath) as doc:

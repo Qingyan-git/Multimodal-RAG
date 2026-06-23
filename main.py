@@ -22,14 +22,11 @@ from scripts.models import openai_model, colqwen_model, qwen3vl_model, sparse_em
 from retrieval.retrieval import answer_user_question
 from features.user_login import sign_up, login, verify_session
 from features.history_aware_answer import process_user_question
-from scripts.supabase import get_chats, get_chatitems, create_chat, create_chatitem, get_chat_history, get_documents, download_document
+from scripts.supabase import insert_pdf, get_chats, get_chatitems, create_chat, create_chatitem, get_chat_history, get_documents, download_document
 
-BASE_DIR = Path(__file__).resolve().parent
-dotenv_path = BASE_DIR / ".env"
-load_dotenv(dotenv_path=dotenv_path, override=True)
+
 
 app = FastAPI(title="RAG Backend")
-STORAGE_DIR = r"C:\Users\UserAdmin\Documents\Multimodal-RAG\pdfs"
 
 class DocumentSource(BaseModel):
     pdf_name: str
@@ -179,25 +176,33 @@ async def enter_chat(chat_id:str,user_id: int = Depends(user_verification)):
 
 
 @app.post("/upload")
-async def upload_pdf(background_tasks: BackgroundTasks, file: UploadFile = File(...)):
+async def upload_pdf(background_tasks: BackgroundTasks, file: UploadFile = File(...), user_id=Depends(user_verification)):
     try:
+        if not file.filename.lower().endswith('.pdf'):
+            raise HTTPException(status_code=400, detail="Only valid PDF files are allowed.")
 
         content = await file.read()
         filesize_bytes = len(content)
-        target_path = settings.local_storage_dir / file.filename
+        
+        supabase_storage_path = f'{file.filename}/full_pdf.pdf'
+        await insert_pdf(content, file.filename, supabase_storage_path, filesize_bytes)
+
+        target_path = Path(settings.local_storage_dir) / file.filename
         with open(target_path, "wb") as f:
             f.write(content)
+            f.flush()
         absolute_local_path = str(target_path.resolve())
-        background_tasks.add_task(ingest_pdfs.ingest_pdf, Path(absolute_local_path), filesize_bytes)
+        background_tasks.add_task(ingest_pdfs.ingest_pdf, Path(absolute_local_path))
 
         return {
             "status": "success",
-            "message": f"'{file.filename}' successfully processed.",
+            "message": f"'{file.filename}' successfully processed and sent to background RAG worker.",
         }
-
-
+        
+    except HTTPException as e:
+        raise e
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"File processing failed: {e}")
+        raise HTTPException(status_code=500, detail=f"File disk deployment failed: {str(e)}")
 
 
 @app.post("/documents")

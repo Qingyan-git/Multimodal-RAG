@@ -57,6 +57,12 @@ async def create_collection():
             hnsw_config=models.HnswConfigDiff(on_disk=True)
         )
 
+        client.create_payload_index(
+            collection_name=name,
+            field_name="page_id",
+            field_schema=PayloadSchemaType.INTEGER, # Or PayloadSchemaType.FLOAT
+        )
+
         print(f'Collection {name} successfully created.\n\n')
 
     except Exception as e:
