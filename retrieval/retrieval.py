@@ -100,7 +100,7 @@ async def extract_used_sources(llm_output, original_sources):
         return clean_answer, [{
             'pdf_name' : source[1],
             'page_num' : source[2],
-            "signed_url": source_data[3]
+            "signed_url": source[3]
         } for source in original_sources]
 
     else:
