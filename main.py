@@ -76,7 +76,7 @@ async def user_signup(user_data: UserCredentials, response: Response):
             httponly=True,
             secure=False,
             samesite="lax",
-            max_age=300
+            max_age=900
         )
 
         return { 
@@ -104,7 +104,7 @@ async def user_login(user_data:UserCredentials, response:Response):
             httponly=True,
             secure=False,
             samesite="lax",
-            max_age=300
+            max_age=900
         )
 
         return {
