@@ -1,6 +1,7 @@
 
 import asyncio
 from fastapi import HTTPException, status
+from datetime import datetime
 
 from retrieval.retrieval import answer_user_question
 from scripts.models import openai_model
@@ -67,8 +68,15 @@ async def summarise_chat(user_id, chat_id):
 
 async def process_user_question(question,chat_id,user_id):
 
+    total_bef = datetime.now()
+
+    bef = datetime.now()
     prompt_safety = await openai_model.check_guardrail(question)
     is_safe = prompt_safety.is_safe
+    after = datetime.now()
+    duration = after - bef
+
+    print(f'\nTime taken to check guardrail : {duration.total_seconds()}\n')
 
     if is_safe == False:
         violation = prompt_safety.violation_category
@@ -80,7 +88,12 @@ async def process_user_question(question,chat_id,user_id):
             )
     
     else:
+        bef = datetime.now()
         intent = await openai_model.classify_query(question)
+        after = datetime.now()
+        duration = after - bef
+
+        print(f'\nTime taken to classify intent : {duration.total_seconds()}\n')
 
         if chat_id == -1:
             chat_name = f'{question[:20]}...'
@@ -91,12 +104,27 @@ async def process_user_question(question,chat_id,user_id):
             sources = []
 
         else:
+            
+            bef = datetime.now()
             chat_summary, uncached_chats = await get_chat_history(user_id, chat_id)
+            after = datetime.now()
+            duration = after - bef
+
+            print(f'\nTime taken to summarise chat : {duration.total_seconds()}\n')
+
+            bef = datetime.now()
             rewritten_query = await contextualise_query(question, chat_summary, uncached_chats)
+            after = datetime.now()
+            print(f'\nTime taken to rewrite query : {duration.total_seconds()}\n')
+
             answer, used_sources = await answer_user_question(rewritten_query)
 
         await create_chatitem(question,answer,user_id,chat_id)
         await summarise_chat(user_id, chat_id)
+
+        total_after = datetime.now()
+        total_duration = total_after - total_bef
+        print(f'\nTime taken for whole answering : {total_duration.total_seconds()}\n')
 
         return {
             'chat_id' : chat_id,

@@ -187,7 +187,7 @@ async def answer_user_question(question):
     total_time = (total_post - total_pre).total_seconds()
     time_taken += f'Total time taken to answer question : {total_time}\n'
 
-    print(f'\nTime taken : {time_taken}\n')
+    print(f'\n{time_taken}\n')
 
     '''
     check here if object nonetype iterable error

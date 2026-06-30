@@ -459,7 +459,7 @@ async def retrieve_source_from_pageid(page_id):
             signed_url_response = await (client
                 .storage
                 .from_(settings.supabase_bucket_name)
-                .create_signed_url(bucket_path, 300)
+                .create_signed_url(bucket_path, 900)
             )
 
             signed_url = signed_url_response.get('signedURL')
