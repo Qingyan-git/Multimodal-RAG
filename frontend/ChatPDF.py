@@ -46,7 +46,7 @@ with st.sidebar:
     if is_logged_in:
         st.success("🟢 Status: Logged In")
     else:
-        st.warning("🔴 Status: Guest / Signed Out")
+        st.warning("🔴 Status: Signed Out")
 
     st.header("💬 Chats")
     
