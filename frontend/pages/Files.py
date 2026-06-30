@@ -18,6 +18,34 @@ if "http_session" not in st.session_state:
 if "download_buffer" not in st.session_state:
     st.session_state.download_buffer = None
 
+
+
+# 🔄 NEW: Background Session Expiry Checker Fragment
+@st.fragment(run_every="5s")
+def monitor_session_expiry():
+    has_cookie = "session_id" in st.session_state.http_session.cookies.get_dict()
+    
+    if has_cookie:
+        try:
+            check_res = st.session_state.http_session.post(DOCUMENTS_URL, timeout=2)
+            if check_res.status_code == 401:
+                has_cookie = False
+        except Exception:
+            pass
+
+    if not has_cookie and st.session_state.get("is_logged_in_state", False):
+        st.session_state.http_session.cookies.clear()
+        st.session_state.download_buffer = None
+        st.session_state.is_logged_in_state = False
+        st.rerun()
+
+# Run the check
+is_logged_in = "session_id" in st.session_state.http_session.cookies.get_dict()
+st.session_state.is_logged_in_state = is_logged_in
+monitor_session_expiry()
+
+
+
 docs = []
 connection_success = False
 

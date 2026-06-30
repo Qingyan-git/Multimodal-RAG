@@ -40,6 +40,43 @@ if "http_session" not in st.session_state:
 
 is_logged_in = "session_id" in st.session_state.http_session.cookies.get_dict()
 
+
+
+# 🔄 NEW: Background Session Expiry Checker Fragment
+@st.fragment(run_every="5s")  # Checks every 5 seconds in the background
+def monitor_session_expiry():
+    # If the user was logged in but the cookie is now gone/expired
+    has_cookie = "session_id" in st.session_state.http_session.cookies.get_dict()
+    
+    # OPTIONAL: If cookies don't auto-expire locally, ping your backend to verify
+    if has_cookie:
+        try:
+            # Send a quick, lightweight request to see if the backend rejects it
+            # (Replace CHATS_URL or use a dedicated /verify endpoint if you have one)
+            check_res = st.session_state.http_session.post(CHATS_URL, timeout=2)
+            if check_res.status_code == 401:
+                has_cookie = False
+        except Exception:
+            pass  # Ignore network hiccups to prevent accidental logouts
+
+    # If they are marked as logged out but state thinks they are logged in
+    if not has_cookie and st.session_state.get("is_logged_in_state", False):
+        st.session_state.http_session.cookies.clear()
+        st.session_state.chat_history = []
+        st.session_state.selected_chat_id = None
+        st.session_state.current_sources = []
+        st.session_state.is_logged_in_state = False
+        st.rerun()
+
+# Track the logging status explicitly for the fragment comparison
+is_logged_in = "session_id" in st.session_state.http_session.cookies.get_dict()
+st.session_state.is_logged_in_state = is_logged_in
+
+# Execute the background checker fragment
+monitor_session_expiry()
+
+
+
 # --- SIDEBAR VIEW ---
 with st.sidebar:
     # 🟢 UI Indicator Element to explicitly show the account status
