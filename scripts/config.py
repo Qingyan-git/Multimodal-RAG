@@ -8,8 +8,6 @@ class Settings(BaseSettings):
     colqwen_model: str = 'vidore/colqwen2-v1.0-hf'
     sparse_embedding_model: str = 'prithvida/Splade_PP_en_v1'
 
-    qwen3vl_model : str = "Qwen/Qwen3-VL-2B-Instruct"
-
     hf_token: SecretStr
 
     jina_url: str 
