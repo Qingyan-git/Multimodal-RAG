@@ -15,7 +15,6 @@ from scripts.supabase import retrieve_markdowns, retrieve_source_from_pageid, re
 from scripts.qdrant import similarity_search
 from scripts.models import (
     openai_model,
-    qwen3vl_model,
     colqwen_model,
     sparse_embedder,
     jina

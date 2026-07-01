@@ -16,7 +16,7 @@ from docling.document_converter import DocumentConverter, PdfFormatOption
 from fastembed import SparseTextEmbedding
 
 from scripts.config import settings
-from scripts.models import openai_model, colqwen_model, qwen3vl_model, sparse_embedder, jina
+from scripts.models import openai_model, colqwen_model, sparse_embedder, jina
 from retrieval.retrieval import answer_user_question
 from features.user_login import sign_up, login, verify_session
 from features.history_aware_answer import process_user_question

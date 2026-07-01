@@ -337,7 +337,7 @@ class ColQwenModel:
             query_embedding = await asyncio.to_thread(_calculate_embedding, query)
         
             return query_embedding
-            
+
 
 
 class SparseEmbedder:
@@ -415,7 +415,6 @@ document_converter = DocumentConverter(
     }
 )
 openai_model = OpenAIModel()
-qwen3vl_model = Qwen3VL()
 colqwen_model = ColQwenModel()
 sparse_embedder = SparseEmbedder()
 jina = Jina()
