@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 from datetime import datetime
 import pymupdf
 
-from scripts.supabase import retrieve_markdowns, retrieve_source_from_pageid, retrieve_info_from_pageid, retrieve_string_from_pageid
+from scripts.supabase import retrieve_markdowns, retrieve_source_from_pageid, retrieve_string_from_pageid
 from scripts.qdrant import similarity_search
 from scripts.models import (
     openai_model,
@@ -43,13 +43,11 @@ def apply_rrf(results, k=60):
     colqwen_rank_map = {item[0]: rank for rank, item in enumerate(colqwen_sorted)}
     jina_rank_map = {item[0]: rank for rank, item in enumerate(jina_sorted)}
 
-    # Dynamic selection (image) using maximum scalar bounds
     image_scores = [item['image_score'] for item in results.values()]
     max_image_score = max(image_scores) if image_scores else 0
     image_cutoff = max_image_score * 0.8
     image_docs = [page_id for page_id, scores in results.items() if scores.get('image_score', 0) >= image_cutoff]
 
-    # Dynamic selection (text) using absolute threshold filters
     TEXT_ABSOLUTE_THRESHOLD = 0.30
     text_docs = [page_id for page_id, scores in results.items() if scores.get('text_score', 0) >= TEXT_ABSOLUTE_THRESHOLD]
 
@@ -245,6 +243,6 @@ async def answer_testset(path):
 
 if __name__ == "__main__":
 
-    asyncio.run(answer_testset(Path(r'C:\Users\Chu Qingyan\Documents\WFH\Multimodal-RAG\testset')))
+    asyncio.run(answer_testset(Path(r'')))
 
 

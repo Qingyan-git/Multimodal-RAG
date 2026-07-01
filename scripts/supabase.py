@@ -384,15 +384,10 @@ async def insert_pdf(file, name, path, filesize):
 
 
 async def insert_page(filename, markdown, page_no, page_image):
-    """
-    Inserts or updates page text context, resolving the parent pdf reference 
-    and outputting the relational sequential primary key id.
-    """
     try:
         client = await get_connection()
 
-        # Step 1: Look up parent mapping ID from the database catalog
-        pdf_lookup = await (client
+        response = await (client
             .table('pdfs')
             .select('pdf_id')
             .eq('name', filename)
@@ -400,7 +395,7 @@ async def insert_page(filename, markdown, page_no, page_image):
             .single()
             .execute()
         )
-        pdf_id = pdf_lookup.data['pdf_id']
+        pdf_id = response.data['pdf_id']
 
         bucket_name = settings.supabase_bucket_name
         storage_path = f"{filename}/page_{page_no}.jpeg"
@@ -465,34 +460,6 @@ async def retrieve_source_from_pageid(page_id):
             signed_url = signed_url_response.get('signedURL')
 
             return pdf_name, page_no, signed_url
-        else:
-            return None
-
-    except Exception as e:
-        print(f'Unable to retrieve page data from pageid, error \n{e}\n')
-
-
-async def retrieve_info_from_pageid(page_id):
-    try:
-        client = await get_connection()
-
-        response = await (client
-        .table("pages")
-        .select(
-            "num",
-            "pdfs(name, path)",
-        )
-        .eq("page_id", page_id)
-        .limit(1)
-        .execute())
-
-        if response.data:
-            info = response.data[0]
-            pdf_path = info['pdfs']['path']
-            pdf_name = info['pdfs']['name']
-            page_no = info['num']
-
-            return pdf_path, pdf_name, page_no
         else:
             return None
 

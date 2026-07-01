@@ -134,6 +134,3 @@ async def ingest_pdf(path):
         raise
 
 
-if __name__ == "__main__":
-
-    asyncio.run(ingest_pdf(Path(r'C:\Users\UserAdmin\Documents\Multimodal-RAG\pdfs')))

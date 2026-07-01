@@ -36,6 +36,6 @@ settings = Settings()
 from scripts.config import settings
 
 model = settings.openai_model
-# Use .get_secret_value() specifically for SecretStr variables
+Use .get_secret_value() specifically for SecretStr variables
 api_key = settings.openai_api_key.get_secret_value() 
 '''

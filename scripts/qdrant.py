@@ -36,7 +36,6 @@ async def create_collection():
             print(f'Collection already exists. Deleting and recreating collection...\n\n')
             await client.delete_collection(collection_name=name)
 
-        # Re-create collection without coarse_embedding
         await client.create_collection(
             collection_name=name,
             vectors_config={
@@ -53,14 +52,13 @@ async def create_collection():
                     modifier=models.Modifier.IDF
                 )
             },
-            # On-disk HNSW ensures your multi-vector index doesn't explode your RAM usage
             hnsw_config=models.HnswConfigDiff(on_disk=True)
         )
 
         client.create_payload_index(
             collection_name=name,
             field_name="page_id",
-            field_schema=PayloadSchemaType.INTEGER, # Or PayloadSchemaType.FLOAT
+            field_schema=PayloadSchemaType.INTEGER,
         )
 
         print(f'Collection {name} successfully created.\n\n')
@@ -118,36 +116,20 @@ async def similarity_search(splade_vector, page_embeddings):
             values=splade_vector['values']
         )
 
-        # response = await client.query_points(
-        #     collection_name=name,
-        #     prefetch=[
-        #         models.Prefetch(query=qdrant_sparse, using="splade_vector", limit=50),
-        #         models.Prefetch(query=page_embeddings, using="page_embeddings", limit=50),
-        #     ],
-        #     query=models.FusionQuery(fusion=models.Fusion.RRF),
-        #     limit=20,
-        # )
-
         response = await client.query_points(
             collection_name=name,
             prefetch=[
                 models.Prefetch(
-                    query=qdrant_sparse,     # The sparse vector
-                    using="splade_vector",   # The sparse vector namespace
+                    query=qdrant_sparse,
+                    using="splade_vector",
                     limit=200
                 )
             ],
-            query=page_embeddings,           # The dense vector re-ranks the top 50
-            using="page_embeddings",         # The dense vector namespace
-            limit=20,                        # Returns final top 20
+            query=page_embeddings,
+            using="page_embeddings",
+            limit=20,
         )
 
-        # response = await client.query_points(
-        #     collection_name=name,
-        #     query=page_embeddings,
-        #     using="page_embeddings",
-        #     limit=20,
-        # )
         
         retrieved = {}
         for point in response.points:

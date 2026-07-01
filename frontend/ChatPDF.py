@@ -235,7 +235,18 @@ left, right = st.columns([1, 1])
 
 # Left Column: Multimodal Context Viewer 
 with left:
-    if st.session_state.current_sources:
+    # 🟢 FIX: If the user is NOT logged in, immediately show the welcome screen
+    if not is_logged_in:
+        st.info("👋 Welcome to ChatPDF!")
+        st.markdown("""
+        ### How to get started:
+        1. Select an archive conversation path from the **Chats** history panel.
+        2. Click **➕ New Chat** inside your sidebar to start fresh.
+        3. Enter a question on the right panel to extract real-time image contexts.
+        """)
+    
+    # If they are logged in, show their PDF sources (if any exist)
+    elif st.session_state.current_sources:
         sources = st.session_state.current_sources
         
         grouped_docs = {}
@@ -254,20 +265,17 @@ with left:
                     with page_tab:
                         current_page = pages[idx]
                         
-                        # 🟢 RENDER DIRECTLY VIA SIGNED_URL
+                        # RENDER DIRECTLY VIA SIGNED_URL
                         if current_page.get("signed_url"):
                             url = current_page["signed_url"]
                             st.image(url, use_container_width=True)
                         else:
                             st.warning("No image available for this page.")
+                            
+    # If they are logged in but haven't asked a question yet / have no sources loaded
     else:
-        st.info("👋 Welcome to ChatPDF!")
-        st.markdown("""
-        ### How to get started:
-        1. Select an archive conversation path from the **Chats** history panel.
-        2. Click **➕ New Chat** inside your sidebar to start fresh.
-        3. Enter a question on the right panel to extract real-time image contexts.
-        """)
+        st.info("💡 Active Session Started")
+        st.caption("Ask a question in the right panel or select an existing chat thread to pull up the relevant PDF document pages here.")
 
 
 # Right Column: Main Chat Room Interface

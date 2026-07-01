@@ -71,21 +71,3 @@ async def login(username,password):
     except Exception as e:
         print(f'Unable to login user, error \n{e}\n\n')
         raise
-
-
-if __name__ == "__main__":
-
-    async def main():
-
-        user1 = 'admin'
-        pass1 = 'admin'
-
-        await sign_up(user1,pass1)
-
-        session_id = await login(user1,pass1)
-        print(f'session_id : {session_id}\n')
-
-        session_verification = await verify_session(session_id)
-        print(f'session_verification : {session_verification}\n')
-
-    asyncio.run(main())
