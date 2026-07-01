@@ -272,7 +272,7 @@ with left:
 
 # Right Column: Main Chat Room Interface
 with right: 
-    chat_container = st.container(height=600)
+    chat_container = st.container(height=500)
     
     # Block input if not authenticated yet to align gracefully with validation
     if not is_logged_in:
