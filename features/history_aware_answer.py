@@ -101,7 +101,7 @@ async def process_user_question(question,chat_id,user_id):
 
         if intent == 'chitchat':
             answer = await openai_model.respond_to_chitchat(question)
-            sources = []
+            used_sources = []
 
         else:
             
